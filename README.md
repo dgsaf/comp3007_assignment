@@ -13,6 +13,8 @@
     - `output/`
       - `task1/`
       - `task2/`
+    - `src/`
+    - `work/`: Directory to save images to, for inspection, during development.
   - `report/`: Assignment report in `tex` format, and resulting `pdf` document.
   - `test/`: Testing images for task 1 and 2; currently an empty directory.
     - `task1/`
