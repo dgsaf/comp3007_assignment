@@ -14,18 +14,15 @@ def recognition(img):
 def read_input():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", required=True,
-                        help="directory with input images")
+                        help="directory path with input images")
     parser.add_argument("-w", "--work", required=True,
-                        help="directory for work images")
+                        help="directory path for work images")
     parser.add_argument("-o", "--output", required=True,
-                        help="directory for output images and data")
+                        help="directory path for output images and data")
 
     args = vars(parser.parse_args())
 
-    dir_input = args["i"]
-
-    files = [f for f in os.listdir(dir_input)
-             if os.path.isfile(os.path.join(dir_input, f))]
+    dir_input = args["input"]
 
     img_files = [os.path.join(dir_input, f)
                  for f in os.listdir(dir_input)
