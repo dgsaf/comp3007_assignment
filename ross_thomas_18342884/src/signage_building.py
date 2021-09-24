@@ -11,7 +11,7 @@ def detection(img):
 def recognition(img):
     return
 
-def read_input():
+def parse_input():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", required=True,
                         help="directory path with input images")
@@ -27,14 +27,18 @@ def read_input():
     img_files = [os.path.join(dir_input, f)
                  for f in os.listdir(dir_input)
                  if os.path.isfile(os.path.join(dir_input, f))
-                 and os.path.splitext(f)[1] == ".jpg"]
+                 and os.path.splitext(f)[1] in {".jpg", ".png"}]
 
     return args, img_files
 
-# program
-args, img_files = read_input()
+# building signage
+args, img_files = parse_input()
 
 for img_file in img_files:
-    img = cv2.imread(img_file, cv2.IMREAD_COLOR)
     root, ext = os.path.splitext(os.path.basename(img_file))
     print(f"{img_file} -> ({root}, {ext})")
+
+    img = cv2.imread(img_file, cv2.IMREAD_COLOR)
+    if img.size == 0:
+        print(f"{img_file} could not be opened")
+        continue
