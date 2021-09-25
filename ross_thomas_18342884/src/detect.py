@@ -31,7 +31,7 @@ def salient_dilate(img, k=3, iterations=16):
     return img_salient
 
 def binarize(img, threshold):
-    _, img_bin = cv2.threshold(img, threshold, 255, cv2.THRESH_BIN)
+    _, img_bin = cv2.threshold(img, threshold, 255, cv2.THRESH_BINARY)
     return img_bin
 
 def binarize_otsu(img):
@@ -39,7 +39,7 @@ def binarize_otsu(img):
     return img_bin
 
 def preprocess(img, blur_k=3, dilate_k=3, iterations=10, threshold=None):
-    img_blur = cv2.medianBlur(img, k=blur_k)
+    img_blur = cv2.medianBlur(img, ksize=blur_k)
     img_dilate = salient_dilate(img_blur, k=dilate_k, iterations=iterations)
 
     if threshold is None:
