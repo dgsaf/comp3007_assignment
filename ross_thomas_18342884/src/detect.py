@@ -20,7 +20,7 @@ def salient_median_blur(img, k=21, iterations=5):
 
 def salient_erode(img, k=5, iterations=16):
     kernel = np.ones((k, k))
-    img_bg = cv2.erode(img, kernel, iterations)
+    img_bg = cv2.erode(img, kernel=kernel, iterations=iterations)
     img_salient = norm_diff(img, img_bg)
     return img_salient
 
@@ -29,3 +29,7 @@ def salient_dilate(img, k=3, iterations=16):
     img_dilate = cv2.dilate(img, kernel, iterations)
     img_salient = norm_diff(img, img_dilate)
     return img_salient
+
+def binarize_otsu(img):
+    _, img_bin = cv2.threshold(img, 128, 255, cv2.THRESH_OTSU)
+    return img_bin

@@ -5,7 +5,7 @@ import argparse
 import numpy as np
 import cv2
 
-from detect import salient_median_blur, salient_erode, salient_dilate
+from detect import *
 
 def detection(img):
     return
@@ -53,13 +53,10 @@ for img_file in img_files:
     cv2.imwrite(f"{dir_work}/{root}_1_0{ext}", img_gray)
 
     for i in [1, 2, 4, 8, 16]:
-        img_median = salient_median_blur(img, iterations=i)
-        cv2.imwrite(f"{dir_work}/{root}_1_1_{i}{ext}", img_median)
+        img_blur = cv2.medianBlur(img_gray, 3)
 
-    for i in [1, 2, 4, 8, 16]:
-        img_erode = salient_erode(img, iterations=i)
-        cv2.imwrite(f"{dir_work}/{root}_1_2_{i}{ext}", img_erode)
+        img_dilate = salient_dilate(img_blur, iterations=i)
+        cv2.imwrite(f"{dir_work}/{root}_1_1_{i}{ext}", img_dilate)
 
-    for i in [1, 2, 4, 8, 16]:
-        img_dilate = salient_dilate(img, iterations=i)
-        cv2.imwrite(f"{dir_work}/{root}_1_3_{i}{ext}", img_dilate)
+        img_bin = binarize_otsu(img_dilate)
+        cv2.imwrite(f"{dir_work}/{root}_1_2_{i}{ext}", img_bin)
