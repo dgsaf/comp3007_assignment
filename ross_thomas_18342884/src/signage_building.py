@@ -5,6 +5,8 @@ import argparse
 import numpy as np
 import cv2
 
+from detect import salient_median_blur, salient_erode, salient_dilate
+
 def detection(img):
     return
 
@@ -33,6 +35,7 @@ def parse_input():
 
 # building signage
 args, img_files = parse_input()
+dir_work = args["work"]
 
 for img_file in img_files:
     root, ext = os.path.splitext(os.path.basename(img_file))
@@ -42,3 +45,21 @@ for img_file in img_files:
     if img.size == 0:
         print(f"{img_file} could not be opened")
         continue
+
+    # development below
+    cv2.imwrite(f"{dir_work}/{root}_0{ext}", img)
+
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite(f"{dir_work}/{root}_1_0{ext}", img_gray)
+
+    for i in [1, 2, 4, 8, 16]:
+        img_median = salient_median_blur(img, iterations=i)
+        cv2.imwrite(f"{dir_work}/{root}_1_1_{i}{ext}", img_median)
+
+    for i in [1, 2, 4, 8, 16]:
+        img_erode = salient_erode(img, iterations=i)
+        cv2.imwrite(f"{dir_work}/{root}_1_2_{i}{ext}", img_erode)
+
+    for i in [1, 2, 4, 8, 16]:
+        img_dilate = salient_dilate(img, iterations=i)
+        cv2.imwrite(f"{dir_work}/{root}_1_3_{i}{ext}", img_dilate)
