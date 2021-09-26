@@ -70,32 +70,27 @@ for img_file in img_files:
     _, contours, hierarchy = cv2.findContours(
         img_edge_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    def suitable_contour(contour):
-        A = img.shape[0] * img.shape[1]
+    def aspect(contour):
+        _, _, w, h = cv2.boundingRect(contour)
+        return (w / h)
 
-        a = (0.3, 1.0)
-        f = (0.0001, 0.5)
-        fr = (0.1, 1.0)
+    def fill(contour):
+        _, _, w, h = cv2.boundingRect(contour)
+        return (cv2.contourArea(contour) / (w * h))
 
-        x, y, w, h = cv2.boundingRect(contour)
-        area = cv2.contourArea(contour)
+    def box_area(contour):
+        _, _, w, h = cv2.boundingRect(contour)
+        return (w * h)
 
-        aspect = w / h
-        fill = w * h / A
-        fill_rect = area / w * h
-
-        within_aspect = (a[0] <= aspect) and (aspect <= a[1])
-        within_fill = (f[0] <= fill) and (fill <= f[1])
-        within_fill_rect = (fr[0] <= fill_rect) and (fill_rect <= fr[1])
-
-        return (within_aspect and within_fill and within_fill_rect)
-
+    def within(x, ival):
+        return ((ival[0] <= x) and (x <= ival[1]))
 
     img_contours = np.zeros(img.shape, dtype=np.uint8)
     for i in range(len(contours)):
         contour = contours[i]
 
-        if (suitable_contour(contour)):
+        if (within(fill(contour), (0.001, 1.0)) and
+            within(aspect(contour), (0.1, 1.3))):
             cv2.drawContours(img_contours, contours, i, (255, 255, 255),
                              hierarchy=hierarchy, maxLevel=0)
 
