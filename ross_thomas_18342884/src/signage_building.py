@@ -5,6 +5,8 @@ import argparse
 import numpy as np
 import cv2
 
+from image_primitive import *
+from image_edge import *
 from detect import *
 
 def detection(img):
