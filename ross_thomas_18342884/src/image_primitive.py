@@ -66,17 +66,18 @@ def diff(img_1, img_2):
     return img_diff
 
 
-def binarize(img, threshold=None):
+def binarize(img, k=21, c=20):
     """
-    Binarize a single-channel image.
+    Binarize a single-channel image, using adaptive thresholding.
 
     Parameters
     ----------
     img : ndarray
         Input single-channel image.
-    threshold : int, optional
-        Threshold value for binary thresholding.
-        Default is None, in which case Otsu's method is used.
+    k : int, default=21
+        Aperture size for adaptive thresholding.
+    c : int, default=20
+        Constant subtracted from weighted mean in adaptive thresholding.
 
     Returns
     -------
@@ -84,9 +85,7 @@ def binarize(img, threshold=None):
         Binary image, with values in {0, 255}, obtained after thresholding.
 
     """
-    if threshold is None:
-        _, img_bin = cv2.threshold(img, 128, 255, cv2.THRESH_OTSU)
-    else:
-        _, img_bin = cv2.threshold(img, threshold, 255, cv2.THRESH_BINARY)
+    img_bin = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                    cv2.THRESH_BINARY, k, c)
 
     return img_bin

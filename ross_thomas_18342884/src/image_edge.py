@@ -63,7 +63,7 @@ def edge_gradient_external(img, k=3, iterations=1):
 
 def edge_gradient(img, k=3, iterations=1):
     """
-    Normalized morphological gradient of an iamge.
+    Normalized morphological gradient of an image.
 
     Parameters
     ----------
@@ -88,5 +88,25 @@ def edge_gradient(img, k=3, iterations=1):
 
 
 def edge_canny(img, t_1=100, t_2=200, k=3):
-    img_edge = invert(cv2.Canny(img, t_1, t_2, apertureSize=k, L2Gradient=True))
+    """
+    Detects edges in an image, using the Canny edge detector.
+
+    Parameters
+    ----------
+    img : ndarray
+        Input single-channel image.
+    t_1 : int, default=100
+        Lower threshold for the Canny edge detector.
+    t_2 : int, default=200
+        Upper threshold for the Canny edge detector.
+    k : int, default=3
+        Apeture size for the Canny edge detector
+
+    Returns
+    -------
+    img_edge : ndarray
+        Binary image of edges, with same shape as `img`.
+
+    """
+    img_edge = invert(cv2.Canny(img, t_1, t_2, apertureSize=k, L2gradient=True))
     return img_edge
