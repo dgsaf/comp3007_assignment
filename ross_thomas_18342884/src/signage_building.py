@@ -54,23 +54,5 @@ for img_file in img_files:
     cv2.imwrite(f"{dir_work}/{root}_1_0{ext}", img_gray)
 
     # development below
-    # 1a: dilate
-    img_dilate = edge_gradient_external(img_gray)
-    cv2.imwrite(f"{dir_work}/{root}_1_1_a{ext}", img_dilate)
-
-    # 1b: median blur, then dilate
-    img_blur = cv2.medianBlur(img_gray, 3)
-    img_dilate = edge_gradient_external(img_blur)
-    cv2.imwrite(f"{dir_work}/{root}_1_1_b{ext}", img_dilate)
-
-    # 2a: morphological gradient
-    img_gradient = edge_gradient(img_gray)
-    cv2.imwrite(f"{dir_work}/{root}_1_2_a{ext}", img_gradient)
-
-    # 2b: median blur, morphological gradient
-    img_blur = cv2.medianBlur(img_gray, 3)
-    img_gradient = edge_gradient(img_blur)
-    cv2.imwrite(f"{dir_work}/{root}_1_2_b{ext}", img_gradient)
-
-    # img_bin = binarize(img_dilate)
-    # cv2.imwrite(f"{dir_work}/{root}_1_2{ext}", img_bin)
+    img_edge = edge_gradient_external(img_gray)
+    cv2.imwrite(f"{dir_work}/{root}_2_0{ext}", img_edge)
