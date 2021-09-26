@@ -85,3 +85,8 @@ def edge_gradient(img, k=3, iterations=1):
                                     iterations=iterations)
     img_edge = invert(norm(img_gradient))
     return img_edge
+
+
+def edge_canny(img, t_1=100, t_2=200, k=3):
+    img_edge = invert(cv2.Canny(img, t_1, t_2, apertureSize=k, L2Gradient=True))
+    return img_edge
