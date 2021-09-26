@@ -72,7 +72,7 @@ for img_file in img_files:
 
     img_contours = np.zeros(img.shape, dtype=np.uint8)
     for i in range(len(contours)):
-        contour = contour[i]
+        contour = contours[i]
         x, y, w, h = cv2.boundingRect(contour)
         area = cv2.contourArea(contour)
 
