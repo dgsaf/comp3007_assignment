@@ -9,11 +9,14 @@ from image_primitive import *
 from image_edge import *
 from detect import *
 
+
 def detection(img):
     return
 
+
 def recognition(img):
     return
+
 
 def parse_input():
     parser = argparse.ArgumentParser()
@@ -34,6 +37,7 @@ def parse_input():
                  and os.path.splitext(f)[1] in {".jpg", ".png"}]
 
     return args, img_files
+
 
 # building signage
 args, img_files = parse_input()

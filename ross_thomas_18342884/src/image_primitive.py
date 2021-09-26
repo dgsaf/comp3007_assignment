@@ -4,6 +4,7 @@ import os
 import numpy as np
 import cv2
 
+
 def invert(img):
     """
     Invert a single-channel image between its min and max values.
@@ -25,6 +26,7 @@ def invert(img):
     img_invert = b + a - img
     return img_invert
 
+
 def norm(img):
     """
     Normalize a single-channel image to have values between (0, 255).
@@ -44,6 +46,7 @@ def norm(img):
     cv2.normalize(img, img_norm, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX)
     return img_norm
 
+
 def diff(img_1, img_2):
     """
     Absolute difference of two single-channel images.
@@ -61,6 +64,7 @@ def diff(img_1, img_2):
     """
     img_diff = cv2.absdiff(img_1, img_2)
     return img_diff
+
 
 def binarize(img, threshold=None):
     """

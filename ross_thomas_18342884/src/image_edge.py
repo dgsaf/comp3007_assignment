@@ -6,6 +6,7 @@ import cv2
 
 from image_primitive import *
 
+
 def edge_gradient_internal(img, k=3, iterations=1):
     """
     Normalized difference of an image from its morphological erosion.
@@ -32,6 +33,7 @@ def edge_gradient_internal(img, k=3, iterations=1):
     img_edge = norm(diff(img, img_erode))
     return img_edge
 
+
 def edge_gradient_external(img, k=3, iterations=1):
     """
     Normalized difference of an image from its morphological dilation.
@@ -57,6 +59,7 @@ def edge_gradient_external(img, k=3, iterations=1):
     img_dilate = cv2.dilate(img, kernel=kernel, iterations=iterations)
     img_edge = invert(norm(diff(img, img_dilate)))
     return img_edge
+
 
 def edge_gradient(img, k=3, iterations=1):
     """
