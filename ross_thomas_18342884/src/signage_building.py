@@ -59,41 +59,12 @@ for img_file in img_files:
     cv2.imwrite(f"{dir_work}/{root}_1{ext}", img_gray)
 
     # development below
-    img_blur = cv2.bilateralFilter(img_gray, 11, 50, 100)
-    cv2.imwrite(f"{dir_work}/{root}_1_1{ext}", img_blur)
+    # img_blur = cv2.bilateralFilter(img_gray, 11, 50, 100)
+    # cv2.imwrite(f"{dir_work}/{root}_1_1{ext}", img_blur)
 
-    img_edge = edge_gradient_external(img_blur)
-    cv2.imwrite(f"{dir_work}/{root}_2{ext}", img_edge)
+    # img_edge = edge_gradient_external(img_blur)
+    # cv2.imwrite(f"{dir_work}/{root}_2{ext}", img_edge)
 
-    img_edge_bin = binarize(img_edge)
-    cv2.imwrite(f"{dir_work}/{root}_3{ext}", img_edge_bin)
-
-    _, contours, hierarchy = cv2.findContours(
-        img_edge_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
-    def aspect(contour):
-        _, _, w, h = cv2.boundingRect(contour)
-        return (w / h)
-
-    def fill(contour):
-        _, _, w, h = cv2.boundingRect(contour)
-        return (cv2.contourArea(contour) / (w * h))
-
-    def box_area(contour):
-        _, _, w, h = cv2.boundingRect(contour)
-        return (w * h)
-
-    def within(x, ival):
-        return ((ival[0] <= x) and (x <= ival[1]))
-
-    img_contours = np.zeros(img.shape, dtype=np.uint8)
-    for i in range(len(contours)):
-        contour = contours[i]
-
-        if (within(fill(contour), (0.1, 1.0))
-            and within(aspect(contour), (0.2, 1.2))
-            and within(box_area(contour) / (W * H), (0.0001, 0.5))):
-            cv2.drawContours(img_contours, contours, i, (255, 255, 255),
-                             hierarchy=hierarchy, maxLevel=0)
-
-    cv2.imwrite(f"{dir_work}/{root}_4{ext}", img_contours)
+    # img_edge_bin = binarize(img_edge)
+    # cv2.imwrite(f"{dir_work}/{root}_3{ext}", img_edge_bin)
+    detect_ccl(args, img_file, img_gray)
