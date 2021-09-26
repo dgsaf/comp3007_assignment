@@ -6,6 +6,7 @@ import cv2
 import random
 
 from image_primitive import *
+from image_edge import *
 
 def detect_contours(args, img_file, img_gray):
     dir_work = args["work"]
@@ -78,5 +79,5 @@ def detect_ccl(args, img_file, img_gray):
     for i in range(h):
         for j in range(w):
             img_ccl[i, j] = color[labels[i, j]]
-    cv2.imwrite(f"{dir_work}/{root}_ccl_4{ext}", img_contours)
+    cv2.imwrite(f"{dir_work}/{root}_ccl_4{ext}", img_ccl)
     return
