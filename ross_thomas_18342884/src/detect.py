@@ -51,7 +51,7 @@ def region_median_blur(img, k=21, iterations=5):
     img_region = norm_diff(img, img_bg)
     return img_region
 
-def edge_erode(img, k=5, iterations=16):
+def edge_erode(img, k=3, iterations=1):
     """
     Normalized difference of an image from its morphological erosion.
 
@@ -59,9 +59,9 @@ def edge_erode(img, k=5, iterations=16):
     ----------
     img : ndarray
         Input single-channel image.
-    k : int, default=5
+    k : int, default=3
         Aperture size of the square erosion kernel.
-    iterations : int, default=16
+    iterations : int, default=1
         Number of successive erosion operations performed on `img`.
 
     Returns
@@ -76,7 +76,7 @@ def edge_erode(img, k=5, iterations=16):
     img_edge = norm_diff(img, img_bg)
     return img_edge
 
-def edge_dilate(img, k=3, iterations=16):
+def edge_dilate(img, k=3, iterations=1):
     """
     Normalized difference of an image from its morphological dilation.
 
@@ -86,7 +86,7 @@ def edge_dilate(img, k=3, iterations=16):
         Input single-channel image.
     k : int, default=3
         Aperture size of the square dilation kernel.
-    iterations : int, default=16
+    iterations : int, default=1
         Number of successive dilation operations performed on `img`.
 
     Returns
@@ -99,6 +99,15 @@ def edge_dilate(img, k=3, iterations=16):
     kernel = np.ones((k, k))
     img_dilate = cv2.dilate(img, kernel=kernel, iterations=iterations)
     img_edge = 255 - norm_diff(img, img_dilate)
+    return img_edge
+
+def edge_gradient(img, k=3, iterations=1):
+    kernel = np.ones((k, k))
+    img_gradient = cv2.morpholoyEx(img, op=cv2.MORPH_GRADIENT, kernel=kernel
+                                   iterations=iterations)
+    img_edge = img_gradient.copy()
+    cv2.normalize(img_gradient, img_edge, alpha=0, beta=255,
+                  norm_type=cv2.NORM_MINMAX)
     return img_edge
 
 def binarize(img, threshold=None):

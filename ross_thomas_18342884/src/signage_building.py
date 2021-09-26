@@ -46,17 +46,31 @@ for img_file in img_files:
         print(f"{img_file} could not be opened")
         continue
 
-    # development below
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # write image and grayscale image to work directory
     cv2.imwrite(f"{dir_work}/{root}_0{ext}", img)
 
-    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     cv2.imwrite(f"{dir_work}/{root}_1_0{ext}", img_gray)
 
-    for i in [1, 2, 4, 8, 16]:
-        img_blur = cv2.medianBlur(img_gray, 3)
+    # development below
+    # 1a: dilate
+    img_dilate = edge_dilate(img_gray)
+    cv2.imwrite(f"{dir_work}/{root}_1_1_a{ext}", img_dilate)
 
-        img_dilate = salient_dilate(img_blur, iterations=i)
-        cv2.imwrite(f"{dir_work}/{root}_1_1_{i}{ext}", img_dilate)
+    # 1b: median blur, then dilate
+    img_blur = cv2.medianBlur(img_gray, 3)
+    img_dilate = edge_dilate(img_blur)
+    cv2.imwrite(f"{dir_work}/{root}_1_1_b{ext}", img_dilate)
 
-        img_bin = binarize_otsu(img_dilate)
-        cv2.imwrite(f"{dir_work}/{root}_1_2_{i}{ext}", img_bin)
+    # 1c: dilate, open
+    img_dilate = edge_dilate(img_gray)
+    img_open = cv2.morphologyEx(img_dilate, op=cv2.MORPH_OPEN)
+    cv2.imwrite(f"{dir_work}/{root}_1_1_c{ext}", img_open)
+
+    # 1d: morphological gradient
+    img_gradient = edge_gradient(img_gray)
+    cv2.imwrite(f"{dir_work}/{root}_1_1_d{ext}", img_gradient)
+
+    # img_bin = binarize(img_dilate)
+    # cv2.imwrite(f"{dir_work}/{root}_1_2{ext}", img_bin)
