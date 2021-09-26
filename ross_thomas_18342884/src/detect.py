@@ -51,7 +51,7 @@ def region_median_blur(img, k=21, iterations=5):
     img_region = norm_diff(img, img_bg)
     return img_region
 
-def edge_erode(img, k=3, iterations=1):
+def edge_gradient_internal(img, k=3, iterations=1):
     """
     Normalized difference of an image from its morphological erosion.
 
@@ -68,15 +68,16 @@ def edge_erode(img, k=3, iterations=1):
     -------
     img_edge : ndarray
         Normalised, between (0, 255), difference between `img` and its
-        erosion; proportional to the internal gradient.
+        erosion.
+        Proportional to the internal gradient.
 
     """
     kernel = np.ones((k, k))
-    img_bg = cv2.erode(img, kernel=kernel, iterations=iterations)
-    img_edge = norm_diff(img, img_bg)
+    img_erode = cv2.erode(img, kernel=kernel, iterations=iterations)
+    img_edge = norm_diff(img, img_erode)
     return img_edge
 
-def edge_dilate(img, k=3, iterations=1):
+def edge_gradient_external(img, k=3, iterations=1):
     """
     Normalized difference of an image from its morphological dilation.
 
@@ -93,7 +94,8 @@ def edge_dilate(img, k=3, iterations=1):
     -------
     img_edge : ndarray
         Normalised, between (0, 255), difference between `img` and its
-        dilation; proportional to the external gradient.
+        dilation, inverted between (0, 255).
+        Proportional to the external gradient.
 
     """
     kernel = np.ones((k, k))
@@ -102,10 +104,31 @@ def edge_dilate(img, k=3, iterations=1):
     return img_edge
 
 def edge_gradient(img, k=3, iterations=1):
+    """
+    Normalized morphological gradient of an iamge.
+
+    Parameters
+    ----------
+    img : ndarray
+        Input single-channel image.
+    k : int, default=3
+        Aperture size of the square dilation kernel.
+    iterations : int, default=1
+        Number of successive gradient operations performed on `img`.
+
+    Returns
+    -------
+    img_edge : ndarray
+        Normalised, between (0, 255), morphological gradient of `img`.
+
+    """
     kernel = np.ones((k, k))
     img_gradient = cv2.morphologyEx(img, op=cv2.MORPH_GRADIENT, kernel=kernel,
                                     iterations=iterations)
-    img_edge = 255 - norm_diff(img_gradient, np.zeros(img_gradient.shape))
+    img_edge = img_gradient.copy()
+    cv2.normalize(img_gradient, img_edge, alpha=0, beta=255,
+                  norm_type=cv2.NORM_MINMAX)
+    img_edge = 255 - img_edge
     return img_edge
 
 def binarize(img, threshold=None):
