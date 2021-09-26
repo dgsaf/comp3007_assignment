@@ -4,9 +4,49 @@ import os
 import numpy as np
 import cv2
 
-def norm_diff(img_1, img_2):
+def invert(img):
     """
-    Difference of two single-channel images, normalized between (0, 255).
+    Invert a single-channel image between its min and max values.
+
+    Parameters
+    ----------
+    img : ndarray
+        Input single-channel images.
+
+    Returns
+    -------
+    img_invert : ndarray
+        Inverted copy of `img`.
+
+    """
+    a = np.amin(img)
+    b = np.amax(img)
+
+    img_invert = b + a - img
+    return img_invert
+
+def norm(img):
+    """
+    Normalize a single-channel image to have values between (0, 255).
+
+    Parameters
+    ----------
+    img : ndarray
+        Input single-channel images.
+
+    Returns
+    -------
+    img_norm : ndarray
+        Normalised, between (0, 255), copy of `img`.
+
+    """
+    img_norm = img.copy()
+    cv2.normalize(img, img_norm, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX)
+    return img_norm
+
+def diff(img_1, img_2):
+    """
+    Absolute difference of two single-channel images.
 
     Parameters
     ----------
@@ -15,15 +55,12 @@ def norm_diff(img_1, img_2):
 
     Returns
     -------
-    img_diff_norm : ndarray
-        Normalised, between (0, 255), difference of the two input images.
+    img_diff : ndarray
+        Absolute difference of the `img_1` and `img_2`.
 
     """
     img_diff = cv2.absdiff(img_1, img_2)
-    img_diff_norm = img_diff.copy()
-    cv2.normalize(img_diff, img_diff_norm, alpha=0, beta=255,
-                  norm_type=cv2.NORM_MINMAX)
-    return img_diff_norm
+    return img_diff
 
 def region_median_blur(img, k=21, iterations=5):
     """
@@ -48,7 +85,7 @@ def region_median_blur(img, k=21, iterations=5):
     img_bg = img.copy()
     for i in range(iterations):
         img_bg = cv2.medianBlur(img_bg, ksize=k)
-    img_region = norm_diff(img, img_bg)
+    img_region = norm(diff(img, img_bg))
     return img_region
 
 def edge_gradient_internal(img, k=3, iterations=1):
@@ -74,7 +111,7 @@ def edge_gradient_internal(img, k=3, iterations=1):
     """
     kernel = np.ones((k, k))
     img_erode = cv2.erode(img, kernel=kernel, iterations=iterations)
-    img_edge = norm_diff(img, img_erode)
+    img_edge = norm(diff(img, img_erode))
     return img_edge
 
 def edge_gradient_external(img, k=3, iterations=1):
@@ -100,7 +137,7 @@ def edge_gradient_external(img, k=3, iterations=1):
     """
     kernel = np.ones((k, k))
     img_dilate = cv2.dilate(img, kernel=kernel, iterations=iterations)
-    img_edge = 255 - norm_diff(img, img_dilate)
+    img_edge = invert(norm(diff(img, img_dilate)))
     return img_edge
 
 def edge_gradient(img, k=3, iterations=1):
@@ -125,10 +162,7 @@ def edge_gradient(img, k=3, iterations=1):
     kernel = np.ones((k, k))
     img_gradient = cv2.morphologyEx(img, op=cv2.MORPH_GRADIENT, kernel=kernel,
                                     iterations=iterations)
-    img_edge = img_gradient.copy()
-    cv2.normalize(img_gradient, img_edge, alpha=0, beta=255,
-                  norm_type=cv2.NORM_MINMAX)
-    img_edge = 255 - img_edge
+    img_edge = invert(norm(img_gradient))
     return img_edge
 
 def binarize(img, threshold=None):
@@ -154,10 +188,4 @@ def binarize(img, threshold=None):
     else:
         _, img_bin = cv2.threshold(img, threshold, 255, cv2.THRESH_BINARY)
 
-    return img_bin
-
-def preprocess(img, k_blur=3, k_dilate=3, iterations=10, threshold=None):
-    img_blur = cv2.medianBlur(img, ksize=k_blur)
-    img_dilate = salient_dilate(img_blur, k=k_dilate, iterations=iterations)
-    img_bin = binarize(img, threshold)
     return img_bin

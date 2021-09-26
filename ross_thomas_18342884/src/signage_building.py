@@ -55,12 +55,12 @@ for img_file in img_files:
 
     # development below
     # 1a: dilate
-    img_dilate = edge_dilate(img_gray)
+    img_dilate = edge_gradient_external(img_gray)
     cv2.imwrite(f"{dir_work}/{root}_1_1_a{ext}", img_dilate)
 
     # 1b: median blur, then dilate
     img_blur = cv2.medianBlur(img_gray, 3)
-    img_dilate = edge_dilate(img_blur)
+    img_dilate = edge_gradient_external(img_blur)
     cv2.imwrite(f"{dir_work}/{root}_1_1_b{ext}", img_dilate)
 
     # 2a: morphological gradient
