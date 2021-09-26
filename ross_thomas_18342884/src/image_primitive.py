@@ -66,7 +66,7 @@ def diff(img_1, img_2):
     return img_diff
 
 
-def binarize(img, k=21, c=-20):
+def binarize(img, k=15, c=-20):
     """
     Binarize a single-channel image, using adaptive thresholding.
 
