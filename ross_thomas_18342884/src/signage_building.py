@@ -92,7 +92,7 @@ for img_file in img_files:
 
         if (within(fill(contour), (0.1, 1.0))
             and within(aspect(contour), (0.2, 1.2))
-            and within(box_area(contour) / (W * H), (0.001, 0.5))):
+            and within(box_area(contour) / (W * H), (0.0001, 0.5))):
             cv2.drawContours(img_contours, contours, i, (255, 255, 255),
                              hierarchy=hierarchy, maxLevel=0)
 
