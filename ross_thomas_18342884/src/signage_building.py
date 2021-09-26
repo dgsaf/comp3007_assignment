@@ -51,6 +51,7 @@ for img_file in img_files:
     if img.size == 0:
         print(f"{img_file} could not be opened")
         continue
+    W, H = img.shape[:2]
 
     cv2.imwrite(f"{dir_work}/{root}_0{ext}", img)
 
@@ -89,8 +90,9 @@ for img_file in img_files:
     for i in range(len(contours)):
         contour = contours[i]
 
-        if (within(fill(contour), (0.001, 1.0)) and
-            within(aspect(contour), (0.1, 1.3))):
+        if (within(fill(contour), (0.1, 1.0))
+            and within(aspect(contour), (0.2, 1.2))
+            and within(box_area(contour) / (W * H), (0.001, 0.5))):
             cv2.drawContours(img_contours, contours, i, (255, 255, 255),
                              hierarchy=hierarchy, maxLevel=0)
 
