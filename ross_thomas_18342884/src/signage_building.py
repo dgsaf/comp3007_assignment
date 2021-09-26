@@ -65,7 +65,8 @@ for img_file in img_files:
 
     # 1c: dilate, open
     img_dilate = edge_dilate(img_gray)
-    img_open = cv2.morphologyEx(img_dilate, op=cv2.MORPH_OPEN)
+    img_open = cv2.morphologyEx(img_dilate, op=cv2.MORPH_OPEN,
+                                kernel=np.ones((3,3)))
     cv2.imwrite(f"{dir_work}/{root}_1_1_c{ext}", img_open)
 
     # 1d: morphological gradient
