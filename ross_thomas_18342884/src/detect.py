@@ -105,9 +105,7 @@ def edge_gradient(img, k=3, iterations=1):
     kernel = np.ones((k, k))
     img_gradient = cv2.morphologyEx(img, op=cv2.MORPH_GRADIENT, kernel=kernel,
                                     iterations=iterations)
-    img_edge = img_gradient.copy()
-    cv2.normalize(img_gradient, img_edge, alpha=0, beta=255,
-                  norm_type=cv2.NORM_MINMAX)
+    img_edge = 255 - norm_diff(img_gradient, np.zeros(img_gradient.shape))
     return img_edge
 
 def binarize(img, threshold=None):
