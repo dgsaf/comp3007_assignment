@@ -4,7 +4,7 @@ import os
 import numpy as np
 import cv2
 
-from image_primitive import *
+from image_primitive import diff, invert, norm
 
 
 def edge_gradient_internal(img, k=3, iterations=1):
