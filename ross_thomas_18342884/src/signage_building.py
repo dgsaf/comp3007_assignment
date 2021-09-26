@@ -52,13 +52,17 @@ for img_file in img_files:
         print(f"{img_file} could not be opened")
         continue
 
-    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    # write image and grayscale image to work directory
     cv2.imwrite(f"{dir_work}/{root}_0{ext}", img)
 
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     cv2.imwrite(f"{dir_work}/{root}_1_0{ext}", img_gray)
 
     # development below
-    img_edge = edge_gradient_external(img_gray)
+    img_blur = cv2.bilateralFilter(img_gray, 11, 50, 100)
+    cv2.imwrite(f"{dir_work}/{root}_1_1{ext}", img_blur)
+
+    img_edge = edge_gradient_external(img_blur)
     cv2.imwrite(f"{dir_work}/{root}_2_0{ext}", img_edge)
+
+    img_edge_bin = binarize(img_edge)
+    cv2.imwrite(f"{dir_work}/{root}_3_0{ext}", img_edge_bin)

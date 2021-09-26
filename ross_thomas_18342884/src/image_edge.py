@@ -57,7 +57,7 @@ def edge_gradient_external(img, k=3, iterations=1):
     """
     kernel = np.ones((k, k))
     img_dilate = cv2.dilate(img, kernel=kernel, iterations=iterations)
-    img_edge = invert(norm(diff(img, img_dilate)))
+    img_edge = norm(diff(img, img_dilate))
     return img_edge
 
 
@@ -83,7 +83,7 @@ def edge_gradient(img, k=3, iterations=1):
     kernel = np.ones((k, k))
     img_gradient = cv2.morphologyEx(img, op=cv2.MORPH_GRADIENT, kernel=kernel,
                                     iterations=iterations)
-    img_edge = invert(norm(img_gradient))
+    img_edge = norm(img_gradient)
     return img_edge
 
 
@@ -108,5 +108,5 @@ def edge_canny(img, t_1=100, t_2=200, k=3):
         Binary image of edges, with same shape as `img`.
 
     """
-    img_edge = invert(cv2.Canny(img, t_1, t_2, apertureSize=k, L2gradient=True))
+    img_edge = cv2.Canny(img, t_1, t_2, apertureSize=k, L2gradient=True)
     return img_edge
