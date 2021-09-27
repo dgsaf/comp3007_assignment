@@ -52,7 +52,7 @@ def binary_gradient_external(img):
     edge_iterations = 2
 
     bin_k = 15
-    bin_c = -50
+    bin_c = -15
 
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img_blur = cv2.bilateralFilter(img_gray, blur_k, blur_sigma_c, blur_sigma_s)
@@ -70,7 +70,7 @@ def binary_region(img):
     edge_iterations = 2
 
     bin_k = 15
-    bin_c = -50
+    bin_c = -15
 
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img_blur = cv2.bilateralFilter(img_gray, blur_k, blur_sigma_c, blur_sigma_s)
