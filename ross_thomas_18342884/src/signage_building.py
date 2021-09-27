@@ -58,11 +58,12 @@ for img_file in img_files:
     if img.size == 0:
         print(f"{img_file} could not be opened")
         continue
-    write_to_work(0, img)
     W, H = img.shape[:2]
 
+    write_to_work("0_0", img)
+
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    write_to_work(1, img_gray)
+    write_to_work("0_1", img_gray)
 
     # development below
 
@@ -77,14 +78,38 @@ for img_file in img_files:
     edge_bin_k = 15
     edge_bin_c = -50
 
+    # expand white character region into black background
     img_blur = cv2.bilateralFilter(img_gray, blur_k, blur_sigma_c, blur_sigma_s)
-    write_to_work(2, img_blur)
+    write_to_work("1_0", img_blur)
 
     img_edge = edge_gradient_external(img_blur, edge_k, edge_iterations)
-    write_to_work(3, img_edge)
+    write_to_work("1_1", img_edge)
 
     img_edge_bin = binarize(img_edge, edge_bin_k, edge_bin_c)
-    write_to_work(4, img_edge_bin)
+    write_to_work("1_2", img_edge_bin)
 
     img_ccl = detect_ccl(img_edge_bin)
-    write_to_work(5, img_ccl)
+    write_to_work("1_3", img_ccl)
+
+    # contract black background around white characters
+    img_blur = cv2.bilateralFilter(img_gray, blur_k, blur_sigma_c, blur_sigma_s)
+    write_to_work("2_0", img_blur)
+
+    img_edge = edge_gradient_internal(img_blur, edge_k, edge_iterations)
+    write_to_work("2_1", img_edge)
+
+    img_edge_bin = invert(binarize(img_edge, edge_bin_k, edge_bin_c))
+    write_to_work("2_2", img_edge_bin)
+
+    img_ccl = detect_ccl(img_edge_bin)
+    write_to_work("2_3", img_ccl)
+
+    # using regions rather than edges
+    img_blur = cv2.bilateralFilter(img_gray, blur_k, blur_sigma_c, blur_sigma_s)
+    write_to_work("3_0", img_blur)
+
+    img_bin = binarize(img_blur, edge_bin_k, edge_bin_c)
+    write_to_work("3_1", img_bin)
+
+    img_ccl = detect_ccl(img_bin)
+    write_to_work("3_2", img_ccl)
