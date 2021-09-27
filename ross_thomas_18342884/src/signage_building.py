@@ -26,8 +26,7 @@ def parse_input():
                         help="directory path for work images")
     parser.add_argument("-o", "--output", required=True,
                         help="directory path for output images and data")
-    parser.add_argument("-W", "--work-save", default=False,
-                        action=argparse.BooleanOptionalAction
+    parser.add_argument("-W", "--work-save", action="store_true",
                         help="flag if work images are to be saved")
 
     args = vars(parser.parse_args())
@@ -51,7 +50,7 @@ for img_file in img_files:
     print(f"{img_file} -> ({root}, {ext})")
 
     def write_to_work(id, img):
-        if args["work-save"]:
+        if args["work_save"]:
             cv2.imwrite(f"{dir_work}/{root}_{id}{ext}", img)
         return
 
