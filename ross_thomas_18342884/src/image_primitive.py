@@ -23,7 +23,7 @@ def invert(img):
     a = np.amin(img)
     b = np.amax(img)
 
-    img_invert = b + a - img
+    img_invert = (b - img) + a
     return img_invert
 
 
