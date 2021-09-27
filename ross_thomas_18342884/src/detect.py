@@ -10,7 +10,7 @@ from image_edge import *
 
 
 def detect_ccl(img_edge_bin):
-    n, labels = cv2.connectedComponents(invert(img_edge_bin), 8)
+    n, labels = cv2.connectedComponents(img_edge_bin, 8)
 
     color = np.zeros((n, 3), dtype=np.uint8)
     for k in range(1, n):
@@ -31,10 +31,10 @@ def binary_gradient_internal(img):
     blur_sigma_s = 50
 
     edge_k = 3
-    edge_iterations = 2
+    edge_iterations = 5
 
     bin_k = 15
-    bin_c = -50
+    bin_c = -15
 
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img_blur = cv2.bilateralFilter(img_gray, blur_k, blur_sigma_c, blur_sigma_s)
