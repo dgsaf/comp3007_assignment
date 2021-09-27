@@ -27,8 +27,8 @@ def detect_ccl(img_edge_bin):
 
 def binary_gradient_internal(img):
     blur_k = 21
-    blur_sigma_c = 50
-    blur_sigma_s = 50
+    blur_sigma_c = 75
+    blur_sigma_s = 75
 
     edge_k = 3
     edge_iterations = 5
@@ -45,8 +45,8 @@ def binary_gradient_internal(img):
 
 def binary_gradient_external(img):
     blur_k = 21
-    blur_sigma_c = 50
-    blur_sigma_s = 50
+    blur_sigma_c = 75
+    blur_sigma_s = 75
 
     edge_k = 3
     edge_iterations = 2
@@ -63,8 +63,8 @@ def binary_gradient_external(img):
 
 def binary_region(img):
     blur_k = 21
-    blur_sigma_c = 50
-    blur_sigma_s = 50
+    blur_sigma_c = 75
+    blur_sigma_s = 75
 
     edge_k = 3
     edge_iterations = 2
