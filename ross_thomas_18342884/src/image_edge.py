@@ -34,7 +34,7 @@ def edge_gradient_internal(img, k=3, iterations=1):
     return img_edge
 
 
-def edge_gradient_external(img, k=3, iterations=1):
+def edge_gradient_external(img, k=3, iterations=2):
     """
     Normalized difference of an image from its morphological dilation.
 
@@ -44,7 +44,7 @@ def edge_gradient_external(img, k=3, iterations=1):
         Input single-channel image.
     k : int, default=3
         Aperture size of the square dilation kernel.
-    iterations : int, default=1
+    iterations : int, default=2
         Number of successive dilation operations performed on `img`.
 
     Returns

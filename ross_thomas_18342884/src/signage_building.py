@@ -26,6 +26,9 @@ def parse_input():
                         help="directory path for work images")
     parser.add_argument("-o", "--output", required=True,
                         help="directory path for output images and data")
+    parser.add_argument("-W", "--work-save", default=False,
+                        action=argparse.BooleanOptionalAction
+                        help="flag if work images are to be saved")
 
     args = vars(parser.parse_args())
 
@@ -47,24 +50,42 @@ for img_file in img_files:
     root, ext = os.path.splitext(os.path.basename(img_file))
     print(f"{img_file} -> ({root}, {ext})")
 
+    def write_to_work(id, img):
+        if args["work-save"]:
+            cv2.imwrite(f"{dir_work}/{root}_{id}{ext}", img)
+        return
+
     img = cv2.imread(img_file, cv2.IMREAD_COLOR)
     if img.size == 0:
         print(f"{img_file} could not be opened")
         continue
+    write_to_work(0, img)
     W, H = img.shape[:2]
 
-    cv2.imwrite(f"{dir_work}/{root}_0{ext}", img)
-
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite(f"{dir_work}/{root}_1{ext}", img_gray)
+    write_to_work(1, img_gray)
 
     # development below
-    # img_blur = cv2.bilateralFilter(img_gray, 11, 50, 100)
-    # cv2.imwrite(f"{dir_work}/{root}_1_1{ext}", img_blur)
 
-    # img_edge = edge_gradient_external(img_blur)
-    # cv2.imwrite(f"{dir_work}/{root}_2{ext}", img_edge)
+    # parameters
+    blur_k = 21
+    blur_sigma_c = 50
+    blur_sigma_s = 50
 
-    # img_edge_bin = binarize(img_edge)
-    # cv2.imwrite(f"{dir_work}/{root}_3{ext}", img_edge_bin)
-    detect_ccl(args, img_file, img_gray)
+    edge_k = 3
+    edge_iterations = 2
+
+    edge_bin_k = 15
+    edge_bin_c = -50
+
+    img_blur = cv2.bilateralFilter(img_gray, blur_k, blur_sigma_c, blur_sigma_s)
+    write_to_work(2, img_blur)
+
+    img_edge = edge_gradient_external(img_blur, edge_k, edge_iterations)
+    write_to_work(3, img_edge)
+
+    img_edge_bin = binarize(img_edge, edge_bin_k, edge_bin_c)
+    write_to_work(4, img_edge_bin)
+
+    img_ccl = detect_ccl(img_edge_bin)
+    write_to_work(5, img_ccl)

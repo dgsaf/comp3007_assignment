@@ -53,20 +53,7 @@ def detect_contours(args, img_file, img_gray):
     return
 
 
-def detect_ccl(args, img_file, img_gray):
-    dir_work = args["work"]
-    root, ext = os.path.splitext(os.path.basename(img_file))
-
-    # development below
-    img_blur = cv2.bilateralFilter(img_gray, 11, 50, 100)
-    cv2.imwrite(f"{dir_work}/{root}_ccl_1{ext}", img_blur)
-
-    img_edge = edge_gradient_external(img_blur)
-    cv2.imwrite(f"{dir_work}/{root}_ccl_2{ext}", img_edge)
-
-    img_edge_bin = binarize(img_edge)
-    cv2.imwrite(f"{dir_work}/{root}_ccl_3{ext}", img_edge_bin)
-
+def detect_ccl(img_edge_bin):
     n, labels = cv2.connectedComponents(invert(img_edge_bin), 8)
 
     color = np.zeros((n, 3), dtype=np.uint8)
@@ -74,10 +61,9 @@ def detect_ccl(args, img_file, img_gray):
         for c in range(3):
             color[k, c] = random.randint(0, 255)
 
-    h, w = img_gray.shape
+    h, w = img_edge_bin.shape
     img_ccl = np.zeros((h, w, 3), dtype=np.uint8)
     for i in range(h):
         for j in range(w):
             img_ccl[i, j] = color[labels[i, j]]
-    cv2.imwrite(f"{dir_work}/{root}_ccl_4{ext}", img_ccl)
-    return
+    return img_ccl

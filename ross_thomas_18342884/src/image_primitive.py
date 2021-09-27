@@ -66,7 +66,7 @@ def diff(img_1, img_2):
     return img_diff
 
 
-def binarize(img, k=15, c=-20):
+def binarize(img, k=15, c=-50):
     """
     Binarize a single-channel image, using adaptive thresholding.
 
@@ -74,9 +74,9 @@ def binarize(img, k=15, c=-20):
     ----------
     img : ndarray
         Input single-channel image.
-    k : int, default=21
+    k : int, default=15
         Aperture size for adaptive thresholding.
-    c : int, default=20
+    c : int, default=-50
         Constant subtracted from weighted mean in adaptive thresholding.
 
     Returns
