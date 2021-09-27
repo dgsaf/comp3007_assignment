@@ -33,8 +33,8 @@ def binary_gradient_internal(img):
     edge_k = 3
     edge_iterations = 2
 
-    edge_bin_k = 15
-    edge_bin_c = -50
+    bin_k = 15
+    bin_c = -50
 
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img_blur = cv2.bilateralFilter(img, blur_k, blur_sigma_c, blur_sigma_s)
@@ -51,8 +51,8 @@ def binary_gradient_external(img):
     edge_k = 3
     edge_iterations = 2
 
-    edge_bin_k = 15
-    edge_bin_c = -50
+    bin_k = 15
+    bin_c = -50
 
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img_blur = cv2.bilateralFilter(img, blur_k, blur_sigma_c, blur_sigma_s)
@@ -69,10 +69,10 @@ def binary_region(img):
     edge_k = 3
     edge_iterations = 2
 
-    edge_bin_k = 15
-    edge_bin_c = -50
+    bin_k = 15
+    bin_c = -50
 
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img_blur = cv2.bilateralFilter(img, blur_k, blur_sigma_c, blur_sigma_s)
-    img_bin = binarize(img_blur, edge_bin_k, edge_bin_c)
+    img_bin = binarize(img_blur, bin_k, bin_c)
     return img_bin
