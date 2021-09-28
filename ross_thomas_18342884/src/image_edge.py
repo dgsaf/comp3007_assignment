@@ -81,8 +81,8 @@ def edge_gradient(img, k=3, iterations=1):
 
     """
     kernel = np.ones((k, k))
-    img_gradient = cv2.morphologyEx(img, op=cv2.MORPH_GRADIENT, kernel=kernel,
-                                    iterations=iterations)
+    img_gradient = cv2.morphologyEx(
+        img, op=cv2.MORPH_GRADIENT, kernel=kernel, iterations=iterations)
     img_edge = norm(img_gradient)
     return img_edge
 

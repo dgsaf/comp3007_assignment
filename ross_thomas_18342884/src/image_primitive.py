@@ -82,10 +82,11 @@ def binarize(img, k=15, c=-50):
     Returns
     -------
     img_bin : ndarray
-        Binary image, with values in {0, 255}, obtained after thresholding.
+        Binary image, with values in {0, 255}, obtained after
+        thresholding.
 
     """
-    img_bin = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                    cv2.THRESH_BINARY, k, c)
+    img_bin = cv2.adaptiveThreshold(
+        img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, k, c)
 
     return img_bin

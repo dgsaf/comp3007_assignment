@@ -67,17 +67,19 @@ for img_file in img_files:
 
     # development below
 
-    img_bin = binary_gradient_internal(img)
-    img_ccl = detect_ccl(img_bin)
-    write_to_work("2_0", img_bin)
-    write_to_work("3_0", img_ccl)
+    # img_bin = binary_gradient_internal(img)
+    # write_to_work("2_0", img_bin)
+    # img_ccl = detect_ccl(img_bin)
+    # write_to_work("3_0", img_ccl)
 
-    img_bin = binary_gradient_external(img)
-    img_ccl = detect_ccl(img_bin)
-    write_to_work("2_1", img_bin)
-    write_to_work("3_1", img_ccl)
+    # img_bin = binary_gradient_external(img)
+    # write_to_work("2_1", img_bin)
+    # img_ccl = detect_ccl(img_bin)
+    # write_to_work("3_1", img_ccl)
 
     img_bin = binary_region(img)
-    img_ccl = detect_ccl(img_bin)
     write_to_work("2_2", img_bin)
+    img_ccl = detect_ccl(img_bin)
     write_to_work("3_2", img_ccl)
+    img_contours = detect_contours(img_bin)
+    write_to_work("3_3", img_contours)
