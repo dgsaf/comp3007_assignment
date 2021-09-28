@@ -102,8 +102,12 @@ def digit_candidates(contours, hierarchy):
          if (i != j
              and hierarchy[0, i, 3] == hierarchy[0, j, 3]
              and similar(4.0, sizes[i, 0], sizes[j, 0])
-             and similar(2.0, sizes[i, 1], sizes[j, 1])
-             and abs(angles[i] - angles[j]) <= 30)
+             and similar(1.25, sizes[i, 1], sizes[j, 1])
+             and abs(angles[i] - angles[j]) <= 30
+             and abs(centres[i, 0] - centres[j, 0]) <= 4*sizes[i, 0]
+             and abs(centres[i, 0] - centres[j, 0]) <= 4*sizes[j, 0]
+             and abs(centres[i, 1] - centres[j, 1]) <= sizes[i, 1]
+             and abs(centres[i, 1] - centres[j, 1]) <= sizes[j, 1])
         ]
     )
 
