@@ -94,17 +94,17 @@ def digit_candidates(contours, hierarchy):
         contour = contours[i]
         centres[i], sizes[i], angles[i] = cv2.minAreaRect(contour)
 
-    # valid aspect ratios
-    idx_valid = np.nonzero(similar(4.0, sizes[i, 0], sizes[i, 1]))
+    idx = np.array(
+        [i for i in range(n) if similar(4.0, sizes[i, 0], sizes[i, 1])])
 
-    # for i in idx_valid:
-    #     j = hierarchy[0][i][0]
-    #     while (j != -1):
-    #         sim_width = similar(4.0, sizes[i, 0], sizes[j, 0])
-    #         sim_height = similar(2.0 , sizes[i, 1], sizes[j, 1])
-    #         j = hierarchy[0][j][0]
+    edges = np.array(
+        [[(i, j) for i in idx
+          if (similar(4.0, sizes[i, 0], sizes[j, 0])
+              and similar(2.0, sizes[i, 1], sizes[j, 1])
+              and abs(angles[i] - angles[j]) <= 30)
+        ] for j in idx])
 
-    return idx_valid
+    return idx, edges
 
 
 def detect_contours(img_bin):
@@ -120,14 +120,19 @@ def detect_contours(img_bin):
         contour = contours[i]
         centres[i], sizes[i], angles[i] = cv2.minAreaRect(contour)
 
+    idx, edges = digit_candidates(contours, hierarchy)
+
     H, W = img_bin.shape
     img_contours = np.zeros((H, W), dtype=np.uint8)
     for i in range(n):
-        # cv2.circle(img_contours, centres[i], 3, 255)
-        cv2.ellipse(img_contours, (centres[i], sizes[i], angles[i]), 128)
+        if i not in idx:
+            cv2.ellipse(img_contours, (centres[i], sizes[i], angles[i]), 25)
 
-    idx_valid = digit_candidates(contours, hierarchy)
-    for i in idx_valid:
+    for i in idx:
         cv2.ellipse(img_contours, (centres[i], sizes[i], angles[i]), 255)
+
+    for edge in edges:
+        i, j = edge
+        cv2.line(img_contours, centres[i], centres[j], 255)
 
     return img_contours
