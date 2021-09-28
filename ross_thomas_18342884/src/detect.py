@@ -79,8 +79,7 @@ def detect_ccl(img_bin):
 
 
 def similar(c, x_1, x_2):
-    r = min(x_1, x_2) / max(x_1, x_2)
-    return ((1/c) <= r <= c)
+    return (x_1/c <= x_2 <= x_1*c and x_2/c <= x_1 <= x_2*c)
 
 
 def digit_candidates(contours, hierarchy):
