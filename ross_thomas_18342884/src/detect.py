@@ -98,11 +98,15 @@ def digit_candidates(contours, hierarchy):
         [i for i in range(n) if similar(4.0, sizes[i, 0], sizes[i, 1])])
 
     edges = np.array(
-        [[(i, j) for i in idx
-          if (similar(4.0, sizes[i, 0], sizes[j, 0])
-              and similar(2.0, sizes[i, 1], sizes[j, 1])
-              and abs(angles[i] - angles[j]) <= 30)
-        ] for j in idx])
+        [(i, j)
+         for i in idx for j in idx
+         if (i != j
+             and hierarchy[0, i, 3] = hierarchy[0, j, 3]
+             and similar(4.0, sizes[i, 0], sizes[j, 0])
+             and similar(2.0, sizes[i, 1], sizes[j, 1])
+             and abs(angles[i] - angles[j]) <= 30)
+        ]
+    )
 
     return idx, edges
 
@@ -133,6 +137,6 @@ def detect_contours(img_bin):
 
     for edge in edges:
         i, j = edge
-        cv2.line(img_contours, centres[i], centres[j], 255)
+        cv2.line(img_contours, tuple(centres[i]), tuple(centres[j]), 255)
 
     return img_contours
