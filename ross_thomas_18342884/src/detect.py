@@ -9,6 +9,14 @@ from image_primitive import *
 from image_edge import *
 
 
+def binary_region(
+        img_gray,
+        blur_k=21, blur_sigma_c=50, blur_sigma_s=50,
+        bin_k=31, bin_c=-15):
+    img_blur = cv2.bilateralFilter(img_gray, blur_k, blur_sigma_c, blur_sigma_s)
+    img_bin = binarize(img_blur, bin_k, bin_c)
+    return img_bin
+
 
 # def binary_gradient_internal(img):
 #     blur_k = 21
@@ -44,16 +52,6 @@ from image_edge import *
 #     img_edge = edge_gradient_external(img_blur, edge_k, edge_iterations)
 #     img_bin = invert(binarize(img_edge, bin_k, bin_c))
 #     return img_bin
-
-
-def binary_region(
-        img_gray,
-        blur_k=21, blur_sigma_c=50, blur_sigma_s=50,
-        bin_k=31, bin_c=-15):
-
-    img_blur = cv2.bilateralFilter(img_gray, blur_k, blur_sigma_c, blur_sigma_s)
-    img_bin = binarize(img_blur, bin_k, bin_c)
-    return img_bin
 
 
 # def detect_ccl(img_bin):
