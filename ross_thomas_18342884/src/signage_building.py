@@ -4,6 +4,7 @@ import os
 import argparse
 import numpy as np
 import cv2
+import random as rng
 
 from image_primitive import *
 from image_edge import *
@@ -62,24 +63,21 @@ for img_file in img_files:
 
     write_to_work("0", img)
 
+    # development below
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     write_to_work("1", img_gray)
 
-    # development below
+    img_bin = binary_region(img_gray)
+    write_to_work("2", img_bin)
 
-    # img_bin = binary_gradient_internal(img)
-    # write_to_work("2_0", img_bin)
-    # img_ccl = detect_ccl(img_bin)
-    # write_to_work("3_0", img_ccl)
+    mser = cv2.MSER_create()
+    mser.setMinArea(25)
+    regions, boxes = mser.detectRegions(img_bin)
 
-    # img_bin = binary_gradient_external(img)
-    # write_to_work("2_1", img_bin)
-    # img_ccl = detect_ccl(img_bin)
-    # write_to_work("3_1", img_ccl)
-
-    img_bin = binary_region(img)
-    write_to_work("2_2", img_bin)
-    img_ccl = detect_ccl(img_bin)
-    write_to_work("3_2", img_ccl)
-    img_contours = detect_contours(img_bin)
-    write_to_work("3_3", img_contours)
+    img_regions = np.zeros((W, H, 3), dtype=np.uint8)
+    for region in regions:
+        color = (rng.randint(0, 256), rng.randint(0, 256), rng.randint(0, 256))
+        for point in region:
+            j, i = point
+            img_regions[i, j] = color
+    write_to_work("3", img_regions)
