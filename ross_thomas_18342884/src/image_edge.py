@@ -48,7 +48,7 @@ def edge_laplacian(img_gray, ksize=3):
     return img_edge
 
 
-def edge_difference_gaussian(img_gray, sigma_1, sigma_2, ksize=3):
+def edge_difference_gaussian(img_gray, sigma_1, sigma_2, ksize=(3, 3)):
     img_gauss_1 = cv2.GaussianBlur(img_gray, ksize, sigma_1)
     img_gauss_2 = cv2.GaussianBlur(img_gray, ksize, sigma_2)
     img_edge = norm(np.abs(img_gauss_1 - img_gauss_2))
