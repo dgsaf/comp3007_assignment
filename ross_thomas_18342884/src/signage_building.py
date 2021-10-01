@@ -11,14 +11,6 @@ from image_edge import *
 from detect import *
 
 
-def detection(img):
-    return
-
-
-def recognition(img):
-    return
-
-
 def parse_input():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", required=True,
@@ -64,22 +56,27 @@ for img_file in img_files:
     write_to_work("0", img)
 
     # development below
-    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    write_to_work("1", img_gray)
+    f_blur = lambda img_gray: cv2.bilateralFilter(img_gray, 21, 50, 50)
+    fs_edge = [
+        lambda img: edge_morph_external(img),
+        lambda img: edge_morph_internal(img),
+        lambda img: edge_morph(img),
+        lambda img: edge_sobel(img),
+        lambda img: edge_scharr(img),
+        lambda img: edge_laplacian(img),
+        lambda img: edge_difference_gaussian(img),
+        lambda img: edge_canny(img)
+    ]
+    f_bin = lambda img_gray: binarize(img_gray, k=31, c=-15)
 
-    img_bin = binary_region(img_gray)
-    write_to_work("2", img_bin)
+    i = 1
+    for f_edge in fs_edge:
+        img_gray, img_blur, img_edge, img_edge_bin = detect_edges(
+            img, f_blur, f_edge, f_bin)
 
-    mser = cv2.MSER_create()
-    mser.setMinArea(25)
-    regions, boxes = mser.detectRegions(img_bin)
+        write_to_work(f"{i}_1", img_gray)
+        write_to_work(f"{i}_2", img_blur)
+        write_to_work(f"{i}_3", img_edge)
+        write_to_work(f"{i}_4", img_edge_bin)
 
-    img_regions = np.zeros((W, H, 3), dtype=np.uint8)
-    for region in regions:
-        color = (rng.randint(0, 256), rng.randint(0, 256), rng.randint(0, 256))
-        for point in region:
-            j, i = point
-            img_regions[i, j] = color
-    write_to_work("3", img_regions)
-
-    # implement combination of MSER detectors for +, -, R, G, B
+        i += 1
