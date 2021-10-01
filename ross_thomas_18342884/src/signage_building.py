@@ -81,3 +81,5 @@ for img_file in img_files:
             j, i = point
             img_regions[i, j] = color
     write_to_work("3", img_regions)
+
+    # implement combination of MSER detectors for +, -, R, G, B

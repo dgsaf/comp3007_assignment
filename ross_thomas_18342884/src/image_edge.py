@@ -7,106 +7,54 @@ import cv2
 from image_primitive import diff, invert, norm
 
 
-def edge_gradient_internal(img, k=3, iterations=1):
-    """
-    Normalized difference of an image from its morphological erosion.
-
-    Parameters
-    ----------
-    img : ndarray
-        Input single-channel image.
-    k : int, default=3
-        Aperture size of the square erosion kernel.
-    iterations : int, default=1
-        Number of successive erosion operations performed on `img`.
-
-    Returns
-    -------
-    img_edge : ndarray
-        Normalised, between (0, 255), difference between `img` and its
-        erosion.
-        Proportional to the internal gradient.
-
-    """
+def edge_morph_internal(img_gray, k=3, iterations=1):
     kernel = np.ones((k, k))
-    img_erode = cv2.erode(img, kernel=kernel, iterations=iterations)
-    img_edge = norm(diff(img, img_erode))
-    return img_edge
+    img_erode = cv2.erode(img_gray, kernel=kernel, iterations=iterations)
+    img_edge_gray = norm(diff(img_gray, img_erode))
+    return img_edge_gray
 
 
-def edge_gradient_external(img, k=3, iterations=2):
-    """
-    Normalized difference of an image from its morphological dilation.
-
-    Parameters
-    ----------
-    img : ndarray
-        Input single-channel image.
-    k : int, default=3
-        Aperture size of the square dilation kernel.
-    iterations : int, default=2
-        Number of successive dilation operations performed on `img`.
-
-    Returns
-    -------
-    img_edge : ndarray
-        Normalised, between (0, 255), difference between `img` and its
-        dilation, inverted between (0, 255).
-        Proportional to the external gradient.
-
-    """
+def edge_morph_external(img_gray, k=3, iterations=2):
     kernel = np.ones((k, k))
-    img_dilate = cv2.dilate(img, kernel=kernel, iterations=iterations)
-    img_edge = norm(diff(img, img_dilate))
-    return img_edge
+    img_dilate = cv2.dilate(img_gray, kernel=kernel, iterations=iterations)
+    img_edge_gray = norm(diff(img_gray, img_dilate))
+    return img_edge_gray
 
 
-def edge_gradient(img, k=3, iterations=1):
-    """
-    Normalized morphological gradient of an image.
-
-    Parameters
-    ----------
-    img : ndarray
-        Input single-channel image.
-    k : int, default=3
-        Aperture size of the square dilation kernel.
-    iterations : int, default=1
-        Number of successive gradient operations performed on `img`.
-
-    Returns
-    -------
-    img_edge : ndarray
-        Normalised, between (0, 255), morphological gradient of `img`.
-
-    """
+def edge_morph(img_gray, k=3, iterations=1):
     kernel = np.ones((k, k))
     img_gradient = cv2.morphologyEx(
-        img, op=cv2.MORPH_GRADIENT, kernel=kernel, iterations=iterations)
-    img_edge = norm(img_gradient)
-    return img_edge
+        img_gray, op=cv2.MORPH_GRADIENT, kernel=kernel, iterations=iterations)
+    img_edge_gray = norm(img_gradient)
+    return img_edge_gray
 
 
-def edge_canny(img, t_1=100, t_2=200, k=3):
-    """
-    Detects edges in an image, using the Canny edge detector.
+def edge_sobel(img_gray):
+    img_gradient_x = cv2.Sobel(img_gray, -1, 1, 0)
+    img_gradient_y = cv2.Sobel(img_gray, -1, 0, 1)
+    img_edge_gray = norm(np.abs(img_gradient_x) + np.abs(img_gradient_y))
+    return img_edge_gray
 
-    Parameters
-    ----------
-    img : ndarray
-        Input single-channel image.
-    t_1 : int, default=100
-        Lower threshold for the Canny edge detector.
-    t_2 : int, default=200
-        Upper threshold for the Canny edge detector.
-    k : int, default=3
-        Apeture size for the Canny edge detector
 
-    Returns
-    -------
-    img_edge : ndarray
-        Binary image of edges, with same shape as `img`.
+def edge_scharr(img_gray):
+    img_gradient_x = cv2.Scharr(img_gray, -1, 1, 0)
+    img_gradient_y = cv2.Scharr(img_gray, -1, 0, 1)
+    img_edge_gray = norm(np.abs(img_gradient_x) + np.abs(img_gradient_y))
+    return img_edge_gray
 
-    """
-    img_edge = cv2.Canny(img, t_1, t_2, apertureSize=k, L2gradient=True)
-    return img_edge
+
+def edge_laplacian(img_gray, ksize=3):
+    img_edge_gray = norm(np.abs(cv2.Laplacian(img_gray, -1, ksize=ksize)))
+    return img_edge_gray
+
+
+def edge_difference_gaussian(img_gray, ksize, sigma_1, sigma_2):
+    img_gauss_1 = cv2.GaussianBlur(img_gray, ksize, sigma_1)
+    img_gauss_2 = cv2.GaussianBlur(img_gray, ksize, sigma_2)
+    img_edge_gray = norm(np.abs(img_gauss_1 - img_gauss_2))
+    return img_edge_gray
+
+
+def edge_canny(img_gray, t_1=100, t_2=200, k=3):
+    img_edge_bin = cv2.Canny(img_gray, t_1, t_2, apertureSize=k, L2gradient=True)
+    return img_edge_bin

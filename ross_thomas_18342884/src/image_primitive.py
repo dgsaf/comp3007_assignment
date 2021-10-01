@@ -88,5 +88,4 @@ def binarize(img, k=15, c=-50):
     """
     img_bin = cv2.adaptiveThreshold(
         img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, k, c)
-
     return img_bin
