@@ -56,27 +56,35 @@ for img_file in img_files:
     write_to_work("0", img)
 
     # development below
-    f_blur = lambda img_gray: cv2.bilateralFilter(img_gray, 21, 50, 50)
-    fs_edge = [
-        lambda img: edge_morph_external(img),
-        lambda img: edge_morph_internal(img),
-        lambda img: edge_morph(img),
-        lambda img: edge_sobel(img),
-        lambda img: edge_scharr(img),
-        lambda img: edge_laplacian(img),
-        lambda img: edge_difference_gaussian(img, 1.0, 5.0),
-        lambda img: edge_canny(img)
+    fs_blur = [
+        lambda img_gray: cv2.bilateralFilter(img_gray, 11, 50, 25)
     ]
-    f_bin = lambda img_gray: binarize(img_gray, k=31, c=-15)
+    fs_edge = [
+        # lambda img: edge_morph_external(img),
+        # lambda img: edge_morph_internal(img),
+        # lambda img: edge_morph(img),
+        # lambda img: edge_sobel(img),
+        # lambda img: edge_scharr(img),
+        # lambda img: edge_laplacian(img),
+        # lambda img: edge_difference_gaussian(img, 1.0, 5.0),
+        lambda img: edge_canny(img, t_1=25, t_2=250)
+    ]
+    fs_bin = [
+        lambda img_gray: binarize(img_gray, k=31, c=-15)
+    ]
 
     i = 1
-    for f_edge in fs_edge:
-        img_gray, img_blur, img_edge, img_edge_bin = detect_edges(
-            img, f_blur, f_edge, f_bin)
-
-        write_to_work(f"{i}_1", img_gray)
-        write_to_work(f"{i}_2", img_blur)
-        write_to_work(f"{i}_3", img_edge)
-        write_to_work(f"{i}_4", img_edge_bin)
-
+    for f_blur in fs_blur:
+        j = 1
+        for f_edge in fs_edge:
+            k = 1
+            for f_bin in fs_bin:
+                img_gray, img_blur, img_edge, img_edge_bin = detect_edges(
+                    img, f_blur, f_edge, f_bin)
+                write_to_work(f"{i}_{j}_{k}_1", img_gray)
+                write_to_work(f"{i}_{j}_{k}_2", img_blur)
+                write_to_work(f"{i}_{j}_{k}_3", img_edge)
+                write_to_work(f"{i}_{j}_{k}_4", img_edge_bin)
+                k += 1
+            j += 1
         i += 1
