@@ -67,7 +67,9 @@ for img_file in img_files:
         # lambda img: edge_scharr(img),
         # lambda img: edge_laplacian(img),
         # lambda img: edge_difference_gaussian(img, 1.0, 5.0),
-        lambda img: edge_canny(img, t_1=25, t_2=250)
+        lambda img: edge_canny(img, t_1=25, t_2=250),
+        lambda img: edge_canny(img, t_1=25, t_2=350),
+        lambda img: edge_canny(img, t_1=25, t_2=450)
     ]
     fs_bin = [
         lambda img_gray: binarize(img_gray, k=31, c=-15)
