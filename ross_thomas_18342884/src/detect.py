@@ -64,6 +64,11 @@ def filter_adjacent(contour_1, contour_2):
             and neighbouring_x and neighbouring_y)
 
 
+def centre(contour):
+    x, y, w, h = cv2.boundingRect(contour)
+    return (int(x + 0.5*w), int(y + 0.5*h))
+
+
 def detect_digits(img_edge_bin):
     _, contours, hierarchy = cv2.findContours(
         img_edge_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -79,13 +84,8 @@ def detect_digits(img_edge_bin):
     for i in indexes:
         cv2.drawContours(img_contours, contours, i, 255)
 
-        x_i, y_i, w_i, h_i = cv2.moments(contours[i])
         for j in indexes:
-            x_j, y_j, w_j, h_j = cv2.moments(contours[j])
-
             if filter_adjacent(contours[i], contours[j]):
-                cv2.line(img_contours,
-                    (x_i + 0.5*w_i, y_i + 0.5*h_i),
-                    (x_j + 0.5*w_j, y_j + 0.5*h_j), 200)
+                cv2.line(img_contours, centre(contours[i]), centre(contours[j]), 200)
 
     return img_contours
