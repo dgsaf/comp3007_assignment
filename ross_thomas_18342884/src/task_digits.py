@@ -45,6 +45,11 @@ def extract_features(contour):
 args, img_files = parse_input()
 dir_work = args["work"]
 
+def write_to_work(id, img):
+    if args["work_save"]:
+        cv2.imwrite(f"{dir_work}/{id}.jpg", img)
+    return
+
 samples = []
 for img_file in img_files:
     root, ext = os.path.splitext(os.path.basename(img_file))
@@ -58,8 +63,10 @@ for img_file in img_files:
         print(f"{img_file} could not be opened")
         continue
 
+    write_to_work(f"{label}_{k}", img)
+
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _, img_bin = cv2.threshold(img_gray, 128, 255, cv2.THRESH_BINARY)
+    _, img_bin = cv2.threshold(img_gray, 128, 255, cv2.THRESH_OTSU)
 
     samples.append((label, k, img_bin.copy()))
 
@@ -73,13 +80,24 @@ for sample in samples:
 
     cv2.imwrite(f"{dir_work}/{label}_{k}.jpg", img)
 
+    # find longest contour (i.e. outline of digit)
     i = 0
-    for contour in contours:
-        features = extract_features(contour)
-        print(f"{features}")
+    for j in range(len(contours)):
+        if (cv2.arcLength(contours[j], True)
+            > cv2.arcLength(contours[i], True)):
+            i = j
 
-        img_contour = np.zeros(img.shape)
-        cv2.drawContours(img_contour, contours, i, 255)
-        cv2.imwrite(f"{dir_work}/{label}_{k}_{i}.jpg", img_contour)
+    # draw longest contour
+    img_contour = np.zeros(img.shape)
+    cv2.drawContours(img_contour, contours, i, 255)
+    write_to_work(f"{label}_{k}_{i}", img_contour)
 
-        i += 1
+    # extract features
+    if label == "left":
+        int_label = 10
+    elif label == "right":
+        int_label = 11
+    else:
+        int_label = int(label)
+
+    data[int_label, int(k)-1, :] = extract_features(contours[idx])
