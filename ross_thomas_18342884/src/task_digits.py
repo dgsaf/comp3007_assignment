@@ -111,7 +111,7 @@ def bounds(i, f):
 print(f"{'D':<4} "\
       f"{'length':<17} {'area':<17} {'ratio':<17} "\
       f"{'height':<17} {'width':<17} {'ratio':<17} "\
-      f"{'fill:<17} ")
+      f"{'fill':<17} ")
 print("-" * ((7*18 + 4)))
 
 for i in range(12):
