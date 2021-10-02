@@ -75,7 +75,7 @@ for sample in samples:
     label, k, img = sample
 
     # use cv2.RETR_EXTERNAL for only top-level contours
-    test, contours, hierarchy = cv2.findContours(
+    _, contours, hierarchy = cv2.findContours(
         img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     cv2.imwrite(f"{dir_work}/{label}_{k}.jpg", img)
