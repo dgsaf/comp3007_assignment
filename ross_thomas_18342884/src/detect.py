@@ -22,7 +22,7 @@ def filter_contour(contour):
     a = cv2.contourArea(contour, oriented=False)
     x, y, w, h = cv2.boundingRect(contour)
 
-    valid_ratio = (0.15*l <= a <= 0.95*l)
+    valid_ratio = (10*a <= l*l <= 130*a)
     valid_aspect = (0.85*h <= w <= 2.55)
     valid_fill = (0.15*(h*w) <= a <= 0.85*(h*w))
 
@@ -83,6 +83,7 @@ def detect_digits(img_edge_bin):
 
     for i in indexes:
         cv2.drawContours(img_contours, contours, i, 255)
+        cv2.circle(img_contours, centre(contour[i]), 1, 255, -1)
 
         for j in indexes:
             if filter_adjacent(contours[i], contours[j]):

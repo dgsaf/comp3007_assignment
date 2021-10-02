@@ -67,7 +67,8 @@ def extract_features(contour):
     length = cv2.arcLength(contour, closed=True)
     area = cv2.contourArea(contour, oriented=False)
     x, y, w, h = cv2.boundingRect(contour)
-    features = np.array([length, area, length / area, h, w, h / w, area/(h*w)])
+    features = np.array([length, area, length*length / area,
+                         h, w, h / w, area/(h*w)])
     return features
 
 data = np.zeros((12, 5, 7), dtype=np.float32)
