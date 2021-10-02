@@ -67,10 +67,10 @@ def extract_features(contour):
     length = cv2.arcLength(contour, closed=True)
     area = cv2.contourArea(contour, oriented=False)
     x, y, w, h = cv2.boundingRect(contour)
-    features = np.array([length, area, length / area, h, w, h / w])
+    features = np.array([length, area, length / area, h, w, h / w, area/(h*w)])
     return features
 
-data = np.zeros((12, 5, 6), dtype=np.float32)
+data = np.zeros((12, 5, 7), dtype=np.float32)
 for sample in samples:
     label, k, img = sample
 
@@ -110,18 +110,19 @@ def bounds(i, f):
 
 print(f"{'D':<4} "\
       f"{'length':<17} {'area':<17} {'ratio':<17} "\
-      f"{'height':<17} {'width':<17} {'ratio':<17} ")
-print("-" * ((6*18 + 4)))
+      f"{'height':<17} {'width':<17} {'ratio':<17} "\
+      f"{'fill:<17} ")
+print("-" * ((7*18 + 4)))
 
 for i in range(12):
     print(f"{i:<2} : ", end="")
-    for f in range(6):
+    for f in range(7):
         print(f"({bounds(i, f)[0]:<6.4} , {bounds(i, f)[1]:<6.4}) ", end="")
     print("")
 
 
-print("-" * ((6*18 + 4)))
+print("-" * ((7*18 + 4)))
 print(f"tot: ", end="")
-for f in range(6):
+for f in range(7):
     print(f"({np.amin(data[:, :, f]):<6.4} , {np.amax(data[:, :, f]):<6.4}) ", end="")
 print("")
