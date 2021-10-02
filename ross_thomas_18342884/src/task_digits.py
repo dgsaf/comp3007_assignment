@@ -33,14 +33,6 @@ def parse_input():
     return args, img_files
 
 
-def extract_features(contour):
-    length = cv2.arcLength(contour, closed=True)
-    area = cv2.contourArea(contour, oriented=False)
-    x, y, w, h = cv2.boundingRect(contour)
-    features = np.array([length, area, length / area, h, w, h / w])
-    return features
-
-
 # program
 args, img_files = parse_input()
 dir_work = args["work"]
@@ -69,6 +61,14 @@ for img_file in img_files:
     _, img_bin = cv2.threshold(img_gray, 128, 255, cv2.THRESH_OTSU)
 
     samples.append((label, k, img_bin.copy()))
+
+# extract features
+def extract_features(contour):
+    length = cv2.arcLength(contour, closed=True)
+    area = cv2.contourArea(contour, oriented=False)
+    x, y, w, h = cv2.boundingRect(contour)
+    features = np.array([length, area, length / area, h, w, h / w])
+    return features
 
 data = np.zeros((12, 5, 6), dtype=np.float32)
 for sample in samples:
@@ -100,4 +100,18 @@ for sample in samples:
     else:
         int_label = int(label)
 
-    data[int_label, int(k)-1, :] = extract_features(contours[idx])
+    data[int_label, int(k)-1, :] = extract_features(contours[i])
+
+# display feature analysis
+def bounds(i, f):
+    lower = np.amin(data[i, :, f])
+    upper = np.amax(data[i, :, f])
+    return (lower, upper)
+
+print(f"{'D':3>} {'length': 10>}")
+
+for i in range(12):
+    print(f"{i:2>}: {bounds(i, 0)[]}", end="")
+    for f in range(6):
+        print(f"({bounds(i, f)[0]:5>} , {bounds(i, f)[1]:5>})", end="")
+    print("")
