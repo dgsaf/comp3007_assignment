@@ -24,8 +24,8 @@ def filter_contour(contour):
     a = h * w
 
     valid_aspect = (0.3*h <= w <= 2.55*h)
-    valid_fill = (1*a <= l*l <= 50*a)
-    valid_length = (25 <= l)
+    valid_fill = (l*l <= 150*a)
+    valid_length = (30 <= l)
 
     return (valid_aspect and valid_fill and valid_length)
 
