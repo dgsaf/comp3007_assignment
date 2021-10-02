@@ -18,11 +18,12 @@ def detect_edges(img, f_blur, f_edge, f_bin):
 
 
 def filter_contour(contour):
-    l = cv2.arcLength(contour, closed=True)
-    a = cv2.contourArea(contour, oriented=False)
     x, y, w, h = cv2.boundingRect(contour)
+    l = cv2.arcLength(contour, closed=True)
+    # a = cv2.contourArea(contour, oriented=False)
+    a = h * w
 
-    valid_ratio = (10*a <= l*l <= 130*a)
+    valid_ratio = (10*a <= l*l <= 200*a)
     valid_aspect = (0.85*h <= w <= 2.55)
     valid_fill = (0.15*(h*w) <= a <= 0.85*(h*w))
 
@@ -56,13 +57,13 @@ def filter_adjacent(contour_1, contour_2):
         y_1 - y_2 - h_2,
         y_1 + h_1 - y_2 - h_2])))
 
-    neighbouring_x = (dist_x <= 1.1*w_1 and dist_x <= 1.1*w_2)
+    neighbouring_x = (dist_x <= 1.0*h_1 and dist_x <= 1.0*h_2)
     neighbouring_y = (dist_y <= 0.5*h_1 and dist_y <= 0.5*h_2)
 
     # overlapping vertically
     a = max([y_1, y_2])
     b = min([y_1 + h_1, y_2 + h_2])
-    overlap = max([0, b - a])
+    overlap_y = max([0, b - a])
 
     overlapping_y = (overlap_y >= 0.5*h_1 and overlap_y >= 0.5*h_2)
 
