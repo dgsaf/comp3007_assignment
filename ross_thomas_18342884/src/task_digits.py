@@ -108,9 +108,10 @@ def bounds(i, f):
     upper = np.amax(data[i, :, f])
     return (lower, upper)
 
-print(f"{'D':<5} "\
+print(f"{'D':<4} "\
       f"{'length':<17} {'area':<17} {'ratio':<17} "\
       f"{'height':<17} {'width':<17} {'ratio':<17} ")
+print("-" * ((6*18 + 4)))
 
 for i in range(12):
     print(f"{i:<2} : ", end="")
@@ -119,6 +120,7 @@ for i in range(12):
     print("")
 
 
+print("-" * ((6*18 + 4)))
 print(f"tot: ", end="")
 for f in range(6):
     print(f"({np.amin(data[:, :, f]):<6.4} , {np.amax(data[:, :, f]):<6.4}) ", end="")
