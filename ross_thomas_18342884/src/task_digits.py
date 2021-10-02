@@ -108,12 +108,12 @@ def bounds(i, f):
     upper = np.amax(data[i, :, f])
     return (lower, upper)
 
-print(f"{'D':<3}"\
+print(f"{'D':<5}"\
       f"{'length':<17} {'area':<17} {'ratio':<17}"\
       f"{'height':<17} {'width':<17} {'ratio':<17}")
 
 for i in range(12):
-    print(f"{i:<2}: ", end="")
+    print(f"{i:<2} : ", end="")
     for f in range(6):
         print(f"({bounds(i, f)[0]:<6.4} , {bounds(i, f)[1]:<6.4}) ", end="")
     print("")
