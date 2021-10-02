@@ -117,3 +117,9 @@ for i in range(12):
     for f in range(6):
         print(f"({bounds(i, f)[0]:<6.4} , {bounds(i, f)[1]:<6.4}) ", end="")
     print("")
+
+
+print(f"tot: ", end="")
+for f in range(6):
+    print(f"({np.amin(data[:, :, f]):<6.4} , {np.amax(data[:, :, f]):<6.4}) ", end="")
+print("")
