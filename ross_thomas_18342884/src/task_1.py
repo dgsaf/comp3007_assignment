@@ -4,7 +4,6 @@ import os
 import argparse
 import numpy as np
 import cv2
-import random as rng
 
 from image_primitive import *
 from image_edge import *
