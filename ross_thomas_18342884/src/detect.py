@@ -23,11 +23,11 @@ def filter_contour(contour):
     # a = cv2.contourArea(contour, oriented=False)
     a = h * w
 
-    valid_ratio = (10*a <= l*l <= 200*a)
-    valid_aspect = (0.85*h <= w <= 2.55)
-    valid_fill = (0.15*(h*w) <= a <= 0.85*(h*w))
+    valid_aspect = (0.3*h <= w <= 2.55*h)
+    valid_fill = (1*a <= l*l <= 50*a)
+    valid_length = (25 <= l)
 
-    return (valid_ratio and valid_aspect and valid_fill)
+    return (valid_aspect and valid_fill and valid_length)
 
 
 def filter_adjacent(contour_1, contour_2):
@@ -57,7 +57,7 @@ def filter_adjacent(contour_1, contour_2):
         y_1 - y_2 - h_2,
         y_1 + h_1 - y_2 - h_2])))
 
-    neighbouring_x = (dist_x <= 1.0*h_1 and dist_x <= 1.0*h_2)
+    neighbouring_x = (dist_x <= 0.6*h_1 and dist_x <= 0.6*h_2)
     neighbouring_y = (dist_y <= 0.5*h_1 and dist_y <= 0.5*h_2)
 
     # overlapping vertically
@@ -65,7 +65,7 @@ def filter_adjacent(contour_1, contour_2):
     b = min([y_1 + h_1, y_2 + h_2])
     overlap_y = max([0, b - a])
 
-    overlapping_y = (overlap_y >= 0.5*h_1 and overlap_y >= 0.5*h_2)
+    overlapping_y = (overlap_y >= 0.75*h_1 and overlap_y >= 0.75*h_2)
 
     return ((not contained)
             and similar_height and similar_width
