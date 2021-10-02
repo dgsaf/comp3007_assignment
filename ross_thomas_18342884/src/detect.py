@@ -43,7 +43,7 @@ def filter_adjacent(contour_1, contour_2):
     similar_height = (0.5*h_2 <= h_1 <= (1/0.5)*h_2)
     similar_width = (0.5*w_2 <= w_1 <= (1/0.5)*w_2)
 
-    # scale-independent adjacency
+    # horizontal adjacency
     dist_x = np.amin(np.abs(np.array([
         x_1 - x_2,
         x_1 + w_1 - x_2,
@@ -56,12 +56,20 @@ def filter_adjacent(contour_1, contour_2):
         y_1 - y_2 - h_2,
         y_1 + h_1 - y_2 - h_2])))
 
-    neighbouring_x = (dist_x <= 4*w_1 and dist_x <= 4*w_2)
-    neighbouring_y = (dist_y <= h_1 and dist_y <= h_2)
+    neighbouring_x = (dist_x <= 1.1*w_1 and dist_x <= 1.1*w_2)
+    neighbouring_y = (dist_y <= 0.5*h_1 and dist_y <= 0.5*h_2)
+
+    # overlapping vertically
+    a = max([y_1, y_2])
+    b = min([y_1 + h_1, y_2 + h_2])
+    overlap = max([0, b - a])
+
+    overlapping_y = (overlap_y >= 0.5*h_1 and overlap_y >= 0.5*h_2)
 
     return ((not contained)
             and similar_height and similar_width
-            and neighbouring_x and neighbouring_y)
+            and neighbouring_x and neighbouring_y
+            and overlapping_y)
 
 
 def centre(contour):
@@ -83,7 +91,7 @@ def detect_digits(img_edge_bin):
 
     for i in indexes:
         cv2.drawContours(img_contours, contours, i, 255)
-        cv2.circle(img_contours, centre(contour[i]), 1, 255, -1)
+        cv2.circle(img_contours, centre(contours[i]), 1, 255, -1)
 
         for j in indexes:
             if filter_adjacent(contours[i], contours[j]):
