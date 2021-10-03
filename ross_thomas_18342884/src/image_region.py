@@ -72,3 +72,12 @@ class Region:
         # cv2.imshow("region", self.image())
         # cv2.waitKey(0)
         # cv2.destroyWindow("region")
+
+
+def unique(regions, threshold=0.9):
+    sorted_regions = sorted(regions, key=lambda r: r.box_area, reverse=True)
+    unique_regions = []
+    for r in sorted_regions:
+        if all([ur.overlap(r) < threshold for ur in unique_regions]):
+            unique_regions.append(r)
+    return unique_regions

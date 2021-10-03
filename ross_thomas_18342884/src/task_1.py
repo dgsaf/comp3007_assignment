@@ -95,8 +95,9 @@ for img_file in img_files:
 
                 cv2.imshow(f"{i}", regions[i].image())
                 cv2.imshow(f"{j}", regions[i].image())
+                cv2.moveWindow(f"{j}", 500, 50)
                 cv2.waitKey(0)
-                cv2.destroyAllWindows
+                cv2.destroyAllWindows()
 
     # fs_blur = [
     #     lambda img_gray: cv2.bilateralFilter(img_gray, 11, 50, 25)
