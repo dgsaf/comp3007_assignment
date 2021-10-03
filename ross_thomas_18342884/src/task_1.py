@@ -81,11 +81,8 @@ for img_file in img_files:
     regions = unique_regions(point_sets, boxes, threshold=0.8)
     write_regions_to_work("2_0_unique", regions)
 
-    regions = list(filter(lambda r: r.aspect >= 1.0, regions))
+    regions = list(filter(lambda r: r.aspect >= 0.8, regions))
     write_regions_to_work("2_1_aspect", regions)
-
-    regions = list(filter(lambda r: r.fill >= 0.1, regions))
-    write_regions_to_work("2_2_fill", regions)
 
     # for i in range(len(regions)):
     #     regions[i].display()
