@@ -5,21 +5,6 @@ import numpy as np
 import cv2
 
 
-def partition(points):
-    neighborhood = np.array(
-        [[0, 1], [1, 1], [1, 0], [1, -1],
-         [0, -1], [-1, -1], [-1, 0], [-1, 1]])
-    boundary = []
-    internal = []
-    for point in points:
-        adjacent = map(lambda n: point + n, neighborhood)
-        if np.all(np.isin(adjacent, points)):
-            internal.append(point)
-        else:
-            boundary.append(point)
-    return (np.array(internal), np.array(boundary))
-
-
 class Region:
     def __init__(self, points, box):
         self.points = np.array(points)
@@ -35,7 +20,10 @@ class Region:
         self.fill = self.area / (self.box_area + 1.0e-8)
         self.aspect = self.height / (self.width + 1.0e-8)
 
-        self.internal, self.boundary = partition(self.points)
+        self.boundary = np.concatenate(
+            [np.reshape(contour, (-1, 2))
+             for contour in self.contours()[0]])
+
         self.diameter = np.amax(
             [cv2.norm(bp_1 - bp_2)
              for bp_1 in self.boundary
