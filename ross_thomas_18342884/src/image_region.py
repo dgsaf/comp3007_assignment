@@ -63,16 +63,18 @@ class Region:
         return (contours, hierarchy)
 
     def display(self):
-        details = f"Region:\n"
-                + f"  tl = ({self.tl[0]} , {self.tl[1]})\n"
-                + f"  size = ({self.width} x {self.height})\n"
-                + f"  area = {self.area}\n"
-                + f"  fill = {self.fill}\n"
-                + f"  aspect = {self.aspect}\n"
-                + f"  diameter = {self.diameter}\n"
-                + f"  holes = {self.holes}\n"
-                + f"  moments = {self.moments}\n"
-                + f"  hu moments = {self.hu_moments}\n"
+        details = \
+            f"Region:\n"\
+            + f"  tl = ({self.tl[0]} , {self.tl[1]})\n"\
+            + f"  size = ({self.width} x {self.height})\n"\
+            + f"  area = {self.area}\n"\
+            + f"  fill = {self.fill}\n"\
+            + f"  aspect = {self.aspect}\n"\
+            + f"  diameter = {self.diameter}\n"\
+            + f"  holes = {self.holes}\n"\
+            + f"  moments = {self.moments}\n"\
+            + f"  hu moments = {self.hu_moments}\n"
+
         print(details)
         cv2.imshow("region", self.image())
         cv2.waitKey(0)
