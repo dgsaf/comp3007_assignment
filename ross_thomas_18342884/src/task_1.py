@@ -82,11 +82,21 @@ for img_file in img_files:
 
     print(f"{len(regions)}")
     for i in range(len(regions)):
-        regions[i].display()
+        # regions[i].display()
         for j in range(len(regions)):
+            if i == j:
+                continue
+
             f = regions[i].overlap(regions[j])
-            if (f > 0.9):
-                print(f"{i} ~contains {j}")
+            if (f > 0.95):
+                print(f"{i} contains {j}: {f}")
+                regions[i].display()
+                regions[j].display()
+
+                cv2.imshow(f"{i}", regions[i].image())
+                cv2.imshow(f"{j}", regions[i].image())
+                cv2.waitKey(0)
+                cv2.destroyAllWindows
 
     # fs_blur = [
     #     lambda img_gray: cv2.bilateralFilter(img_gray, 11, 50, 25)
