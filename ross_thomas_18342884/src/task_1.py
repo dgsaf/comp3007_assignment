@@ -7,6 +7,7 @@ import cv2
 
 from image_primitive import *
 from image_edge import *
+from image_region import *
 from detect import *
 
 
@@ -55,41 +56,54 @@ for img_file in img_files:
     write_to_work("0", img)
 
     # development below
-    fs_blur = [
-        lambda img_gray: cv2.bilateralFilter(img_gray, 11, 50, 25)
-    ]
-    fs_edge = [
-        # lambda img: edge_morph_external(img),
-        # lambda img: edge_morph_internal(img),
-        # lambda img: edge_morph(img),
-        # lambda img: edge_sobel(img),
-        # lambda img: edge_scharr(img),
-        # lambda img: edge_laplacian(img),
-        # lambda img: edge_difference_gaussian(img, 1.0, 5.0),
-        lambda img: edge_canny(img, t_1=25, t_2=250)
-        # lambda img: edge_canny(img, t_1=25, t_2=350),
-        # lambda img: edge_canny(img, t_1=25, t_2=450)
-    ]
-    fs_bin = [
-        lambda img_gray: binarize(img_gray, k=31, c=-15)
-    ]
+    img_gray = cv2.convertColor(img, cv2.COLOR_BGR2GRAY)
 
-    i = 1
-    for f_blur in fs_blur:
-        j = 1
-        for f_edge in fs_edge:
-            k = 1
-            for f_bin in fs_bin:
-                img_gray, img_blur, img_edge, img_edge_bin = detect_edges(
-                    img, f_blur, f_edge, f_bin)
-                write_to_work(f"{i}_{j}_{k}_1", img_gray)
-                write_to_work(f"{i}_{j}_{k}_2", img_blur)
-                write_to_work(f"{i}_{j}_{k}_3", img_edge)
-                write_to_work(f"{i}_{j}_{k}_4", img_edge_bin)
+    mser = cv2.MSER_create()
+    point_sets, boxes = mser.detectRegions(img_gray)
 
-                img_contours = detect_digits(img_edge_bin)
-                write_to_work(f"{i}_{j}_{k}_5", img_contours)
+    regions = []
+    for i in range(len(point_sets)):
+        regions.append(Region(point_sets[i], boxes[i]))
 
-                k += 1
-            j += 1
-        i += 1
+    print(f"{len(regions)}")
+    for region in regions:
+        region.display()
+
+    # fs_blur = [
+    #     lambda img_gray: cv2.bilateralFilter(img_gray, 11, 50, 25)
+    # ]
+    # fs_edge = [
+    #     # lambda img: edge_morph_external(img),
+    #     # lambda img: edge_morph_internal(img),
+    #     # lambda img: edge_morph(img),
+    #     # lambda img: edge_sobel(img),
+    #     # lambda img: edge_scharr(img),
+    #     # lambda img: edge_laplacian(img),
+    #     # lambda img: edge_difference_gaussian(img, 1.0, 5.0),
+    #     lambda img: edge_canny(img, t_1=25, t_2=250)
+    #     # lambda img: edge_canny(img, t_1=25, t_2=350),
+    #     # lambda img: edge_canny(img, t_1=25, t_2=450)
+    # ]
+    # fs_bin = [
+    #     lambda img_gray: binarize(img_gray, k=31, c=-15)
+    # ]
+
+    # i = 1
+    # for f_blur in fs_blur:
+    #     j = 1
+    #     for f_edge in fs_edge:
+    #         k = 1
+    #         for f_bin in fs_bin:
+    #             img_gray, img_blur, img_edge, img_edge_bin = detect_edges(
+    #                 img, f_blur, f_edge, f_bin)
+    #             write_to_work(f"{i}_{j}_{k}_1", img_gray)
+    #             write_to_work(f"{i}_{j}_{k}_2", img_blur)
+    #             write_to_work(f"{i}_{j}_{k}_3", img_edge)
+    #             write_to_work(f"{i}_{j}_{k}_4", img_edge_bin)
+
+    #             img_contours = detect_digits(img_edge_bin)
+    #             write_to_work(f"{i}_{j}_{k}_5", img_contours)
+
+    #             k += 1
+    #         j += 1
+    #     i += 1
