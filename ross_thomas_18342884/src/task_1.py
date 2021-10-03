@@ -56,7 +56,7 @@ for img_file in img_files:
     write_to_work("0", img)
 
     # development below
-    img_gray = cv2.convertColor(img, cv2.COLOR_BGR2GRAY)
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     mser = cv2.MSER_create()
     point_sets, boxes = mser.detectRegions(img_gray)

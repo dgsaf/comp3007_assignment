@@ -25,7 +25,7 @@ class Region:
         self.points = np.array(points)
         self.box = box
 
-        self.tl = np.array(box[0:1])
+        self.tl = np.array(box[0:2])
         self.width = box[2]
         self.height = box[3]
         self.br = self.tl + np.array([self.width, self.height])
@@ -54,7 +54,7 @@ class Region:
     def image(self):
         img = np.zeros((self.width, self.height), dtype=np.uint8)
         for point in self.points:
-            img[point - self.tl] = 255
+            img[tuple(point - self.tl)] = 255
         return img
 
     def contours(self):
