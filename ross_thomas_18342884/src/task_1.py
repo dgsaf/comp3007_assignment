@@ -4,6 +4,7 @@ import os
 import argparse
 import numpy as np
 import cv2
+import random
 
 from image_primitive import *
 from image_edge import *
@@ -57,13 +58,27 @@ for img_file in img_files:
 
     # development below
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    write_to_work("1", img_gray)
 
     mser = cv2.MSER_create()
+    mser.setMinArea(25)
+    mser.setMaxArea(1000)
+    mser.setDelta(50)
     point_sets, boxes = mser.detectRegions(img_gray)
 
+    img_mser = np.zeros(img.shape)
+    for ps in point_sets:
+        color = (random.randint(100, 255),
+                 random.randint(100, 255),
+                 random.randint(100, 255))
+        for p in ps:
+            j, i = tuple(p[:2])
+            img_mser[i, j] = color
+    write_to_work("2", img_mser)
+
     regions = []
-    for i in range(len(point_sets)):
-        regions.append(Region(point_sets[i], boxes[i]))
+    for (ps, b) in zip(point_sets, boxes):
+        regions.append(Region(ps, b))
 
     print(f"{len(regions)}")
     for region in regions:

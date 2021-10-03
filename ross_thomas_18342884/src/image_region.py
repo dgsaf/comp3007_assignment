@@ -40,9 +40,10 @@ class Region:
         return np.amin([self.distance(bp) for bp in region.boundary])
 
     def image(self):
-        img = np.zeros((self.width, self.height), dtype=np.uint8)
+        img = np.zeros((self.height, self.width), dtype=np.uint8)
         for point in self.points:
-            img[tuple(point - self.tl)] = 255
+            j, i = tuple(point - self.tl)
+            img[i, j] = 255
         return img
 
     def contours(self):
