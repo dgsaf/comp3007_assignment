@@ -41,23 +41,39 @@ class Region:
              for bp_1 in self.boundary
              for bp_2 in self.boundary])
 
-        def distance(self, point):
-            return np.amin([cv2.norm(bp - point) for bp in self.boundary])
-
-        def hausdorff_distance(self, region):
-            return np.amin([self.distance(bp) for bp in region.boundary])
-
-        def image(self):
-            img = np.zeros((self.width, self.height), dtype=np.uint8)
-            for point in self.points:
-                img[point - self.tl] = 255
-            return img
-
-        def contours(self):
-            _, contours, hierarchy = cv2.findContours(
-                self.image(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-            return (contours, hierarchy)
-
         self.holes = len((self.contours())[0]) - 1
         self.moments = cv2.moments(self.image(), binaryImage=True)
         self.hu_moments = cv2.HuMoments(self.moments)
+
+    def distance(self, point):
+        return np.amin([cv2.norm(bp - point) for bp in self.boundary])
+
+    def hausdorff_distance(self, region):
+        return np.amin([self.distance(bp) for bp in region.boundary])
+
+    def image(self):
+        img = np.zeros((self.width, self.height), dtype=np.uint8)
+        for point in self.points:
+            img[point - self.tl] = 255
+        return img
+
+    def contours(self):
+        _, contours, hierarchy = cv2.findContours(
+            self.image(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+        return (contours, hierarchy)
+
+    def display(self):
+        details = f"Region:\n"
+                + f"  tl = ({self.tl[0]} , {self.tl[1]})\n"
+                + f"  size = ({self.width} x {self.height})\n"
+                + f"  area = {self.area}\n"
+                + f"  fill = {self.fill}\n"
+                + f"  aspect = {self.aspect}\n"
+                + f"  diameter = {self.diameter}\n"
+                + f"  holes = {self.holes}\n"
+                + f"  moments = {self.moments}\n"
+                + f"  hu moments = {self.hu_moments}\n"
+        print(details)
+        cv2.imshow("region", self.image())
+        cv2.waitKey(0)
+        cv2.destroyWindow("region")
