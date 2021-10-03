@@ -66,36 +66,44 @@ for img_file in img_files:
     mser.setDelta(20)
     point_sets, boxes = mser.detectRegions(img_gray)
 
+    def write_regions_to_work(id, regions):
+        print(f"number of regions = {len(regions)}")
+        img_regions = np.zeros(img.shape)
+        for region in regions:
+            color = (random.randint(100, 255),
+                     random.randint(100, 255),
+                     random.randint(100, 255))
+            for point in region.points:
+                j, i = point
+                img_regions[i, j] = color
+        write_to_work(id, img_regions)
+
     regions = unique_regions(point_sets, boxes, threshold=0.8)
+    write_regions_to_work("2_0_unique", regions)
 
-    img_regions = np.zeros(img.shape)
-    for region in regions:
-        color = (random.randint(100, 255),
-                 random.randint(100, 255),
-                 random.randint(100, 255))
-        for point in region.points:
-            j, i = point
-            img_regions[i, j] = color
-    write_to_work("2", img_regions)
+    regions = list(filter(lambda r: r.aspect >= 1.0, regions))
+    write_regions_to_work("2_1_aspect", regions)
 
-    print(f"{len(regions)}")
-    for i in range(len(regions)):
-        # regions[i].display()
-        for j in range(len(regions)):
-            if i == j:
-                continue
+    regions = list(filter(lambda r: r.fill >= 0.1, regions))
+    write_regions_to_work("2_2_fill", regions)
 
-            f = regions[i].overlap(regions[j])
-            if (f > 0.5):
-                print(f"{i} contains {j}: {f}")
-                regions[i].display()
-                regions[j].display()
+    # for i in range(len(regions)):
+    #     regions[i].display()
+    #     for j in range(len(regions)):
+    #         if i == j:
+    #             continue
 
-                cv2.imshow(f"{i}", regions[i].image())
-                cv2.imshow(f"{j}", regions[i].image())
-                cv2.moveWindow(f"{j}", 500, 50)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
+    #         f = regions[i].overlap(regions[j])
+    #         if (f > 0.5):
+    #             print(f"{i} contains {j}: {f}")
+    #             regions[i].display()
+    #             regions[j].display()
+
+    #             cv2.imshow(f"{i}", regions[i].image())
+    #             cv2.imshow(f"{j}", regions[i].image())
+    #             cv2.moveWindow(f"{j}", 500, 50)
+    #             cv2.waitKey(0)
+    #             cv2.destroyAllWindows()
 
 
     # fs_blur = [
