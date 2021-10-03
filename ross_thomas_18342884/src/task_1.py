@@ -62,8 +62,8 @@ for img_file in img_files:
 
     mser = cv2.MSER_create()
     mser.setMinArea(25)
-    mser.setMaxArea(1000)
-    mser.setDelta(50)
+    mser.setMaxArea(2000)
+    mser.setDelta(25)
     point_sets, boxes = mser.detectRegions(img_gray)
 
     img_mser = np.zeros(img.shape)
@@ -81,8 +81,12 @@ for img_file in img_files:
         regions.append(Region(ps, b))
 
     print(f"{len(regions)}")
-    for region in regions:
-        region.display()
+    for i in range(len(regions)):
+        regions[i].display()
+        for j in range(len(regions)):
+            f = regions[i].overlap(regions[j])
+            if (f > 0.9):
+                print(f"{i} ~contains {j}")
 
     # fs_blur = [
     #     lambda img_gray: cv2.bilateralFilter(img_gray, 11, 50, 25)
