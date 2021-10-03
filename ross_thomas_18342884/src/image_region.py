@@ -51,7 +51,7 @@ class Region:
         return np.amin([self.distance(bp) for bp in region.boundary])
 
     def overlap(self, region):
-        return len(self.points.intersect(region.points)) / len(region.points)
+        return len(self.points.intersection(region.points)) / len(region.points)
 
     def contains(self, region):
         return np.all([(bp in self.points) for bp in region.boundary])
