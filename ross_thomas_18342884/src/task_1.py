@@ -66,11 +66,7 @@ for img_file in img_files:
     mser.setDelta(20)
     point_sets, boxes = mser.detectRegions(img_gray)
 
-    regions = []
-    for (ps, b) in zip(point_sets, boxes):
-        regions.append(Region(ps, b))
-
-    regions = unique(regions, threshold=0.8)
+    regions = unique_regions(point_sets, boxes, threshold=0.8)
 
     img_regions = np.zeros(img.shape)
     for region in regions:

@@ -74,10 +74,11 @@ class Region:
         cv2.destroyWindow("region")
 
 
-def unique(regions, threshold=0.8):
-    sorted_regions = sorted(regions, key=lambda r: r.area, reverse=True)
-    unique_regions = []
-    for r in sorted_regions:
-        if all([ur.overlap(r) < threshold for ur in unique_regions]):
-            unique_regions.append(r)
-    return unique_regions
+def unique_regions(point_sets, boxes, threshold=0.8):
+    regions = [Region(ps, b) for (ps, b) in zip(point_sets, boxes)]
+    regions_sorted = sorted(regions, key=lambda r: r.area, reverse=True)
+    regions_unique = []
+    for r in regions_sorted:
+        if all([ur.overlap(r) < threshold for ur in regions_unique]):
+            regions_unique.append(r)
+    return regions_unique
