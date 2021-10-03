@@ -63,22 +63,24 @@ for img_file in img_files:
     mser = cv2.MSER_create()
     mser.setMinArea(25)
     mser.setMaxArea(2000)
-    mser.setDelta(25)
+    mser.setDelta(20)
     point_sets, boxes = mser.detectRegions(img_gray)
-
-    img_mser = np.zeros(img.shape)
-    for ps in point_sets:
-        color = (random.randint(100, 255),
-                 random.randint(100, 255),
-                 random.randint(100, 255))
-        for p in ps:
-            j, i = tuple(p[:2])
-            img_mser[i, j] = color
-    write_to_work("2", img_mser)
 
     regions = []
     for (ps, b) in zip(point_sets, boxes):
         regions.append(Region(ps, b))
+
+    regions = unique(regions, threshold=0.8)
+
+    img_regions = np.zeros(img.shape)
+    for region in regions:
+        color = (random.randint(100, 255),
+                 random.randint(100, 255),
+                 random.randint(100, 255))
+        for point in region.points:
+            j, i = point
+            img_regions[i, j] = color
+    write_to_work("2", img_regions)
 
     print(f"{len(regions)}")
     for i in range(len(regions)):
@@ -88,7 +90,7 @@ for img_file in img_files:
                 continue
 
             f = regions[i].overlap(regions[j])
-            if (f > 0.95):
+            if (f > 0.5):
                 print(f"{i} contains {j}: {f}")
                 regions[i].display()
                 regions[j].display()
@@ -98,6 +100,7 @@ for img_file in img_files:
                 cv2.moveWindow(f"{j}", 500, 50)
                 cv2.waitKey(0)
                 cv2.destroyAllWindows()
+
 
     # fs_blur = [
     #     lambda img_gray: cv2.bilateralFilter(img_gray, 11, 50, 25)
