@@ -23,15 +23,15 @@ class Region:
         return (self.area() / self.box.area())
 
     def image(self):
-        img = np.zeros((self.box.height, self.box.width), dtype=np.uint8)
+        img = np.zeros((self.box.height, self.box.width), dtype=np.float32)
         for point in self.points:
             j, i = (point[0] - self.box.x, point[1] - self.box.y)
-            img[i, j] = 255
+            img[i, j] = 255.0
         return img
 
     def contours(self):
         _, contours, hierarchy = cv2.findContours(
-            self.image(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+            self.image().astype(np.uint8), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
         return (contours, hierarchy)
 
     def holes(self):
@@ -72,7 +72,7 @@ class Region:
             + f"area = {self.area()}\n"\
             + f"fill = {self.fill()}\n"\
             + f"holes = {self.holes()}\n"\
-            + f"(regular) hu moments = \n{self.hu_moments_regular()}\n"
+            + f"hu moments = \n{self.hu_moments()}\n"
         return properties
 
 
