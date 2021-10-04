@@ -93,7 +93,6 @@ def mser_regions(img_gray, min_area=25, max_area=2000, delta=20, threshold=0.8):
     mser.setDelta(delta)
 
     point_sets, boxes = mser.detectRegions(img_gray)
-    regions = unique_regions(
-        [Region(ps, b) for (ps, b) in zip(point_sets, boxes)],
-        threshold=threshold)
-    return regions
+    regions = [Region(ps, b) for (ps, b) in zip(point_sets, boxes)]
+    regions_unique = unique_regions(regions, threshold=threshold)
+    return regions_unique
