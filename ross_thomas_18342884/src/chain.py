@@ -23,11 +23,13 @@ def find_chains(regions):
 
             diff_y = np.abs(rj.box.y - ri.box.y)
             diff_height = np.abs(rj.box.height - ri.box.height)
+            diff_x = np.abs(rj.box.x - ri.box.x)
 
             if ((not ri.box.contains(rj.box))
                 and diff_y <= 0.5*ri.box.height
                 and diff_y <= 0.5*rj.box.height
                 and diff_height < 0.05*ri.box.height
-                and diff_height < 0.05*rj.box.height):
+                and diff_height < 0.05*rj.box.height
+                and diff_x <= 1.5*ri.box.height):
                 links[i].append(j)
     return links
