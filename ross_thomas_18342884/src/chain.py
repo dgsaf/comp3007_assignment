@@ -15,10 +15,9 @@ def find_chains(regions):
     regions_ordered = sorted(regions, key=lambda r: r.box.x)
     n = len(regions_ordered)
 
-    links = []
+    links = [[] for i in range(n)]
     for i in range(n):
         ri = regions_ordered[i]
-        links[i] = []
         for j in range(i+1, n):
             rj = regions_ordered[j]
             diff_y = np.abs(rj.box.y - ri.box.y)

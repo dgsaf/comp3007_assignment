@@ -24,7 +24,7 @@ class Box:
         return (self.x, self.y + self.height)
 
     def center(self):
-        return (self.x + (self.width / 2), self.y + (self.height / 2))
+        return (self.x + int(self.width / 2), self.y + int(self.height / 2))
 
     def area(self):
         return (self.width * self.height)

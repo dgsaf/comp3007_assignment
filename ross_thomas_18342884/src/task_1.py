@@ -55,10 +55,12 @@ for img_file in img_files:
     img_chains = np.zeros(img_gray.shape)
     for i in range(len(regions)):
         ri = regions[i]
-        img_chains[ri.box.y:, ri.box.x:] = ri.image[:, :]
+        x1, x2 = ri.box.x, ri.box.x + ri.box.width
+        y1, y2 = ri.box.y, ri.box.y + ri.box.height
+        img_chains[y1:y2, x1:x2] = ri.image()
     for i in range(len(regions)):
         ri = regions[i]
         for j in chains[i]:
             rj = regions[j]
-            cv2.arrowedLine(img_chains, ri.box.center, rj.box.center, 128)
+            cv2.arrowedLine(img_chains, ri.box.center(), rj.box.center(), 128)
     write_image_to_work(args, img_file, "3", img_chains)
