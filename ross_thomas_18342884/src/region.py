@@ -44,7 +44,8 @@ class Region:
         return cv2.HuMoments(self.moments())
 
     def hu_moments_regular(self):
-        return map(lambda h: -np.sign(h) * np.log(np.abs(h)), self.hu_moments())
+        h = self.hu_moments()
+        return (-np.sign(h) * np.log(np.abs(h)))
 
     def distance(self, point):
         return np.amin([cv2.norm(bp - point) for bp in self.boundary])
@@ -71,7 +72,7 @@ class Region:
             + f"area = {self.area()}\n"\
             + f"fill = {self.fill()}\n"\
             + f"holes = {self.holes()}\n"\
-            + f"(regular) hu moments = {self.hu_moments_regular()}\n"
+            + f"(regular) hu moments = \n{self.hu_moments_regular()}\n"
         return properties
 
 

@@ -21,11 +21,11 @@ for img_file in img_files:
         continue
     W, H = img.shape[:2]
 
-    write_to_work(args, img_file, "0", img)
+    write_image_to_work(args, img_file, "0", img)
 
     # development below
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    write_to_work(args, img_file, "1", img_gray)
+    write_image_to_work(args, img_file, "1", img_gray)
 
     def write_regions_to_work(suffix, regions):
         print(f"number of regions = {len(regions)}")
@@ -37,7 +37,7 @@ for img_file in img_files:
             for point in region.points:
                 j, i = point
                 img_regions[i, j] = color
-            write_to_work(args, img_file, suffix, img_regions)
+            write_image_to_work(args, img_file, suffix, img_regions)
 
     regions = mser_regions(
         img_gray, min_area=25, max_area=2000, delta=20, threshold=0.8)

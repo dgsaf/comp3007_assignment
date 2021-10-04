@@ -3,6 +3,7 @@
 import os
 import argparse
 import re
+import cv2
 
 
 def parse_input():
@@ -36,7 +37,7 @@ def parse_image_file(img_file):
     return (file_root, file_ext, file_id)
 
 
-def write_to_work(args, img_file, suffix, img):
+def write_image_to_work(args, img_file, suffix, img):
     if args["work_save"]:
         dir_work = args['work']
         file_root, file_ext, _ = parse_image_file(img_file)
