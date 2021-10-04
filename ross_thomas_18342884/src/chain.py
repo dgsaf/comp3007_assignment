@@ -20,10 +20,14 @@ def find_chains(regions):
         ri = regions_ordered[i]
         for j in range(i+1, n):
             rj = regions_ordered[j]
+
             diff_y = np.abs(rj.box.y - ri.box.y)
-            rel_diff_height = (rj.box.height - ri.box.height) / ri.box.height
+            diff_height = np.abs(rj.box.height - ri.box.height)
+
             if ((not ri.box.contains(rj.box))
-                and diff_y < 0.75*ri.box.height
-                and rel_diff_height < 0.1):
+                and diff_y <= 0.5*ri.box.height
+                and diff_y <= 0.5*rj.box.height
+                and diff_height < 0.05*ri.box.height
+                and diff_height < 0.05*rj.box.height):
                 links[i].append(j)
     return links
