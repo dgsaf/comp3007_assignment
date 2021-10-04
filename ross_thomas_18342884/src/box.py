@@ -32,6 +32,10 @@ class Box:
     def aspect(self):
         return (self.height / self.width)
 
+    def contains(self, box):
+        return (self.x <= box.x <= self.x + self.width - box.width
+                and self.y <= box.y <= self.y + self.height - box.height)
+
     def __str__(self):
         properties = \
             f"Box:\n"\

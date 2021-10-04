@@ -5,6 +5,7 @@ import cv2
 
 from box import *
 
+
 class Region:
     def __init__(self, points, box):
         self.points = set([(p[0], p[1]) for p in points])
@@ -23,7 +24,7 @@ class Region:
         return (self.area() / self.box.area())
 
     def image(self):
-        img = np.zeros((self.box.height, self.box.width), dtype=np.float32)
+        img = np.zeros((self.box.height, self.box.width), dtype=np.uint8)
         for point in self.points:
             j, i = (point[0] - self.box.x, point[1] - self.box.y)
             img[i, j] = 255.0
@@ -38,7 +39,7 @@ class Region:
         return (len((self.contours())[0]) - 1)
 
     def moments(self):
-        return cv2.moments(self.image(), binaryImage=True)
+        return cv2.moments(self.image().astype(np.float32), binaryImage=True)
 
     def hu_moments(self):
         return cv2.HuMoments(self.moments())

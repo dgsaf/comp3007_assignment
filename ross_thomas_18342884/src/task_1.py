@@ -6,6 +6,7 @@ import random
 
 from parser import *
 from region import *
+from chain import *
 
 
 # task 1
@@ -48,3 +49,16 @@ for img_file in img_files:
 
     for i in range(len(regions)):
         print(str(regions[i]))
+
+
+    chains = find_chains(regions)
+    img_chains = np.zeros(img_gray.shape)
+    for i in range(len(regions)):
+        ri = regions[i]
+        img_chains[ri.box.y:, ri.box.x:] = ri.image[:, :]
+    for i in range(len(regions)):
+        ri = regions[i]
+        for j in chains[i]:
+            rj = regions[j]
+            cv2.arrowedLine(img_chains, ri.box.center, rj.box.center, 128)
+    write_image_to_work(args, img_file, "3", img_chains)
