@@ -50,18 +50,14 @@ for img_file in img_files:
     for i in range(len(regions)):
         print(str(regions[i]))
 
-    regions = sorted(regions, key=lambda r: r.box.x)
-
     chains = find_chains(regions)
-    img_chains = np.zeros(img_gray.shape)
-    for i in range(len(regions)):
-        ri = regions[i]
-        x1, x2 = ri.box.x, ri.box.x + ri.box.width
-        y1, y2 = ri.box.y, ri.box.y + ri.box.height
-        img_chains[y1:y2, x1:x2] = ri.image()
-    for i in range(len(regions)):
-        ri = regions[i]
-        for j in chains[i]:
-            rj = regions[j]
-            cv2.arrowedLine(img_chains, ri.box.tl(), rj.box.tl(), 128)
-    write_image_to_work(args, img_file, "3", img_chains)
+
+    i = 0
+    for chain in chains:
+        img_chain = np.zeros(img_gray.shape)
+        for r in chain:
+            x1, x2 = r.box.x, r.box.x + r.box.width
+            y1, y2 = r.box.y, r.box.y + r.box.height
+            img_chain[y1:y2, x1:x2] = r.image()
+        write_image_to_work(args, img_file, f"3_chain_{i}", img_chain)
+        i += 1

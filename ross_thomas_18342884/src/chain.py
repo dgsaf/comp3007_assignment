@@ -15,7 +15,7 @@ def find_chains(regions):
     regions_ordered = sorted(regions, key=lambda r: r.box.x)
     n = len(regions_ordered)
 
-    links = [[] for i in range(n)]
+    edges = [[] for i in range(n)]
     for i in range(n):
         ri = regions_ordered[i]
         for j in range(i+1, n):
@@ -28,8 +28,20 @@ def find_chains(regions):
             if ((not ri.box.contains(rj.box))
                 and diff_y <= 0.5*ri.box.height
                 and diff_y <= 0.5*rj.box.height
-                and diff_height < 0.05*ri.box.height
-                and diff_height < 0.05*rj.box.height
+                and diff_height < 0.1*ri.box.height
+                and diff_height < 0.1*rj.box.height
                 and diff_x <= 1.5*ri.box.height):
-                links[i].append(j)
-    return links
+                edges[i].append(j)
+
+    def build_chain(i):
+        chain = [regions_ordered[i]]
+        if edges[i]:
+            j = edges[i][0]
+            chain = chain + build_chain(j)
+        return chain
+
+    chains = list(filter(
+        lambda c: len(c) > 1,
+        [build_chain(i) for i in range(n)]))
+
+    return chains
