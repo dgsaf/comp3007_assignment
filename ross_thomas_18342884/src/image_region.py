@@ -31,6 +31,8 @@ class Region:
         self.holes = len((self.contours())[0]) - 1
         self.moments = cv2.moments(self.image(), binaryImage=True)
         self.hu_moments = cv2.HuMoments(self.moments)
+        self.hu_moments_regular = map(
+            lambda h: -np.sign(h) * np.log(np.abs(h)), self.hu_moments)
 
     def image(self):
         img = np.zeros((self.height, self.width), dtype=np.uint8)
@@ -66,7 +68,8 @@ class Region:
             + f"  aspect = {self.aspect}\n"\
             + f"  holes = {self.holes}\n"\
             + f"  moments = {self.moments}\n"\
-            + f"  hu moments = {self.hu_moments}\n"
+            + f"  hu moments = {self.hu_moments}\n"\
+            + f"  (regular) hu moments = {self.hu_moments_regular}\n"
 
         print(details)
         cv2.imshow("region", self.image())
@@ -74,11 +77,23 @@ class Region:
         cv2.destroyWindow("region")
 
 
-def unique_regions(point_sets, boxes, threshold=0.8):
-    regions = [Region(ps, b) for (ps, b) in zip(point_sets, boxes)]
+def unique_regions(regions, threshold=0.8):
     regions_sorted = sorted(regions, key=lambda r: r.area, reverse=True)
     regions_unique = []
     for r in regions_sorted:
         if all([ur.overlap(r) < threshold for ur in regions_unique]):
             regions_unique.append(r)
     return regions_unique
+
+
+def mser_regions(img_gray, min_area=25, max_area=2000, delta=20, threshold=0.8):
+    mser = cv2.MSER_create()
+    mser.setMinArea(min_area)
+    mser.setMaxArea(max_area)
+    mser.setDelta(delta)
+
+    point_sets, boxes = mser.detectRegions(img_gray)
+    regions = unique_regions(
+        [Region(ps, b) for (ps, b) in zip(point_sets, boxes)],
+        threshold=threshold)
+    return regions
