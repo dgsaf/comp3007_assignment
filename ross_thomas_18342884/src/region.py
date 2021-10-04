@@ -1,26 +1,17 @@
 #!/usr/bin/env python
 
-import os
 import numpy as np
 import cv2
 
+from box import *
 
 class Region:
     def __init__(self, points, box):
         self.points = set([(p[0], p[1]) for p in points])
-        self.box = box
-
-        self.x = box[0]
-        self.y = box[1]
-        self.width = box[2]
-        self.height = box[3]
-        self.tl = (self.x, self.y)
-        self.br = (self.x + self.width, self.y + self.height)
-        self.box_area = self.width * self.height
+        self.box = Box(box)
 
         self.area = len(self.points)
-        self.fill = self.area / (self.box_area + 1.0e-8)
-        self.aspect = self.height / (self.width + 1.0e-8)
+        self.fill = self.area / (self.box.area() + 1.0e-8)
 
         self.boundary = set(
             [(p[0], p[1])
@@ -35,9 +26,9 @@ class Region:
             lambda h: -np.sign(h) * np.log(np.abs(h)), self.hu_moments)
 
     def image(self):
-        img = np.zeros((self.height, self.width), dtype=np.uint8)
+        img = np.zeros((self.box.height, self.box.width), dtype=np.uint8)
         for point in self.points:
-            j, i = (point[0] - self.x, point[1] - self.y)
+            j, i = (point[0] - self.box.x, point[1] - self.box.y)
             img[i, j] = 255
         return img
 
@@ -61,11 +52,11 @@ class Region:
     def display(self):
         details = \
             f"Region:\n"\
-            + f"  x, y = ({self.x} , {self.y})\n"\
-            + f"  size = ({self.width} x {self.height})\n"\
+            + f"  x, y = ({self.box.x} , {self.box.y})\n"\
+            + f"  size = ({self.box.width} x {self.box.height})\n"\
             + f"  area = {self.area}\n"\
             + f"  fill = {self.fill}\n"\
-            + f"  aspect = {self.aspect}\n"\
+            + f"  aspect = {self.box.aspect}\n"\
             + f"  holes = {self.holes}\n"\
             + f"  moments = {self.moments}\n"\
             + f"  hu moments = {self.hu_moments}\n"\

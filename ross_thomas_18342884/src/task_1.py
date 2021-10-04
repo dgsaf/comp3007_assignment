@@ -43,7 +43,7 @@ for img_file in img_files:
         img_gray, min_area=25, max_area=2000, delta=20, threshold=0.8)
     write_regions_to_work("2_0_unique", regions)
 
-    regions = list(filter(lambda r: r.aspect >= 0.8, regions))
+    regions = list(filter(lambda r: r.box.aspect >= 0.8, regions))
     write_regions_to_work("2_1_aspect", regions)
 
     # for i in range(len(regions)):
