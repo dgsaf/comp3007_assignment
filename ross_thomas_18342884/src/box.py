@@ -17,8 +17,24 @@ class Box:
     def br(self):
         return (self.x + self.width, self.y + self.height)
 
+    def tr(self):
+        return (self.x + self.width, self.y)
+
+    def bl(self):
+        return (self.x, self.y + self.height)
+
+    def center(self):
+        return (self.x + (self.width / 2), self.y + (self.height / 2))
+
     def area(self):
         return (self.width * self.height)
 
     def aspect(self):
-        return (self.height / (self.width + 1.0e-8))
+        return (self.height / self.width)
+
+    def __str__(self):
+        properties = \
+            f"Box:\n"\
+            + f"x in [{self.x}, {self.x + self.width}]\n"\
+            + f"y in [{self.y}, {self.y + self.height}]\n"
+        return properties

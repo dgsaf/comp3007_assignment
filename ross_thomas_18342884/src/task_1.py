@@ -46,20 +46,5 @@ for img_file in img_files:
     regions = list(filter(lambda r: r.box.aspect >= 0.8, regions))
     write_regions_to_work("2_1_aspect", regions)
 
-    # for i in range(len(regions)):
-    #     regions[i].display()
-    #     for j in range(len(regions)):
-    #         if i == j:
-    #             continue
-
-    #         f = regions[i].overlap(regions[j])
-    #         if (f > 0.5):
-    #             print(f"{i} contains {j}: {f}")
-    #             regions[i].display()
-    #             regions[j].display()
-
-    #             cv2.imshow(f"{i}", regions[i].image())
-    #             cv2.imshow(f"{j}", regions[i].image())
-    #             cv2.moveWindow(f"{j}", 500, 50)
-    #             cv2.waitKey(0)
-    #             cv2.destroyAllWindows()
+    for i in range(len(regions)):
+        print(str(regions[i]))

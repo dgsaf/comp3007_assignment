@@ -11,7 +11,7 @@ class Region:
         self.box = Box(box)
 
         self.area = len(self.points)
-        self.fill = self.area / (self.box.area() + 1.0e-8)
+        self.fill = self.area / self.box.area()
 
         self.boundary = set(
             [(p[0], p[1])
@@ -49,23 +49,21 @@ class Region:
     def contains(self, region):
         return np.all([(bp in self.points) for bp in region.boundary])
 
-    def display(self):
-        details = \
-            f"Region:\n"\
-            + f"  x, y = ({self.box.x} , {self.box.y})\n"\
-            + f"  size = ({self.box.width} x {self.box.height})\n"\
-            + f"  area = {self.area}\n"\
-            + f"  fill = {self.fill}\n"\
-            + f"  aspect = {self.box.aspect}\n"\
-            + f"  holes = {self.holes}\n"\
-            + f"  moments = {self.moments}\n"\
-            + f"  hu moments = {self.hu_moments}\n"\
-            + f"  (regular) hu moments = {self.hu_moments_regular}\n"
-
-        print(details)
+    def show(self):
         cv2.imshow("region", self.image())
         cv2.waitKey(0)
         cv2.destroyWindow("region")
+        return
+
+    def __str__(self):
+        properties = \
+            f"Region:\n"\
+            + f"{str(self.box)}"\
+            + f"area = {self.area}\n"\
+            + f"fill = {self.fill}\n"\
+            + f"holes = {self.holes}\n"\
+            + f"(regular) hu moments = {self.hu_moments_regular}\n"
+        return properties
 
 
 def unique_regions(regions, threshold=0.8):
