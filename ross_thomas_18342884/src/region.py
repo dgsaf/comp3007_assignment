@@ -10,20 +10,17 @@ class Region:
         self.points = set([(p[0], p[1]) for p in points])
         self.box = Box(box)
 
-        self.area = len(self.points)
-        self.fill = self.area / self.box.area()
-
         self.boundary = set(
             [(p[0], p[1])
              for p in
              (np.concatenate(
                  [np.reshape(c, (-1, 2)) for c in self.contours()[0]]))])
 
-        self.holes = len((self.contours())[0]) - 1
-        self.moments = cv2.moments(self.image(), binaryImage=True)
-        self.hu_moments = cv2.HuMoments(self.moments)
-        self.hu_moments_regular = map(
-            lambda h: -np.sign(h) * np.log(np.abs(h)), self.hu_moments)
+    def area(self):
+        return len(self.points)
+
+    def fill(self):
+        return (self.area() / self.box.area())
 
     def image(self):
         img = np.zeros((self.box.height, self.box.width), dtype=np.uint8)
@@ -36,6 +33,18 @@ class Region:
         _, contours, hierarchy = cv2.findContours(
             self.image(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
         return (contours, hierarchy)
+
+    def holes(self):
+        return (len((self.contours())[0]) - 1)
+
+    def moments(self):
+        return cv2.moments(self.image(), binaryImage=True)
+
+    def hu_moments(self):
+        return cv2.HuMoments(self.moments())
+
+    def hu_moments_regular(self):
+        return map(lambda h: -np.sign(h) * np.log(np.abs(h)), self.hu_moments())
 
     def distance(self, point):
         return np.amin([cv2.norm(bp - point) for bp in self.boundary])
@@ -59,15 +68,15 @@ class Region:
         properties = \
             f"Region:\n"\
             + f"{str(self.box)}"\
-            + f"area = {self.area}\n"\
-            + f"fill = {self.fill}\n"\
-            + f"holes = {self.holes}\n"\
-            + f"(regular) hu moments = {self.hu_moments_regular}\n"
+            + f"area = {self.area()}\n"\
+            + f"fill = {self.fill()}\n"\
+            + f"holes = {self.holes()}\n"\
+            + f"(regular) hu moments = {self.hu_moments_regular()}\n"
         return properties
 
 
 def unique_regions(regions, threshold=0.8):
-    regions_sorted = sorted(regions, key=lambda r: r.area, reverse=True)
+    regions_sorted = sorted(regions, key=lambda r: r.area(), reverse=True)
     regions_unique = []
     for r in regions_sorted:
         if all([ur.overlap(r) < threshold for ur in regions_unique]):
