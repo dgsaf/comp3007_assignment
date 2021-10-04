@@ -85,7 +85,7 @@ def unique_regions(regions, threshold=0.8):
     return regions_unique
 
 
-def mser_regions(img_gray, min_area=25, max_area=2000, delta=20, threshold=0.8):
+def mser_regions(img_gray, min_area=25, max_area=2000, delta=5, threshold=0.8):
     mser = cv2.MSER_create()
     mser.setMinArea(min_area)
     mser.setMaxArea(max_area)

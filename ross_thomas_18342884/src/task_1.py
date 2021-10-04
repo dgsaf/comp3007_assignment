@@ -40,7 +40,7 @@ for img_file in img_files:
             write_image_to_work(args, img_file, suffix, img_regions)
 
     regions = mser_regions(
-        img_gray, min_area=25, max_area=2000, delta=20, threshold=0.8)
+        img_gray, min_area=45, max_area=2000, delta=15, threshold=0.8)
     write_regions_to_work("2_0_unique", regions)
 
     regions = list(filter(lambda r: r.box.aspect() >= 0.8, regions))
