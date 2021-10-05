@@ -13,7 +13,7 @@ class Region:
         self.box = Box(box)
 
         self.boundary = set(
-            [(p[0], p[1])
+            [(self.box.x + p[0], self.box.y + p[1])
              for p in
              (np.concatenate(
                  [np.reshape(c, (-1, 2)) for c in self.contours()[0]]))])
@@ -28,7 +28,7 @@ class Region:
         img = np.zeros((self.box.height, self.box.width), dtype=np.uint8)
         for point in self.points:
             j, i = (point[0] - self.box.x, point[1] - self.box.y)
-            img[i, j] = 255.0
+            img[i, j] = 255
         return img
 
     def contours(self):
@@ -102,7 +102,7 @@ def draw_regions(regions, size=None):
                  random.randint(100, 255),
                  random.randint(100, 255))
         for p in r.points:
-            x, y = point
+            x, y = p
             img_regions[y - canvas.y, x - canvas.x] = color
         for bp in r.boundary:
             x, y = bp
