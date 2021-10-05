@@ -80,6 +80,15 @@ class Region:
         return properties
 
 
+def remove_overlapping(regions, threshold=0.8):
+    regions_sorted = sorted(regions, key=lambda r: r.area(), reverse=True)
+    regions_unique = []
+    for r in regions_sorted:
+        if all([ur.overlap(r) < threshold for ur in regions_unique]):
+            regions_unique.append(r)
+    return regions_unique
+
+
 def draw_regions(regions, size=None):
     if size:
         canvas = Box((0, 0, size[1], size[0]))
@@ -99,12 +108,3 @@ def draw_regions(regions, size=None):
             x, y = bp
             img_regions[y - canvas.y, x - canvas.x] = (255, 255, 255)
     return img_regions
-
-
-def remove_overlapping(regions, threshold=0.8):
-    regions_sorted = sorted(regions, key=lambda r: r.area(), reverse=True)
-    regions_unique = []
-    for r in regions_sorted:
-        if all([ur.overlap(r) < threshold for ur in regions_unique]):
-            regions_unique.append(r)
-    return regions_unique
