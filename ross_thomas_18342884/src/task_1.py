@@ -51,8 +51,9 @@ for img_file in img_files:
     chains = find_chains(regions)
     i = 0
     for chain in chains:
-        write_image_to_work(args, img_file, f"2_4_{i}",
-                            draw_regions(chain, (H, W)))
+        if len(chain) <= 3:
+            write_image_to_work(args, img_file, f"2_4_{i}",
+                                draw_regions(chain, (H, W)))
         i += 1
 
     # i = 0
