@@ -49,16 +49,18 @@ class Region:
         return (-np.sign(h) * np.log(np.abs(h)))
 
     def distance(self, point):
-        return np.amin([cv2.norm(bp - point) for bp in self.boundary])
-
-    def hausdorff_distance(self, region):
-        return np.amin([self.distance(bp) for bp in region.boundary])
+        if point in self.points:
+            min_distance = 0
+        else:
+            min_distance = np.amin(
+                [cv2.norm(bp - point) for bp in self.boundary])
+        return min_distance
 
     def overlap(self, region):
         return len(self.points.intersection(region.points)) / len(region.points)
 
     def contains(self, region):
-        return np.all([(bp in self.points) for bp in region.boundary])
+        return np.all([(p in self.points) for p in region.points])
 
     def show(self):
         cv2.imshow("region", self.image())
@@ -77,22 +79,10 @@ class Region:
         return properties
 
 
-def unique_regions(regions, threshold=0.8):
+def remove_overlapping(regions, threshold=0.8):
     regions_sorted = sorted(regions, key=lambda r: r.area(), reverse=True)
     regions_unique = []
     for r in regions_sorted:
         if all([ur.overlap(r) < threshold for ur in regions_unique]):
             regions_unique.append(r)
-    return regions_unique
-
-
-def mser_regions(img_gray, min_area=25, max_area=2000, delta=5, threshold=0.8):
-    mser = cv2.MSER_create()
-    mser.setMinArea(min_area)
-    mser.setMaxArea(max_area)
-    mser.setDelta(delta)
-
-    point_sets, boxes = mser.detectRegions(img_gray)
-    regions = [Region(ps, b) for (ps, b) in zip(point_sets, boxes)]
-    regions_unique = unique_regions(regions, threshold=threshold)
     return regions_unique

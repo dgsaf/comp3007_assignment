@@ -32,7 +32,12 @@ class Box:
     def aspect(self):
         return (self.height / self.width)
 
-    def contains(self, box):
+    def contains(self, point):
+        x, y = point[0], point[1]
+        return (self.x <= x <= self.x + self.width
+                and self.y <= y <= self.y + self.height)
+
+    def is_superset_of(self, box):
         return (self.x <= box.x <= self.x + self.width - box.width
                 and self.y <= box.y <= self.y + self.height - box.height)
 

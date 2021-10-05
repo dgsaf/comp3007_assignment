@@ -40,12 +40,20 @@ for img_file in img_files:
                 img_regions[i, j] = color
             write_image_to_work(args, img_file, suffix, img_regions)
 
-    regions = mser_regions(
-        img_gray, min_area=45, max_area=2000, delta=15, threshold=0.8)
-    write_regions_to_work("2_0_unique", regions)
+    mser = cv2.MSER_create()
+    mser.setMinArea(45)
+    mser.setMaxArea(2000)
+    mser.setDelta(15)
+    point_sets, boxes = mser.detectRegions(img_gray)
+
+    regions = [Region(ps, b) for (ps, b) in zip(point_sets, boxes)]
+    write_regions_to_work("2_0", regions)
+
+    regions = remove_overlapping(regions, threshold=0.8)
+    write_regions_to_work("2_1_overlap", regions)
 
     regions = list(filter(lambda r: r.box.aspect() >= 0.8, regions))
-    write_regions_to_work("2_1_aspect", regions)
+    write_regions_to_work("2_2_aspect", regions)
 
     for i in range(len(regions)):
         print(str(regions[i]))
