@@ -49,20 +49,9 @@ for img_file in img_files:
         print(str(regions[i]))
 
     chains = find_chains(regions)
-    i = 0
-    for chain in chains:
-        if len(chain) <= 3:
-            write_image_to_work(args, img_file, f"2_4_{i}",
-                                draw_regions(chain, (H, W)))
-        i += 1
 
-    # i = 0
-    # for chain in chains:
-    #     img_chain = np.zeros(img_gray.shape)
-    #     for r in chain:
-    #         # x1, x2 = r.box.x, r.box.x + r.box.width
-    #         # y1, y2 = r.box.y, r.box.y + r.box.height
-    #         # img_chain[y1:y2, x1:x2] = r.image()
-    #         img_chain[r.box.indexes()] = r.image()
-    #     write_image_to_work(args, img_file, f"3_chain_{i}", img_chain)
-    #     i += 1
+    img_chains = draw_regions(regions, (H, W))
+    for chain in chains:
+        chain_box = covering_box([r.box for r in chain])
+        cv2.rectangle(img_chains, chain_box.tl(), chain_box.br(),
+                      (255,255,255), 1)
