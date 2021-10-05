@@ -39,8 +39,6 @@ def find_chains(regions):
         else:
             return [[i]]
 
-    chains = []
-    for i in roots:
-        chains = chains + paths(i)
+    chains = [paths(i) for i in roots]
 
     return chains
