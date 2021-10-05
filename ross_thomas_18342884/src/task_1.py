@@ -61,7 +61,7 @@ for img_file in img_files:
     for i in range(len(regions)):
         print(str(regions[i]))
 
-    print(f"{timing()} calculating chains of mono-height regions")
+    print(f"{timing()} calculating chains of similar, adjacent regions")
     chains = find_chains(regions)
 
     img_chains = draw_regions(regions, (H, W))
