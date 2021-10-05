@@ -80,13 +80,28 @@ class Region:
         return properties
 
 
-def remove_overlapping(regions, threshold=0.8):
-    regions_sorted = sorted(regions, key=lambda r: r.area(), reverse=True)
-    regions_unique = []
-    for r in regions_sorted:
-        if all([ur.overlap(r) < threshold for ur in regions_unique]):
-            regions_unique.append(r)
-    return regions_unique
+def remove_overlapping(regions, max_overlap=0.8):
+    regions_ordered = sorted(regions, key=lambda r: r.area(), reverse=True)
+    regions_filtered = []
+    for r in regions_ordered:
+        if all([ru.overlap(r) < max_overlap for ru in regions_filtered]):
+            regions_filtered.append(r)
+    return regions_filtered
+
+
+def remove_occluded_holes(regions, max_boundary_distance=10):
+    regions_ordered = sorted(regions, key=lambda r: r.box.x)
+    regions_filtered = []
+    for r in regions_ordered:
+        covered_by = lambda rf: rf.box.is_superset_of(r.box)
+        sup_boundary_distance = \
+            lambda rf: np.amax([rf.distance(bp) for bp in r.boundary])
+
+        if all([(not covered_by(rf))
+                and sup_boundary_distance(rf) > max_boundary_distance
+                for rf in regions_filtered]):
+            regions_filtered.append(r)
+    return regions_filtered
 
 
 def draw_regions(regions, size=None):

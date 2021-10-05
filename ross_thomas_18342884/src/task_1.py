@@ -36,24 +36,27 @@ for img_file in img_files:
     regions = [Region(ps, b) for (ps, b) in zip(point_sets, boxes)]
     write_image_to_work(args, img_file, "2_0", draw_regions(regions, (H, W)))
 
-    regions = remove_overlapping(regions, threshold=0.8)
+    regions = remove_overlapping(regions, max_overlap=0.8)
     write_image_to_work(args, img_file, "2_1", draw_regions(regions, (H, W)))
 
     regions = list(filter(lambda r: r.box.aspect() >= 0.8, regions))
     write_image_to_work(args, img_file, "2_2", draw_regions(regions, (H, W)))
 
-    for i in range(len(regions)):
-        print(str(regions[i]))
+    regions = remove_occluded_holes(regions, max_boundary_distance=10)
+    write_image_to_work(args, img_file, "2_3", draw_regions(regions, (H, W)))
 
-    chains = find_chains(regions)
+    # for i in range(len(regions)):
+    #     print(str(regions[i]))
 
-    i = 0
-    for chain in chains:
-        img_chain = np.zeros(img_gray.shape)
-        for r in chain:
-            # x1, x2 = r.box.x, r.box.x + r.box.width
-            # y1, y2 = r.box.y, r.box.y + r.box.height
-            # img_chain[y1:y2, x1:x2] = r.image()
-            img_chain[r.box.indexes()] = r.image()
-        write_image_to_work(args, img_file, f"3_chain_{i}", img_chain)
-        i += 1
+    # chains = find_chains(regions)
+
+    # i = 0
+    # for chain in chains:
+    #     img_chain = np.zeros(img_gray.shape)
+    #     for r in chain:
+    #         # x1, x2 = r.box.x, r.box.x + r.box.width
+    #         # y1, y2 = r.box.y, r.box.y + r.box.height
+    #         # img_chain[y1:y2, x1:x2] = r.image()
+    #         img_chain[r.box.indexes()] = r.image()
+    #     write_image_to_work(args, img_file, f"3_chain_{i}", img_chain)
+    #     i += 1
