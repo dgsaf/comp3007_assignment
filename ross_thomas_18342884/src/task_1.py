@@ -16,7 +16,7 @@ for img_file in img_files:
     time_start = timer()
 
     def timing():
-        return f"{timer() - time_start:>5.1f}s>"
+        return f"{timer() - time_start:>.1f}s>"
 
     file_root, file_ext, file_id = parse_image_file(img_file)
     print(f"{img_file} -> ({file_root}, {file_ext}, {file_id})")
