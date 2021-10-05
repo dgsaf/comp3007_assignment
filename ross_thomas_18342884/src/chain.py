@@ -33,8 +33,11 @@ def find_chains(regions):
         roots = roots - edges[i]
 
     def paths(i):
-        suffixes = [paths(j) for j in edges[i]]
-        return [s.add(i) for s in suffixes]]
+        if edges[i]:
+            suffixes = [p for j in edges[i] for p in paths(j)]
+            return [[i] + s for s in suffixes]
+        else:
+            return [[i]]
 
     chains = []
     for i in roots:
