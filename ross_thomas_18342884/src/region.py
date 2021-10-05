@@ -53,8 +53,11 @@ class Region:
         if point in self.points:
             min_distance = 0.0
         else:
+            norm = lambda p: np.sqrt(np.abs((p[0] ** 2) + (p[1] ** 2)))
+            diff = lambda p1, p2: (p1[0] - p2[0], p1[1] - p2[1])
+
             min_distance = np.amin(
-                [cv2.norm(bp - point) for bp in self.boundary])
+                [norm(diff(bp, point)) for bp in self.boundary])
         return min_distance
 
     def overlap(self, region):
@@ -91,15 +94,13 @@ def remove_overlapping(regions, max_overlap=0.8):
 
 def remove_occluded_holes(regions, max_boundary_distance=10):
     regions_ordered = sorted(regions, key=lambda r: r.box.x)
+
     regions_filtered = []
     for r in regions_ordered:
-        covered_by = lambda rf: rf.box.is_superset_of(r.box)
-        sup_boundary_distance = \
-            lambda rf: np.amax([rf.distance(bp) for bp in r.boundary])
-
-        if all([(not covered_by(rf))
-                and sup_boundary_distance(rf) > max_boundary_distance
-                for rf in regions_filtered]):
+        occludes = lambda rf: np.all(
+            [rf.distance(bp) <= max_boundary_distance for bp in r.boundary])
+        if np.all([not (rf.box.is_superset_of(r.box) and occludes(rf))
+                   for rf in regions_filtered]):
             regions_filtered.append(r)
     return regions_filtered
 
