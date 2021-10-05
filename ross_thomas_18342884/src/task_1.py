@@ -2,6 +2,7 @@
 
 import numpy as np
 import cv2
+from timeit import default_timer as timer
 
 from parser import *
 from region import *
@@ -12,9 +13,12 @@ from chain import *
 args, img_files = parse_input()
 
 for img_file in img_files:
+    time_start = timer ()
+
     file_root, file_ext, file_id = parse_image_file(img_file)
     print(f"{img_file} -> ({file_root}, {file_ext}, {file_id})")
 
+    print(f"{timer() - time_start:5.2f}s> reading {img_file}")
     img = cv2.imread(img_file, cv2.IMREAD_COLOR)
     if img is None:
         print(f"{img_file} could not be opened")
