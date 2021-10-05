@@ -2,6 +2,7 @@
 
 import numpy as np
 import cv2
+import random
 
 from box import *
 
@@ -77,6 +78,27 @@ class Region:
             + f"holes = {self.holes()}\n"\
             + f"hu moments = \n{self.hu_moments()}\n"
         return properties
+
+
+def draw_regions(regions, size=None):
+    if size:
+        canvas = Box((0, 0, size[1], size[0]))
+    else:
+        canvas = covering_box([r.box for r in regions])
+
+    img_regions = np.zeros(
+        (canvas.height, canvas.width, 3), dtype=np.uint8)
+    for r in regions:
+        color = (random.randint(100, 255),
+                 random.randint(100, 255),
+                 random.randint(100, 255))
+        for p in r.points:
+            x, y = point
+            img_regions[y - canvas.y, x - canvas.x] = color
+        for bp in r.boundary:
+            x, y = bp
+            img_regions[y - canvas.y, x - canvas.x] = (255, 255, 255)
+    return img_regions
 
 
 def remove_overlapping(regions, threshold=0.8):

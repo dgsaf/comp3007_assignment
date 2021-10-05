@@ -52,3 +52,11 @@ class Box:
             + f"x in [{self.x}, {self.x + self.width}]\n"\
             + f"y in [{self.y}, {self.y + self.height}]\n"
         return properties
+
+
+def covering_box(boxes):
+    x_min = np.amin([b.x for b in boxes])
+    x_max = np.amax([b.x + b.width for b in boxes])
+    y_min = np.amin([b.y for b in boxes])
+    y_max = np.amax([b.y + b.height for b in boxes])
+    return Box((x_min, y_min, x_max - x_min, y_max - y_min))
