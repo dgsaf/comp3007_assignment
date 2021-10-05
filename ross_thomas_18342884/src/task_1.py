@@ -45,10 +45,12 @@ for img_file in img_files:
     regions = remove_occluded_holes(regions, max_boundary_distance=10)
     write_image_to_work(args, img_file, "2_3", draw_regions(regions, (H, W)))
 
-    # for i in range(len(regions)):
-    #     print(str(regions[i]))
+    for i in range(len(regions)):
+        print(str(regions[i]))
 
-    # chains = find_chains(regions)
+    chains = find_chains(regions)
+    for chain in chains:
+        print(chain)
 
     # i = 0
     # for chain in chains:

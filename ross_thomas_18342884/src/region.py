@@ -94,7 +94,6 @@ def remove_overlapping(regions, max_overlap=0.8):
 
 def remove_occluded_holes(regions, max_boundary_distance=10):
     regions_ordered = sorted(regions, key=lambda r: r.box.x)
-
     regions_filtered = []
     for r in regions_ordered:
         occludes = lambda rf: np.all(
@@ -114,13 +113,12 @@ def draw_regions(regions, size=None):
     img_regions = np.zeros(
         (canvas.height, canvas.width, 3), dtype=np.uint8)
     for r in regions:
-        color = (random.randint(100, 255),
-                 random.randint(100, 255),
-                 random.randint(100, 255))
+        color = (random.randint(0, 179), 255, 255)
         for p in r.points:
             x, y = p
             img_regions[y - canvas.y, x - canvas.x] = color
         for bp in r.boundary:
             x, y = bp
-            img_regions[y - canvas.y, x - canvas.x] = (255, 255, 255)
+            img_regions[y - canvas.y, x - canvas.x] = (0, 0, 255)
+    img_regions = cv2.cvtColor(img_regions, cv2.COLOR_HSV2BGR)
     return img_regions
