@@ -59,4 +59,4 @@ for img_file in img_files:
         chain_box = covering_box([r.box for r in chain])
         cv2.rectangle(img_chains, chain_box.tl(), chain_box.br(),
                       (255,255,255), 1)
-    write_image_to_work(args, img_file, "3", img_regions)
+    write_image_to_work(args, img_file, "3", img_chains)
