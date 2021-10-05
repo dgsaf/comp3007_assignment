@@ -30,7 +30,7 @@ def find_chains(regions):
     for i in range(n):
         edges[i] = {j for j in range(i+1, n)
                     if linked(regions_ordered[i], regions_ordered[j])}
-        roots -= - edges[i]
+        roots -= edges[i]
         if not edges[i]:
             roots -= {i}
 
@@ -42,5 +42,4 @@ def find_chains(regions):
             return [[i]]
 
     chains = [p for i in roots for p in paths(i)]
-
-    return chains
+    return [list(map(lambda i: regions_ordered[i], c)) for c in chains]
