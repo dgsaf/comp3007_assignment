@@ -50,7 +50,7 @@ class Region:
 
     def distance(self, point):
         if point in self.points:
-            min_distance = 0
+            min_distance = 0.0
         else:
             min_distance = np.amin(
                 [cv2.norm(bp - point) for bp in self.boundary])

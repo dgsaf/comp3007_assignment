@@ -64,8 +64,9 @@ for img_file in img_files:
     for chain in chains:
         img_chain = np.zeros(img_gray.shape)
         for r in chain:
-            x1, x2 = r.box.x, r.box.x + r.box.width
-            y1, y2 = r.box.y, r.box.y + r.box.height
-            img_chain[y1:y2, x1:x2] = r.image()
+            # x1, x2 = r.box.x, r.box.x + r.box.width
+            # y1, y2 = r.box.y, r.box.y + r.box.height
+            # img_chain[y1:y2, x1:x2] = r.image()
+            img_chain[r.box.indexes()] = r.image()
         write_image_to_work(args, img_file, f"3_chain_{i}", img_chain)
         i += 1
