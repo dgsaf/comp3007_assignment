@@ -45,6 +45,7 @@ class Region:
                  for p in
                  (np.concatenate(
                      [np.reshape(c, (-1, 2)) for c in self.contours()[0]]))])
+            self.cached_boundary = True
         return self._boundary
 
     def holes(self):
