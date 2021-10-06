@@ -16,7 +16,7 @@ for img_file in img_files:
     time_start = timer()
 
     def timing():
-        return f"{timer() - time_start:>.1f}s>"
+        return f"{timer() - time_start:>.1f} s>"
 
     file_root, file_ext, file_id = parse_image_file(img_file)
     print(f"{img_file} -> ({file_root}, {file_ext}, {file_id})")
@@ -46,12 +46,12 @@ for img_file in img_files:
     regions = [Region(ps, b) for (ps, b) in zip(point_sets, boxes)]
     write_image_to_work(args, img_file, "2_0", draw_regions(regions, (H, W)))
 
-    print(f"{timing()} removing overlapping regions")
-    regions = remove_overlapping(regions, max_overlap=0.8)
-    write_image_to_work(args, img_file, "2_1", draw_regions(regions, (H, W)))
-
     print(f"{timing()} filtering regions by aspect ratio")
     regions = list(filter(lambda r: r.box.aspect() >= 0.8, regions))
+    write_image_to_work(args, img_file, "2_1", draw_regions(regions, (H, W)))
+
+    print(f"{timing()} removing overlapping regions")
+    regions = remove_overlapping(regions, max_overlap=0.8)
     write_image_to_work(args, img_file, "2_2", draw_regions(regions, (H, W)))
 
     print(f"{timing()} removing occluded hole regions")
@@ -67,8 +67,11 @@ for img_file in img_files:
     img_chains = draw_regions(regions, (H, W))
     for chain in chains:
         chain_box = covering_box([r.box for r in chain])
-        cv2.rectangle(img_chains, chain_box.tl(), chain_box.br(),
-                      (255,255,255), 1)
+        if len(chain) <= 3:
+            box_color = (255, 255, 255)
+        else:
+            box_color = (100, 100, 100)
+        cv2.rectangle(img_chains, chain_box.tl(), chain_box.br(), box_color, 1)
     write_image_to_work(args, img_file, "3", img_chains)
 
     print(f"{timing()} ")
