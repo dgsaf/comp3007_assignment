@@ -55,6 +55,12 @@ class Box:
     def aspect(self):
         return (self.height / self.width)
 
+    @property
+    def indexes(self):
+        slice_x = slice(self.x, self.x + self.width)
+        slice_y = slice(self.y, self.y + self.height)
+        return (slice_y, slice_x)
+
     def contains(self, point):
         x, y = point[0], point[1]
         return (self.x <= x <= self.x + self.width
@@ -63,11 +69,6 @@ class Box:
     def is_superset_of(self, box):
         return (self.x <= box.x <= self.x + self.width - box.width
                 and self.y <= box.y <= self.y + self.height - box.height)
-
-    def indexes(self):
-        slice_x = slice(self.x, self.x + self.width)
-        slice_y = slice(self.y, self.y + self.height)
-        return (slice_y, slice_x)
 
     def __str__(self):
         properties = \

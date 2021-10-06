@@ -115,8 +115,6 @@ def remove_overlapping(regions, max_overlap=0.8):
                         and rf.overlap(r) >= max_overlap)
                    for rf in regions_filtered]):
             regions_filtered.append(r)
-        # if all([ru.overlap(r) < max_overlap for ru in regions_filtered]):
-        #     regions_filtered.append(r)
     return regions_filtered
 
 
