@@ -37,11 +37,16 @@ class Region:
     @property
     @functools.lru_cache()
     def boundary(self):
+        # self._boundary = set(
+        #     [(self.box.x + p[0], self.box.y + p[1])
+        #      for p in
+        #      (np.concatenate(
+        #          [np.reshape(c, (-1, 2)) for c in (self.contours[0])]))])
+        cs = [np.reshape(c, (-1, 2)) for c in (self.contours[0])]
+        print(cs)
         self._boundary = set(
             [(self.box.x + p[0], self.box.y + p[1])
-             for p in
-             (np.concatenate(
-                 [np.reshape(c, (-1, 2)) for c in self.contours[0]]))])
+             for p in np.concatenate(cs)])
         return self._boundary
 
     @property
