@@ -14,11 +14,10 @@ class Region:
 
         self.cached_boundary = False
         self._boundary = set()
-        # self.boundary = set(
-        #     [(self.box.x + p[0], self.box.y + p[1])
-        #      for p in
-        #      (np.concatenate(
-        #          [np.reshape(c, (-1, 2)) for c in self.contours()[0]]))])
+
+        self.cached_contours = False
+        # self._contours = None
+        # self._hierarchy = None
 
     def area(self):
         return len(self.points)
@@ -34,9 +33,12 @@ class Region:
         return img
 
     def contours(self):
-        _, contours, hierarchy = cv2.findContours(
-            self.image().astype(np.uint8), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-        return (contours, hierarchy)
+        if not self.cached_contours:
+            _, self._contours, self._hierarchy = cv2.findContours(
+                self.image().astype(np.uint8),
+                cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+            self.cached_contours = True
+        return self._contours
 
     def boundary(self):
         if not self.cached_boundary:
@@ -44,12 +46,12 @@ class Region:
                 [(self.box.x + p[0], self.box.y + p[1])
                  for p in
                  (np.concatenate(
-                     [np.reshape(c, (-1, 2)) for c in self.contours()[0]]))])
+                     [np.reshape(c, (-1, 2)) for c in self.contours()))])
             self.cached_boundary = True
         return self._boundary
 
     def holes(self):
-        return (len((self.contours())[0]) - 1)
+        return (len(self.contours()) - 1)
 
     def moments(self):
         return cv2.moments(self.image().astype(np.float32), binaryImage=True)

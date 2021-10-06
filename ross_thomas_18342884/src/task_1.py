@@ -39,30 +39,35 @@ for img_file in img_files:
     mser = cv2.MSER_create()
     mser.setMinArea(45)
     mser.setMaxArea(2000)
-    mser.setDelta(15)
+    mser.setDelta(20)
     point_sets, boxes = mser.detectRegions(img_gray)
 
     print(f"{timing()} constructing regions")
     regions = [Region(ps, b) for (ps, b) in zip(point_sets, boxes)]
     write_image_to_work(args, img_file, "2_0", draw_regions(regions, (H, W)))
+    print(f"{timing()} {len(regions)} regions")
 
     print(f"{timing()} filtering regions by aspect ratio")
     regions = list(filter(lambda r: r.box.aspect() >= 0.8, regions))
     write_image_to_work(args, img_file, "2_1", draw_regions(regions, (H, W)))
+    print(f"{timing()} {len(regions)} regions")
 
     print(f"{timing()} removing overlapping regions")
     regions = remove_overlapping(regions, max_overlap=0.8)
     write_image_to_work(args, img_file, "2_2", draw_regions(regions, (H, W)))
+    print(f"{timing()} {len(regions)} regions")
 
     print(f"{timing()} removing occluded hole regions")
     regions = remove_occluded_holes(regions, max_boundary_distance=10)
     write_image_to_work(args, img_file, "2_3", draw_regions(regions, (H, W)))
+    print(f"{timing()} {len(regions)} regions")
 
-    for i in range(len(regions)):
-        print(str(regions[i]))
+    # for i in range(len(regions)):
+    #     print(str(regions[i]))
 
     print(f"{timing()} calculating chains of similar, adjacent regions")
     chains = find_chains(regions)
+    print(f"{timing()} {len(chains)} chains")
 
     img_chains = draw_regions(regions, (H, W))
     for chain in chains:
