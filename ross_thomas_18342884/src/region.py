@@ -3,7 +3,6 @@
 import numpy as np
 import cv2
 import random
-import functools
 
 from box import *
 
@@ -13,8 +12,10 @@ class Region:
         self._points = set([(p[0], p[1]) for p in points])
         self._box = Box(box)
 
+        self._cached_boundary = False
         self._boundary = None
 
+        self._cached_contours = False
         self._contours = None
         self._hierarchy = None
 
@@ -35,18 +36,13 @@ class Region:
         return (self.area / self.box.area)
 
     @property
-    @functools.lru_cache()
     def boundary(self):
-        # self._boundary = set(
-        #     [(self.box.x + p[0], self.box.y + p[1])
-        #      for p in
-        #      (np.concatenate(
-        #          [np.reshape(c, (-1, 2)) for c in (self.contours[0])]))])
-        cs = [np.reshape(c, (-1, 2)) for c in (self.contours[0])]
-        print(cs)
-        self._boundary = set(
-            [(self.box.x + p[0], self.box.y + p[1])
-             for p in np.concatenate(cs)])
+        if not cached_boundary:
+            cs = [np.reshape(c, (-1, 2)) for c in (self.contours[0])]
+            self._boundary = set(
+                [(self.box.x + p[0], self.box.y + p[1])
+                 for p in np.concatenate(cs)])
+            self._cached_boundary = True
         return self._boundary
 
     @property
@@ -62,11 +58,12 @@ class Region:
         return cv2.HuMoments(self.moments)
 
     @property
-    @functools.lru_cache()
     def contours(self):
-        _, self._contours, self._hierarchy = cv2.findContours(
-            self.image().astype(np.uint8),
-            cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+        if not self._cached_contours:
+            _, self._contours, self._hierarchy = cv2.findContours(
+                self.image().astype(np.uint8),
+                cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+            self._cached_contours = True
         return (self._contours, self._hierarchy)
 
     def image(self):
