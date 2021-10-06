@@ -139,7 +139,7 @@ def draw_regions(regions, size=None):
         for p in r.points:
             x, y = p
             img_regions[y - canvas.y, x - canvas.x] = color
-        for bp in r.boundary():
+        for bp in r.boundary:
             x, y = bp
             img_regions[y - canvas.y, x - canvas.x] = (0, 0, 255)
     img_regions = cv2.cvtColor(img_regions, cv2.COLOR_HSV2BGR)

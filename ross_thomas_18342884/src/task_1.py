@@ -44,31 +44,31 @@ for img_file in img_files:
 
     print(f"{timing()} constructing regions")
     regions = [Region(ps, b) for (ps, b) in zip(point_sets, boxes)]
+    print(f"{timing()} writing regions ({len(regions)})")
     write_image_to_work(args, img_file, "2_0", draw_regions(regions, (H, W)))
-    print(f"{timing()} {len(regions)} regions")
-
-    print(f"{timing()} filtering regions by aspect ratio")
-    regions = list(filter(lambda r: r.box.aspect() >= 0.8, regions))
-    write_image_to_work(args, img_file, "2_1", draw_regions(regions, (H, W)))
-    print(f"{timing()} {len(regions)} regions")
 
     print(f"{timing()} removing overlapping regions")
     regions = remove_overlapping(regions, max_overlap=0.8)
+    print(f"{timing()} writing regions ({len(regions)})")
+    write_image_to_work(args, img_file, "2_1", draw_regions(regions, (H, W)))
+
+    print(f"{timing()} filtering regions by aspect ratio")
+    regions = list(filter(lambda r: r.box.aspect >= 0.8, regions))
+    print(f"{timing()} writing regions ({len(regions)})")
     write_image_to_work(args, img_file, "2_2", draw_regions(regions, (H, W)))
-    print(f"{timing()} {len(regions)} regions")
 
     print(f"{timing()} removing occluded hole regions")
     regions = remove_occluded_holes(regions, max_boundary_distance=10)
+    print(f"{timing()} writing regions ({len(regions)})")
     write_image_to_work(args, img_file, "2_3", draw_regions(regions, (H, W)))
-    print(f"{timing()} {len(regions)} regions")
 
     # for i in range(len(regions)):
     #     print(str(regions[i]))
 
     print(f"{timing()} calculating chains of similar, adjacent regions")
     chains = find_chains(regions)
-    print(f"{timing()} {len(chains)} chains")
 
+    print(f"{timing()} writing chains ({len(chains)}) of regions ({len(regions)})")
     img_chains = draw_regions(regions, (H, W))
     for chain in chains:
         chain_box = covering_box([r.box for r in chain])
