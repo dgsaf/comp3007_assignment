@@ -15,10 +15,10 @@ def linked(region_1, region_2):
     return ((not region_1.box.is_superset_of(region_2.box))
             and diff_y <= 0.5*region_1.box.height
             and diff_y <= 0.5*region_2.box.height
-            and diff_height <= 0.1*region_1.box.height
-            and diff_height <= 0.1*region_2.box.height
-            and diff_x <= 1.2*region_1.box.height
-            and diff_x <= 1.2*region_2.box.height)
+            and diff_height <= 0.2*region_1.box.height
+            and diff_height <= 0.2*region_2.box.height
+            and diff_x <= 1.0*region_1.box.height
+            and diff_x <= 1.0*region_2.box.height)
 
 
 def find_chains(regions):

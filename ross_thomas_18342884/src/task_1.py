@@ -28,12 +28,12 @@ for img_file in img_files:
         continue
     H, W = img.shape[:2]
 
-    write_image_to_work(args, img_file, "0", img)
+    # write_image_to_work(args, img_file, "0", img)
 
     # development below
     print(f"{timing()} converting to grayscale")
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    write_image_to_work(args, img_file, "1", img_gray)
+    # write_image_to_work(args, img_file, "1", img_gray)
 
     print(f"{timing()} calculating MSER")
     mser = cv2.MSER_create()
@@ -45,22 +45,22 @@ for img_file in img_files:
     print(f"{timing()} constructing regions")
     regions = [Region(ps, b) for (ps, b) in zip(point_sets, boxes)]
     print(f"{timing()} writing regions ({len(regions)})")
-    write_image_to_work(args, img_file, "2_0", draw_regions(regions, (H, W)))
+    # write_image_to_work(args, img_file, "2_0", draw_regions(regions, (H, W)))
 
     print(f"{timing()} removing overlapping regions")
     regions = remove_overlapping(regions, max_overlap=0.8)
     print(f"{timing()} writing regions ({len(regions)})")
-    write_image_to_work(args, img_file, "2_1", draw_regions(regions, (H, W)))
+    # write_image_to_work(args, img_file, "2_1", draw_regions(regions, (H, W)))
 
     print(f"{timing()} filtering regions by aspect ratio")
     regions = list(filter(lambda r: r.box.aspect >= 0.8, regions))
     print(f"{timing()} writing regions ({len(regions)})")
-    write_image_to_work(args, img_file, "2_2", draw_regions(regions, (H, W)))
+    # write_image_to_work(args, img_file, "2_2", draw_regions(regions, (H, W)))
 
     print(f"{timing()} removing occluded hole regions")
     regions = remove_occluded_holes(regions, max_boundary_distance=10)
     print(f"{timing()} writing regions ({len(regions)})")
-    write_image_to_work(args, img_file, "2_3", draw_regions(regions, (H, W)))
+    # write_image_to_work(args, img_file, "2_3", draw_regions(regions, (H, W)))
 
     # for i in range(len(regions)):
     #     print(str(regions[i]))
@@ -78,5 +78,9 @@ for img_file in img_files:
             box_color = (100, 100, 100)
         cv2.rectangle(img_chains, chain_box.tl, chain_box.br, box_color, 1)
     write_image_to_work(args, img_file, "3", img_chains)
+
+    for i, chain in enumerate(chains):
+        img_chain = draw_regions(chain)
+        write_image_to_work(args, img_file, f"3_{i}", img_chain)
 
     print(f"{timing()} ")
