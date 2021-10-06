@@ -98,3 +98,18 @@ def covering_box(boxes):
     y_min = np.amin([b.y for b in boxes])
     y_max = np.amax([b.y + b.height for b in boxes])
     return Box((x_min, y_min, x_max - x_min, y_max - y_min))
+
+
+def merge_overlapping(boxes, max_overlap=0.05):
+    boxes_ordered = sorted(boxes, key=lambda b: box.area, reverse=True)
+
+    boxes_merged = []
+    idxs = set(range(len(boxes)))
+    for i in idxs:
+        bi = boxes_ordered[i]
+        idxs_overlapping = {j for j, bj in enumerate(boxes_ordered, start=i+1)
+                       if bi.overlap(bj) >= max_overlap}
+        boxes_merged.append(
+            covering_box([bi] + [boxes_ordered[j] for j in idxs_overlapping]))
+        idxs -= idxs_overlapping
+    return boxes_merged

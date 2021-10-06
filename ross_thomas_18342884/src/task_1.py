@@ -91,10 +91,7 @@ for img_file in img_files:
     roi_boxes = [covering_box([r.box for r in c])
                  for c in chains if len(c) <= 3]
 
-    roi_boxes = list(filter(
-        lambda b: np.any(
-            [bj.overlap(bi) >= 0.5 for bj in roi_boxes]),
-        roi_boxes))
+    roi_boxes = merge_overlapping(roi_boxes, max_overlap=0.01)
 
     for i, roi_box in enumerate(roi_boxes):
         img_roi = img[roi_box.indexes]
