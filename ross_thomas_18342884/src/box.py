@@ -6,29 +6,52 @@ import cv2
 
 class Box:
     def __init__(self, box):
-        self.x = box[0]
-        self.y = box[1]
-        self.width = box[2]
-        self.height = box[3]
+        self._x = box[0]
+        self._y = box[1]
+        self._width = box[2]
+        self._height = box[3]
 
+    @property
+    def x(self):
+        return self._x
+
+    @property
+    def y(self):
+        return self._y
+
+    @property
+    def width(self):
+        return self._width
+
+    @property
+    def height(self):
+        return self._height
+
+    @property
     def tl(self):
         return (self.x, self.y)
 
+    @property
     def br(self):
         return (self.x + self.width, self.y + self.height)
 
+    @property
     def tr(self):
         return (self.x + self.width, self.y)
 
+    @property
     def bl(self):
         return (self.x, self.y + self.height)
 
+    @property
     def center(self):
         return (self.x + int(self.width / 2), self.y + int(self.height / 2))
 
+    @property
     def area(self):
         return (self.width * self.height)
 
+    @property
     def aspect(self):
         return (self.height / self.width)
 

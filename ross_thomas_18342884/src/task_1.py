@@ -76,7 +76,7 @@ for img_file in img_files:
             box_color = (255, 255, 255)
         else:
             box_color = (100, 100, 100)
-        cv2.rectangle(img_chains, chain_box.tl(), chain_box.br(), box_color, 1)
+        cv2.rectangle(img_chains, chain_box.tl, chain_box.br, box_color, 1)
     write_image_to_work(args, img_file, "3", img_chains)
 
     print(f"{timing()} ")
