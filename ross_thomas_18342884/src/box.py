@@ -74,7 +74,6 @@ class Box:
         a_y = max([self.y, box.y])
         b_y = min([self.y + self.height, box.y + box.height])
         h = b_y - a_y if b_y > a_y else 0
-
         return ((w * h) / box.area)
 
     def is_superset_of(self, box):
@@ -101,15 +100,20 @@ def covering_box(boxes):
 
 
 def merge_overlapping(boxes, max_overlap=0.05):
-    boxes_ordered = sorted(boxes, key=lambda b: box.area, reverse=True)
+    def overlaps(bi, bj):
+        return (bi.overlap(bj) >= max_overlap
+                or bj.overlap(bi) >= max_overlap)
+
+    def merge_into(boxes, box):
+        overlapping = [b for b in boxes if overlaps(box, b)]
+        if (len(overlapping) == 0):
+            return (boxes + [box])
+        else:
+            preserved = [b for b in boxes if not overlaps(box, b)]
+            merged = covering_box(overlapping + [box])
+            return (merge_into(preserved, merged))
 
     boxes_merged = []
-    idxs = set(range(len(boxes)))
-    for i in idxs:
-        bi = boxes_ordered[i]
-        idxs_overlapping = {j for j, bj in enumerate(boxes_ordered, start=i+1)
-                       if bi.overlap(bj) >= max_overlap}
-        boxes_merged.append(
-            covering_box([bi] + [boxes_ordered[j] for j in idxs_overlapping]))
-        idxs -= idxs_overlapping
+    for b in boxes:
+        boxes_merged = merge_into(boxes_merged, b)
     return boxes_merged

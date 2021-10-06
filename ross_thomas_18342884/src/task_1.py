@@ -88,13 +88,18 @@ for img_file in img_files:
             print(f"{i}-{j}: {str(region)}")
 
     print(f"{timing()} writing regions of interest")
-    roi_boxes = [covering_box([r.box for r in c])
-                 for c in chains if len(c) <= 3]
+    rois = [covering_box([r.box for r in c])
+            for c in chains if len(c) <= 3]
 
-    roi_boxes = merge_overlapping(roi_boxes, max_overlap=0.01)
+    rois = merge_overlapping(rois, max_overlap=0.01)
 
-    for i, roi_box in enumerate(roi_boxes):
-        img_roi = img[roi_box.indexes]
+    img_rois = img_chains.copy()
+    for roi in rois:
+        cv2.rectangle(img_rois, roi.tl, roi.br, (255, 255, 255), 2)
+    write_image_to_work(args, img_file, f"4", img_rois)
+
+    for i, roi in enumerate(rois):
+        img_roi = img[roi.indexes]
         write_image_to_work(args, img_file, f"4_{i}", img_roi)
 
     print(f"{timing()} ")
