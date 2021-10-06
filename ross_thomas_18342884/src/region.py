@@ -37,7 +37,7 @@ class Region:
 
     @property
     def boundary(self):
-        if not cached_boundary:
+        if not self._cached_boundary:
             cs = [np.reshape(c, (-1, 2)) for c in (self.contours[0])]
             self._boundary = set(
                 [(self.box.x + p[0], self.box.y + p[1])
