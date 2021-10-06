@@ -111,8 +111,12 @@ def remove_overlapping(regions, max_overlap=0.8):
     regions_ordered = sorted(regions, key=lambda r: r.area, reverse=True)
     regions_filtered = []
     for r in regions_ordered:
-        if all([ru.overlap(r) < max_overlap for ru in regions_filtered]):
+        if np.all([not (rf.box.is_superset_of(r.box)
+                        and rf.overlap(r) >= max_overlap)
+                   for rf in regions_filtered]):
             regions_filtered.append(r)
+        # if all([ru.overlap(r) < max_overlap for ru in regions_filtered]):
+        #     regions_filtered.append(r)
     return regions_filtered
 
 
