@@ -35,6 +35,15 @@ for img_file in img_files:
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # write_image_to_work(args, img_file, "1", img_gray)
 
+    # # TASK 2: use morphology to improve MSER near edge of sign
+    # print(f"{timing()} morphology")
+    # img_bg = cv2.morphology(
+    #     img_gray, cv2.MORPH_OPEN,
+    #     cv2.getStructuringElement(cv2.MORPH_CROSS, (3, 31)), iterations=1)
+    # write_image_to_work(args, img_file, "1_1", img_bg)
+    # img_gray = cv2.addWeighted(img_gray, 1, img_bg, -1, 0)
+    # write_image_to_work(args, img_file, "1_2", img_gray)
+
     print(f"{timing()} calculating MSER")
     mser = cv2.MSER_create()
     mser.setMinArea(45)
