@@ -12,11 +12,13 @@ class Region:
         self.points = set([(p[0], p[1]) for p in points])
         self.box = Box(box)
 
-        self.boundary = set(
-            [(self.box.x + p[0], self.box.y + p[1])
-             for p in
-             (np.concatenate(
-                 [np.reshape(c, (-1, 2)) for c in self.contours()[0]]))])
+        self.cached_boundary = False
+        self._boundary = set()
+        # self.boundary = set(
+        #     [(self.box.x + p[0], self.box.y + p[1])
+        #      for p in
+        #      (np.concatenate(
+        #          [np.reshape(c, (-1, 2)) for c in self.contours()[0]]))])
 
     def area(self):
         return len(self.points)
@@ -35,6 +37,15 @@ class Region:
         _, contours, hierarchy = cv2.findContours(
             self.image().astype(np.uint8), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
         return (contours, hierarchy)
+
+    def boundary(self):
+        if not self.cached_boundary:
+            self._boundary = set(
+                [(self.box.x + p[0], self.box.y + p[1])
+                 for p in
+                 (np.concatenate(
+                     [np.reshape(c, (-1, 2)) for c in self.contours()[0]]))])
+        return self._boundary
 
     def holes(self):
         return (len((self.contours())[0]) - 1)
@@ -57,7 +68,7 @@ class Region:
             diff = lambda p1, p2: (p1[0] - p2[0], p1[1] - p2[1])
 
             min_distance = np.amin(
-                [norm(diff(bp, point)) for bp in self.boundary])
+                [norm(diff(bp, point)) for bp in self.boundary()])
         return min_distance
 
     def overlap(self, region):
@@ -97,7 +108,7 @@ def remove_occluded_holes(regions, max_boundary_distance=10):
     regions_filtered = []
     for r in regions_ordered:
         occludes = lambda rf: np.all(
-            [rf.distance(bp) <= max_boundary_distance for bp in r.boundary])
+            [rf.distance(bp) <= max_boundary_distance for bp in r.boundary()])
         if np.all([not (rf.box.is_superset_of(r.box) and occludes(rf))
                    for rf in regions_filtered]):
             regions_filtered.append(r)
@@ -117,7 +128,7 @@ def draw_regions(regions, size=None):
         for p in r.points:
             x, y = p
             img_regions[y - canvas.y, x - canvas.x] = color
-        for bp in r.boundary:
+        for bp in r.boundary():
             x, y = bp
             img_regions[y - canvas.y, x - canvas.x] = (0, 0, 255)
     img_regions = cv2.cvtColor(img_regions, cv2.COLOR_HSV2BGR)
