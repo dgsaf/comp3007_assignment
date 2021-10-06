@@ -85,7 +85,7 @@ for img_file in img_files:
 
     print(f"{timing()} writing regions of interest")
     roi_boxes = [covering_box([r.box for r in c])
-                 for c in chains if len(c) <= 3])
+                 for c in chains if len(c) <= 3]
 
     for i, roi_box in enumerate(roi_boxes):
         img_roi = img[roi_box.indexes]
