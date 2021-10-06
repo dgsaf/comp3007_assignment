@@ -84,8 +84,9 @@ for img_file in img_files:
         write_image_to_work(args, img_file, f"3_{i}", img_chain)
 
     print(f"{timing()} writing regions of interest")
-    roi_boxes = np.unique([covering_box([r.box for r in c])
-                           for c in chains if len(c) <= 3])
+    roi_boxes = [covering_box([r.box for r in c])
+                 for c in chains if len(c) <= 3])
+
     for i, roi_box in enumerate(roi_boxes):
         img_roi = img[roi_box.indexes]
         write_image_to_work(args, img_file, f"4_{i}", img_roi)

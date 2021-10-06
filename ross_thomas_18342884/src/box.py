@@ -66,6 +66,17 @@ class Box:
         return (self.x <= x <= self.x + self.width
                 and self.y <= y <= self.y + self.height)
 
+    def overlap(self, box):
+        a_x = max([self.x, box.x])
+        b_x = min([self.x + self.width, box.x + box.width])
+        w = b_x - a_x if b_x > a_x else 0
+
+        a_y = max([self.y, box.y])
+        b_y = min([self.y + self.height, box.y + box.height])
+        h = b_y - a_y if b_y > a_y else 0
+
+        return ((w * h) / box.area)
+
     def is_superset_of(self, box):
         return (self.x <= box.x <= self.x + self.width - box.width
                 and self.y <= box.y <= self.y + self.height - box.height)
