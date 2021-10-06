@@ -53,7 +53,8 @@ for img_file in img_files:
     # write_image_to_work(args, img_file, "2_1", draw_regions(regions, (H, W)))
 
     print(f"{timing()} filtering regions by aspect ratio")
-    regions = list(filter(lambda r: r.box.aspect >= 0.8, regions))
+    # 0.8 for directions, 1.2 for digits
+    regions = list(filter(lambda r: 1.2 <= r.box.aspect <= 3.0, regions))
     print(f"{timing()} writing regions ({len(regions)})")
     # write_image_to_work(args, img_file, "2_2", draw_regions(regions, (H, W)))
 
@@ -83,9 +84,17 @@ for img_file in img_files:
         img_chain = draw_regions(chain)
         write_image_to_work(args, img_file, f"3_{i}", img_chain)
 
+        for j, region in enumerate(chain):
+            print(f"{i}-{j}: {str(region)}")
+
     print(f"{timing()} writing regions of interest")
     roi_boxes = [covering_box([r.box for r in c])
                  for c in chains if len(c) <= 3]
+
+    roi_boxes = list(filter(
+        lambda b: np.any(
+            [bj.overlap(bi) >= 0.5 for bj in roi_boxes]),
+        roi_boxes))
 
     for i, roi_box in enumerate(roi_boxes):
         img_roi = img[roi_box.indexes]

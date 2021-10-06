@@ -58,6 +58,11 @@ class Region:
         return cv2.HuMoments(self.moments)
 
     @property
+    def hu_moments_regular(self):
+        return np.array([- np.sign(h) * np.log(np.abs(h))
+                         for h in self.hu_moments])
+
+    @property
     def contours(self):
         if not self._cached_contours:
             _, self._contours, self._hierarchy = cv2.findContours(
@@ -103,7 +108,8 @@ class Region:
             + f"area = {self.area}\n"\
             + f"fill = {self.fill}\n"\
             + f"holes = {self.holes}\n"\
-            + f"hu moments = \n{self.hu_moments}\n"
+            + f"hu moments = \n{self.hu_moments}\n"\
+            + f"hu moments (reg) = \n{self.hu_moments_regular}\n"
         return properties
 
 

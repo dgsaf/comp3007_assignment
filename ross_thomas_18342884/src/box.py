@@ -84,8 +84,11 @@ class Box:
     def __str__(self):
         properties = \
             f"Box:\n"\
-            + f"x in [{self.x}, {self.x + self.width}]\n"\
-            + f"y in [{self.y}, {self.y + self.height}]\n"
+            + f"tl = ({self.x}, {self.y})\n"\
+            + f"width = {self.width}\n"\
+            + f"height = {self.height}\n"\
+            + f"area = {self.area}\n"\
+            + f"aspect = {self.aspect}\n"
         return properties
 
 
