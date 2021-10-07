@@ -72,8 +72,10 @@ for img_file in img_files:
     print(f"{timing()} writing regions ({len(regions)})")
     # write_image_to_work(args, img_file, "2_3", draw_regions(regions, (H, W)))
 
-    # for i in range(len(regions)):
-    #     print(str(regions[i]))
+    print(f"{timing()} removing highly filled regions")
+    regions = list(filter(lambda r: r.fill <= 0.85, regions))
+    print(f"{timing()} writing regions ({len(regions)})")
+    # write_image_to_work(args, img_file, "2_4", draw_regions(regions, (H, W)))
 
     print(f"{timing()} calculating chains of similar, adjacent regions")
     chains = find_chains(regions)
