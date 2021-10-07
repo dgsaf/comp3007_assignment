@@ -91,6 +91,7 @@ for img_file in img_files:
         cv2.rectangle(img_chains, chain_box.tl, chain_box.br, box_color, 1)
     write_image_to_work(args, img_file, "3", img_chains)
 
+    print(f"Chains >>>")
     for i, chain in enumerate(chains):
         img_chain = draw_regions(chain)
         write_image_to_work(args, img_file, f"3_{i}", img_chain)
@@ -98,14 +99,14 @@ for img_file in img_files:
         def summary(arr):
             return f"({np.amin(arr):.1f} | {np.average(arr):.1f} | {np.amax(arr):.1f})"
 
-        print(f"chain {i} averages:")
+        print(f"Chain {i}:")
         print(f"height = {summary([r.box.height for r in chain])}")
         print(f"width = {summary([r.box.width for r in chain])}")
         print(f"aspect = {summary([r.box.aspect for r in chain])}")
         print(f"fill = {summary([r.fill for r in chain])}")
-
+        print(f"")
         for j, region in enumerate(chain):
-            print(f"{i}-{j}: {str(region)}")
+            print(f"{i}-{j}: \n{str(region)}")
 
     print(f"{timing()} writing regions of interest")
     rois = [covering_box([r.box for r in c]) for c in chains]
