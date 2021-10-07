@@ -132,7 +132,8 @@ for img_file in img_files:
     print(f"{timing()} selecting most monochromatic chain (by otsu separation)")
     chain_best = sorted(
         chains,
-        key=(lambda c: otsu_separation_color(covering_box([r.box for r in c]))),
+        key=(lambda c: \
+             otsu_separation_color(img, covering_box([r.box for r in c]))),
         reverse=True)[0]
 
     img_best = img[covering_box([r.box for r in chain_best]).indexes]
