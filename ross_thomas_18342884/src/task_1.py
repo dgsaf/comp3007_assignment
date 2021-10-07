@@ -129,4 +129,13 @@ for img_file in img_files:
     #     img_roi = img[roi.indexes]
     #     write_image_to_work(args, img_file, f"4_{i}", img_roi)
 
+    print(f"{timing()} selecting most monochromatic chain (by otsu separation)")
+    chain_best = sorted(
+        chains,
+        key=(lambda c: otsu_separation_color(covering_box([r.box for r in c]))),
+        reverse=True)[0]
+
+    img_best = img[covering_box([r.box for r in chain_best]).indexes]
+    write_image_to_work(args, img_file, f"5", img_best)
+
     print(f"{timing()} ")

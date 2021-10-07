@@ -142,3 +142,13 @@ def otsu_separation(img_gray, box):
     mean_w = np.average(img_box[idxs_w])
     mean_b = np.average(img_box[idxs_b])
     return (mean_w - mean_b)
+
+
+def otsu_separation_color(img, box):
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    min_otsu_sep = np.amin(
+        [otsu_separation(img_gray, box),
+         otsu_separation(img[:, :, 0], box),
+         otsu_separation(img[:, :, 1], box),
+         otsu_separation(img[:, :, 2], box)])
+    return min_otsu_sep
