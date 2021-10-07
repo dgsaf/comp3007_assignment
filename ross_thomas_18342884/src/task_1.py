@@ -95,11 +95,14 @@ for img_file in img_files:
         img_chain = draw_regions(chain)
         write_image_to_work(args, img_file, f"3_{i}", img_chain)
 
+        def summary(arr):
+            return f"({np.amin(arr):.1f} | {np.average(arr):.1f} | {np.amax(arr):.1f})"
+
         print(f"chain {i} averages:")
-        print(f"height = {np.average([r.box.height for r in chain])}")
-        print(f"width = {np.average([r.box.width for r in chain])}")
-        print(f"aspect = {np.average([r.box.aspect for r in chain])}")
-        print(f"fill = {np.average([r.fill for r in chain])}")
+        print(f"height = {summary([r.box.height for r in chain])}")
+        print(f"width = {summary([r.box.width for r in chain])}")
+        print(f"aspect = {summary([r.box.aspect for r in chain])}")
+        print(f"fill = {summary([r.fill for r in chain])}")
 
         for j, region in enumerate(chain):
             print(f"{i}-{j}: {str(region)}")
