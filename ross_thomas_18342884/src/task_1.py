@@ -106,7 +106,11 @@ for img_file in img_files:
         print(f"width = {summary([r.box.width for r in chain])}")
         print(f"aspect = {summary([r.box.aspect for r in chain])}")
         print(f"fill = {summary([r.fill for r in chain])}")
-        print(f"otsu sep = {otsu_separation(img, covering_box([r.box for r in chain]))}")
+        print(f"otsu sep:")
+        print(f"  I = {otsu_separation(img_gray, covering_box([r.box for r in chain])):.2f}")
+        print(f"  B = {otsu_separation(img[:,:,0], covering_box([r.box for r in chain])):.2f}")
+        print(f"  G = {otsu_separation(img[:,:,1], covering_box([r.box for r in chain])):.2f}")
+        print(f"  R = {otsu_separation(img[:,:,2], covering_box([r.box for r in chain])):.2f}")
         print(f"")
         for j, region in enumerate(chain):
             print(f"{i}-{j}: \n{str(region)}")
