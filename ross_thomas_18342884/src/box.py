@@ -92,11 +92,24 @@ class Box:
 
 
 def covering_box(boxes):
+    """
+    Construct the smallest box which covers a collection of boxes.
+
+    Parameters
+    ----------
+    boxes : iterable collection of Box
+
+    Returns
+    -------
+    cover : Box
+
+    """
     x_min = np.amin([b.x for b in boxes])
     x_max = np.amax([b.x + b.width for b in boxes])
     y_min = np.amin([b.y for b in boxes])
     y_max = np.amax([b.y + b.height for b in boxes])
-    return Box((x_min, y_min, x_max - x_min, y_max - y_min))
+    cover = Box((x_min, y_min, x_max - x_min, y_max - y_min))
+    return cover
 
 
 def merge_overlapping(boxes, max_overlap=0.05):
