@@ -33,8 +33,8 @@ def find_chains(regions, best_edge=True):
         links = {j for j in range(i+1, n) if linked(ri, regions_ordered[j])}
         if best_edge:
             links_sorted = sorted(
-                links, key=(lambda j: \
-                            ri.set_distance_min(regions_ordered[j].boundary))))
+                links,
+                key=(lambda j: ri.distance(regions_ordered[j].box.center)))
             links = set(links_sorted[:1])
 
         edges[i] = links
