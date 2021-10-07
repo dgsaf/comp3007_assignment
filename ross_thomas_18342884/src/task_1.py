@@ -93,8 +93,10 @@ for img_file in img_files:
         img_chain = draw_regions(chain)
         write_image_to_work(args, img_file, f"3_{i}", img_chain)
 
+        print(f"chain {i}: ")
         for j, region in enumerate(chain):
             print(f"{i}-{j}: {str(region)}")
+            print(f"otsu sep = {otsu_separation(img_gray, region.box)}")
 
     print(f"{timing()} writing regions of interest")
     rois = [covering_box([r.box for r in c])
@@ -103,8 +105,11 @@ for img_file in img_files:
     rois = merge_overlapping(rois, max_overlap=0.01)
 
     img_rois = img_chains.copy()
-    for roi in rois:
+    for i, roi in enumerate(rois):
         cv2.rectangle(img_rois, roi.tl, roi.br, (255, 255, 255), 2)
+        cv2.putText(
+            img_rois, f"{i}", roi.tl,
+            cv2.FONT_HERSHEY_PLAIN, 1.0, (255, 255, 255))
     write_image_to_work(args, img_file, f"4", img_rois)
 
     for i, roi in enumerate(rois):
