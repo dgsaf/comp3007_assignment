@@ -21,15 +21,23 @@ def linked(region_1, region_2):
             and diff_x <= 1.0*region_2.box.height)
 
 
-def find_chains(regions):
+def find_chains(regions, best_edge=True):
     regions_ordered = sorted(regions, key=lambda r: r.box.x)
     n = len(regions_ordered)
 
     edges = dict()
     roots = set(range(0, n))
     for i in range(n):
-        edges[i] = {j for j in range(i+1, n)
-                    if linked(regions_ordered[i], regions_ordered[j])}
+        ri = regions_ordered[i]
+
+        links = {j for j in range(i+1, n) if linked(ri, regions_ordered[j])}
+        if best_edge:
+            links_sorted = sorted(
+                links, key=(lambda j: \
+                            ri.set_distance_min(regions_ordered[j].boundary))))
+            links = set(links_sorted[:1])
+
+        edges[i] = links
         roots -= edges[i]
         if not edges[i]:
             roots -= {i}

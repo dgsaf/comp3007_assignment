@@ -89,6 +89,12 @@ class Region:
                 [norm(diff(bp, point)) for bp in self.boundary])
         return min_distance
 
+    def set_distance_min(self, points):
+        return np.amin([self.distance(p) for p in points])
+
+    def set_distance_max(self, points):
+        return np.amax([self.distance(p) for p in points])
+
     def overlap(self, region):
         return len(self.points.intersection(region.points)) / len(region.points)
 
