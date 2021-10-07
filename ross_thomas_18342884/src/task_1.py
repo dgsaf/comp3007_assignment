@@ -112,8 +112,8 @@ for img_file in img_files:
         print(f"  G = {otsu_separation(img[:,:,1], covering_box([r.box for r in chain])):.2f}")
         print(f"  R = {otsu_separation(img[:,:,2], covering_box([r.box for r in chain])):.2f}")
         print(f"")
-        for j, region in enumerate(chain):
-            print(f"{i}-{j}: \n{str(region)}")
+        # for j, region in enumerate(chain):
+        #     print(f"{i}-{j}: \n{str(region)}")
 
     print(f"{timing()} writing regions of interest")
     rois = [covering_box([r.box for r in c]) for c in chains]
