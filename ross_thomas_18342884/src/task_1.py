@@ -95,8 +95,8 @@ for img_file in img_files:
 
     print(f"Chains >>>")
     for i, chain in enumerate(chains):
-        img_chain = draw_regions(chain)
-        write_image_to_work(args, img_file, f"3_{i}", img_chain)
+        # img_chain = draw_regions(chain)
+        # write_image_to_work(args, img_file, f"3_{i}", img_chain)
 
         def summary(arr):
             return f"({np.amin(arr):.1f} | {np.average(arr):.1f} | {np.amax(arr):.1f})"
@@ -106,6 +106,7 @@ for img_file in img_files:
         print(f"width = {summary([r.box.width for r in chain])}")
         print(f"aspect = {summary([r.box.aspect for r in chain])}")
         print(f"fill = {summary([r.fill for r in chain])}")
+        print(f"otsu sep = {otsu_separation(img, covering_box([r.box for r in chain]))}")
         print(f"")
         for j, region in enumerate(chain):
             print(f"{i}-{j}: \n{str(region)}")
@@ -120,8 +121,8 @@ for img_file in img_files:
         cv2.rectangle(img_rois, roi.tl, roi.br, (255, 255, 255), 1)
     write_image_to_work(args, img_file, f"4", img_rois)
 
-    for i, roi in enumerate(rois):
-        img_roi = img[roi.indexes]
-        write_image_to_work(args, img_file, f"4_{i}", img_roi)
+    # for i, roi in enumerate(rois):
+    #     img_roi = img[roi.indexes]
+    #     write_image_to_work(args, img_file, f"4_{i}", img_roi)
 
     print(f"{timing()} ")
