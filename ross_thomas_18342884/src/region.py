@@ -113,9 +113,9 @@ class Region:
             + f"{str(self.box)}"\
             + f"area = {self.area}\n"\
             + f"fill = {self.fill}\n"\
-            + f"holes = {self.holes}\n"\
-            + f"hu moments = \n{self.hu_moments}\n"\
-            + f"hu moments (reg) = \n{self.hu_moments_regular}\n"
+            + f"holes = {self.holes}\n"
+            # + f"hu moments = \n{self.hu_moments}\n"\
+            # + f"hu moments (reg) = \n{self.hu_moments_regular}\n"
         return properties
 
 
