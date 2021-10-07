@@ -8,17 +8,34 @@ from region import *
 
 
 def linked(region_1, region_2):
+    # these are ratios w.r.t. box heights
+    max_ratio_diff_y = 0.5
+    max_ratio_diff_height = 0.2
+    max_ratio_diff_x = 1.0
+    max_overlap = 0.5
+
     diff_x = np.abs(region_2.box.x - region_1.box.x)
     diff_y = np.abs(region_2.box.y - region_1.box.y)
     diff_height = np.abs(region_2.box.height - region_1.box.height)
 
-    return ((not region_1.box.is_superset_of(region_2.box))
-            and diff_y <= 0.5*region_1.box.height
-            and diff_y <= 0.5*region_2.box.height
-            and diff_height <= 0.2*region_1.box.height
-            and diff_height <= 0.2*region_2.box.height
-            and diff_x <= 1.0*region_1.box.height
-            and diff_x <= 1.0*region_2.box.height)
+    linked_x = (
+        diff_x <= max_ratio_diff_x*region_1.box.height
+        and diff_x <= max_ratio_diff_x*region_2.box.height)
+
+    linked_y = (
+        diff_y <= max_ratio_diff_y*region_1.box.height
+        and diff_y <= max_ratio_diff_y*region_2.box.height)
+
+    linked_height = (
+        diff_height <= max_ratio_diff_height*region_1.box.height
+        and diff_height <= max_ratio_diff_height*region_2.box.height)
+
+    non_occluding = (
+        (not region_1.box.is_superset_of(region_2.box))
+        and region_1.box.overlap(region_2.box) <= max_overlap
+        and region_2.box.overlap(region_1.box) <= max_overlap)
+
+    return (non_occluding and linked_x and linked_y and linked_height)
 
 
 def find_chains(regions, best_edge=True):
