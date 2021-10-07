@@ -80,8 +80,6 @@ for img_file in img_files:
     print(f"{timing()} calculating chains of similar, adjacent regions")
     chains = find_chains(regions)
 
-    chains = list(filter(lambda c: len(c) <= 3, chains))
-
     print(f"{timing()} writing chains ({len(chains)}) of regions ({len(regions)})")
     img_chains = draw_regions(regions, (H, W))
     for chain in chains:
@@ -93,7 +91,9 @@ for img_file in img_files:
         cv2.rectangle(img_chains, chain_box.tl, chain_box.br, box_color, 1)
     write_image_to_work(args, img_file, "3", img_chains)
 
-    print(f"Chains >>>")
+    chains = list(filter(lambda c: len(c) <= 3, chains))
+
+    print(f"{timing()} analysing chains")
     for i, chain in enumerate(chains):
         # img_chain = draw_regions(chain)
         # write_image_to_work(args, img_file, f"3_{i}", img_chain)
