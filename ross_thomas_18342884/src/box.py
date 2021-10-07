@@ -117,3 +117,15 @@ def merge_overlapping(boxes, max_overlap=0.05):
     for b in boxes:
         boxes_merged = merge_into(boxes_merged, b)
     return boxes_merged
+
+
+def otsu_separation(img_gray, box):
+    img_box = (img_gray[box.indexes]).astype(np.uint8)
+    t, img_bin = cv2.threshold(img_box, 128, 255, cv2.THRESH_OTSU)
+
+    idxs_w = img_box > t
+    idxs_b = img_box <= t
+
+    mean_w = np.average(img_box[idxs_w])
+    mean_b = np.average(img_box[idxs_b])
+    return (mean_w - mean_b)
