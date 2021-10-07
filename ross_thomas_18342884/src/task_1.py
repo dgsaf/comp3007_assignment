@@ -78,6 +78,8 @@ for img_file in img_files:
     print(f"{timing()} calculating chains of similar, adjacent regions")
     chains = find_chains(regions)
 
+    chains = list(filter(lambda c: len(c) <= 3, chains))
+
     print(f"{timing()} writing chains ({len(chains)}) of regions ({len(regions)})")
     img_chains = draw_regions(regions, (H, W))
     for chain in chains:
@@ -98,8 +100,7 @@ for img_file in img_files:
             print(f"{i}-{j}: {str(region)}")
 
     print(f"{timing()} writing regions of interest")
-    rois = [covering_box([r.box for r in c])
-            for c in chains if len(c) <= 3]
+    rois = [covering_box([r.box for r in c]) for c in chains]
 
     rois = merge_overlapping(rois, max_overlap=0.01)
 
