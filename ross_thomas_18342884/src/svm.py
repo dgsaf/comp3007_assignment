@@ -4,6 +4,7 @@ import os
 import numpy as np
 import cv2
 
+from region import *
 
 class SVM_OVO:
     def __init__(self, samples_labelled):
@@ -88,13 +89,13 @@ def build_svm_digits(dir_digits):
         9: "Nine"}
 
     imgs = dict()
-    for d, name in enumerate(digits):
+    for d in iter(digits):
         for k in range(5):
-            digit_file = os.path.join(dir_digits, f"{name}{k+1}.jpg")
+            digit_file = os.path.join(dir_digits, f"{digits[d]}{k+1}.jpg")
             imgs[(d, k)] = cv2.imread(digit_file, cv2.IMREAD_COLOR)
 
     samples = dict()
-    for d, _ in enumerate(digits):
+    for d in iter(digits):
         samples[d] = np.zeros((5, 7), dtype=np.float32)
         for k in range(5):
             img_gray = cv2.cvtColor(imgs[(d, k)], cv2.COLOR_BGR2GRAY)
@@ -116,13 +117,13 @@ def build_svm_arrows(dir_arrows):
         "R": "RightArrow"}
 
     imgs = dict()
-    for a, name in enumerate(arrows):
+    for a in iter(arrows):
         for k in range(5):
-            arrow_file = os.path.join(dir_arrows, f"{name}{k+1}.jpg")
+            arrow_file = os.path.join(dir_arrows, f"{arrows[a]}{k+1}.jpg")
             imgs[(a, k)] = cv2.imread(arrow_file, cv2.IMREAD_COLOR)
 
     samples = dict()
-    for a, _ in enumerate(arrows):
+    for a in iter(arrows):
         samples[a] = np.zeros((5, 7), dtype=np.float32)
         for k in range(5):
             img_gray = cv2.cvtColor(imgs[(a, k)], cv2.COLOR_BGR2GRAY)
