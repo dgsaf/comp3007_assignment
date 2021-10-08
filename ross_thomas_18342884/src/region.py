@@ -56,7 +56,7 @@ class Region:
     @property
     def centroid(self):
         m = self.moments
-        return (m['m10'] / m['m00'], m['m01'] / m['m00'])
+        return (m["m10"] / m["m00"], m["m01"] / m["m00"])
 
     @property
     def hu_moments(self):
@@ -71,10 +71,10 @@ class Region:
     def covariance(self):
         m = self.moments
         cov = np.zeros((2, 2), dtype=np.float32)
-        cov[0, 0] = m["mu02"] / m["mu00"]
-        cov[0, 1] = m["mu11"] / m["mu00"]
-        cov[1, 0] = m["mu11"] / m["mu00"]
-        cov[1, 1] = m["mu20"] / m["mu00"]
+        cov[0, 0] = m["mu02"] / m["m00"]
+        cov[0, 1] = m["mu11"] / m["m00"]
+        cov[1, 0] = m["mu11"] / m["m00"]
+        cov[1, 1] = m["mu20"] / m["m00"]
         return cov
 
 
