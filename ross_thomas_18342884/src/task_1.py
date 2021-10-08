@@ -5,6 +5,7 @@ import cv2
 from timeit import default_timer as timer
 
 from parser import *
+from svm import *
 from region import *
 from chain import *
 
