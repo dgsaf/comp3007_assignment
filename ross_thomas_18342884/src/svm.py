@@ -20,13 +20,15 @@ class SVM_OVO:
         return self._svms
 
     def train(self, samples_labelled):
-        self._labels = set(iter(samples_labelled))
+        # self._labels = set(iter(samples_labelled))
+        self._labels = {k : l for k, l in enumerate(samples_labelled.keys())}
+
         self._svms = dict()
 
         for li in self.labels:
             si = samples_labelled[li].astype(np.float32)
             ni = si.shape[0]
-            ri = np.array([li for i in range(ni)])
+            ri = np.array([li for i in range(ni)], dtype=np.short32)
 
             for lj in self.labels:
                 if lj <= li:
@@ -34,7 +36,7 @@ class SVM_OVO:
 
                 sj = samples_labelled[lj].astype(np.float32)
                 nj = sj.shape[0]
-                rj = np.array([lj for j in range(nj)])
+                rj = np.array([lj for j in range(nj)], dtype=np.short32)
 
                 lij = (li, lj)
                 nij = (ni + nj)
@@ -60,12 +62,12 @@ class SVM_OVO:
     def predict(self, samples):
         votes = dict()
         for i, _ in enumerate(samples):
-            votes[i] = {l : 0 for l in self.labels}
+            votes[i] = {k : 0 for k in self.labels}
 
         for lij in iter(self.svms):
             li, lj = lij
 
-            _, responses = self.svms[lij].predict(samples)
+            _, responses = self.svms[lij].predict(samples.astype(np.float32))
 
             for i, response in enumerate(responses):
                 votes[i][response] += 1
