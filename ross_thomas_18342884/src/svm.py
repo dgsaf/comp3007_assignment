@@ -25,52 +25,53 @@ class SVM_OVO:
 
         self._svms = dict()
 
-        for li in self.labels:
-            si = samples_labelled[li].astype(np.float32)
+        for ki in self.labels:
+            si = samples_labelled[ki].astype(np.float32)
             ni = si.shape[0]
-            ri = np.array([li for i in range(ni)], dtype=np.short32)
+            ri = np.array([ki for i in range(ni)], dtype=np.int32)
 
-            for lj in self.labels:
-                if lj <= li:
+            for kj in self.labels:
+                if kj <= ki:
                     continue
 
-                sj = samples_labelled[lj].astype(np.float32)
+                sj = samples_labelled[kj].astype(np.float32)
                 nj = sj.shape[0]
-                rj = np.array([lj for j in range(nj)], dtype=np.short32)
+                rj = np.array([kj for j in range(nj)], dtype=np.int32)
 
-                lij = (li, lj)
+                kij = (ki, kj)
                 nij = (ni + nj)
 
                 wi = nij / (2 * ni)
                 wj = nij / (2 * nj)
                 wij = np.array([wi, wj])
 
-                self._svms[lij] = cv2.ml.SVM_create()
-                self._svms[lij].setType(cv2.ml.SVM_C_SVC)
-                self._svms[lij].setKernel(cv2.ml.SVM_RBF)
-                self._svms[lij].setTermCriteria(
+                self._svms[kij] = cv2.ml.SVM_create()
+                self._svms[kij].setType(cv2.ml.SVM_C_SVC)
+                self._svms[kij].setKernel(cv2.ml.SVM_RBF)
+                self._svms[kij].setTermCriteria(
                     (cv2.TERM_CRITERIA_MAX_ITER , 100000, 1.0e-6))
-                self._svms[lij].setClassWeights(wij)
+                self._svms[kij].setClassWeights(wij)
 
                 sij = np.append(si, sj, axis=0)
                 rij = np.append(ri, rj, axis=0)
 
-                self._svms[lij].trainAuto(
-                    sij, cv2.ml.ROW_SAMPLE, rij, kFold=min([nij - 1, 10]))
+                self._svms[kij].trainAuto(
+                    sij, cv2.ml.ROW_SAMPLE, rij, kFold=min([nij, 10]))
         return
 
     def predict(self, samples):
         votes = dict()
-        for i, _ in enumerate(samples):
+        for i, sample in enumerate(samples):
             votes[i] = {k : 0 for k in self.labels}
 
-        for lij in iter(self.svms):
-            li, lj = lij
+        for kij in iter(self.svms):
+            ki, kj = kij
 
-            _, responses = self.svms[lij].predict(samples.astype(np.float32))
+            _, responses = self.svms[kij].predict(samples.astype(np.float32))
 
             for i, response in enumerate(responses):
-                votes[i][response] += 1
+                k = np.int32(response[0])
+                votes[i][k] += 1
 
         labels_predicted = np.array(
             [max(votes[i], key=votes[i].get) for i in iter(votes)])
