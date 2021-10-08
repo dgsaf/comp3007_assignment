@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 
 
-class SvmOVO:
+class SVM_OVO:
     def __init__(self, samples_labelled):
         self.train(samples_labelled)
         return
@@ -71,3 +71,63 @@ class SvmOVO:
         labels_predicted = np.array(
             [max(votes[i], key=votes[i].get) for i in iter(votes)])
         return labels_predicted
+
+
+def svm_digits(dir_digits):
+    digits = {
+        0: "Zero",
+        1: "One",
+        2: "Two",
+        3: "Three",
+        4: "Four",
+        5: "Five",
+        6: "Six",
+        7: "Seven",
+        8: "Eight",
+        9: "Nine"}
+
+    imgs = dict()
+    for d, name in enumerate(digits):
+        for k in range(5):
+            digit_file = os.path.join(dir_digits, f"{name}{k+1}.jpg")
+            imgs[(d, k)] = cv2.imread(digit_file, cv2.IMREAD_COLOR)
+
+    samples = dict()
+    for d, _ in enumerate(digits):
+        samples[d] = np.zeros((5, 7), dtype=np.float32)
+        for k in range(5):
+            img_gray = cv2.cvtColor(imgs[(d, k)], cv2.COLOR_BGR2GRAY)
+            t, img_bin = cv2.threshold(img_gray, 128, 255, cv2.THRESH_OTSU)
+
+            # detect all regions
+            # select most central region as candidate
+            # use (regular) hu moments as feature vector
+            samples[d][k] = region.hu_moments_regular
+
+    return SVM_OVO(samples)
+
+
+def svm_arrows(dir_arrows):
+    arrows = {
+        "L": "LeftArrow",
+        "R": "RightArrow"}
+
+    imgs = dict()
+    for a, name in enumerate(arrows):
+        for k in range(5):
+            arrow_file = os.path.join(dir_arrows, f"{name}{k+1}.jpg")
+            imgs[(a, k)] = cv2.imread(arrow_file, cv2.IMREAD_COLOR)
+
+    samples = dict()
+    for a, _ in enumerate(arrows):
+        samples[a] = np.zeros((5, 7), dtype=np.float32)
+        for k in range(5):
+            img_gray = cv2.cvtColor(imgs[(a, k)], cv2.COLOR_BGR2GRAY)
+            t, img_bin = cv2.threshold(img_gray, 128, 255, cv2.THRESH_OTSU)
+
+            # detect all regions
+            # select most central region as candidate
+            # use (regular) hu moments as feature vector
+            samples[d][k] = region.hu_moments_regular
+
+    return SVM_OVO(samples)
