@@ -50,19 +50,13 @@ class Region:
         return (len(self.contours[0]) - 1)
 
     @property
-    def centroid(self):
-        m = self.moments
-        return (m.m10 / m.m00, m.m01 / m.m00)
-
-    @property
     def moments(self):
         return cv2.moments(self.image().astype(np.float32), binaryImage=True)
 
     @property
-    def central_moments(self):
+    def centroid(self):
         m = self.moments
-        return np.array([m.nu20, m.nu11, m.nu02,
-                         m.nu30, m.nu21, m.nu12, m.nu03])
+        return (m['m10'] / m['m00'], m['m01'] / m['m00'])
 
     @property
     def hu_moments(self):
@@ -74,8 +68,30 @@ class Region:
                          for h in self.hu_moments])
 
     @property
+    def covariance(self):
+        m = self.moments
+        cov = np.zeros((2, 2), dtype=np.float32)
+        cov[0, 0] = m["mu02"] / m["mu00"]
+        cov[0, 1] = m["mu11"] / m["mu00"]
+        cov[1, 0] = m["mu11"] / m["mu00"]
+        cov[1, 1] = m["mu20"] / m["mu00"]
+        return cov
+
+
+    @property
+    def covariance_eigen(self):
+        cov = self.covariance
+        a = (cov[0, 0] + cov[1, 1]) / 2
+        b = (cov[0, 0] - cov[1, 1]) / 2
+        c = np.sqrt(np.abs((cov[0, 1] ** 2) + (b ** 2)))
+        eig_1, eig_2 = a + c, a - c
+        theta = np.arctan(cov[0, 1] / b) / 2
+        return (eig_1, eig_2, theta)
+
+    @property
     def features(self):
-        return np.append(self.central_moments, [self.holes])
+        eig_1, eig_2, theta = self.covariance_eigen
+        return np.append(self.hu_moments, [self.holes, eig_1, eig_2, theta])
 
     @property
     def contours(self):
@@ -129,7 +145,8 @@ class Region:
             + f"area = {self.area}\n"\
             + f"fill = {self.fill}\n"\
             + f"holes = {self.holes}\n"\
-            + f"hu moments (reg) = \n{self.hu_moments_regular}"
+            + f"hu moments (reg) = \n{self.hu_moments_regular}\n"\
+            + f"covariance eig = {self.covariance_eigen}"
         return properties
 
 
