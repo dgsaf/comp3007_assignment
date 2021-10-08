@@ -55,7 +55,7 @@ class Region:
 
     @property
     def hu_moments(self):
-        return cv2.HuMoments(self.moments)
+        return cv2.HuMoments(self.moments)[:, 0]
 
     @property
     def hu_moments_regular(self):
