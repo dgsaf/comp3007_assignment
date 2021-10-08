@@ -50,8 +50,19 @@ class Region:
         return (len(self.contours[0]) - 1)
 
     @property
+    def centroid(self):
+        m = self.moments
+        return (m.m10 / m.m00, m.m01 / m.m00)
+
+    @property
     def moments(self):
         return cv2.moments(self.image().astype(np.float32), binaryImage=True)
+
+    @property
+    def central_moments(self):
+        m = self.moments
+        return np.array([m.nu20, m.nu11, m.nu02,
+                         m.nu30, m.nu21, m.nu12, m.nu03])
 
     @property
     def hu_moments(self):
@@ -61,6 +72,10 @@ class Region:
     def hu_moments_regular(self):
         return np.array([- np.sign(h) * np.log(np.abs(h))
                          for h in self.hu_moments])
+
+    @property
+    def features(self):
+        return np.append(self.central_moments, [self.holes])
 
     @property
     def contours(self):

@@ -145,7 +145,7 @@ for img_file in img_files:
     write_image_to_work(args, img_file, f"5", img_best)
 
     print(f"{timing()} classifying digits")
-    digits = np.array([r.hu_moments_regular for r in chain_best])
+    digits = np.array([r.features for r in chain_best])
     predicted = svm_digits.predict(digits)
     print(predicted)
 

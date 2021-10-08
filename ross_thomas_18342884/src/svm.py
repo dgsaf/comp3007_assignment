@@ -109,7 +109,7 @@ def build_svm_digits(dir_digits):
             region = min(
                 regions, key=lambda r: r.distance((int(w/2), int(h/2))))
 
-            samples[d][k] = region.hu_moments_regular
+            samples[d][k] = region.features
 
     return SVM_OVO(samples)
 
@@ -137,6 +137,6 @@ def build_svm_arrows(dir_arrows):
             region = min(
                 regions, key=lambda r: r.distance((int(w/2), int(h/2))))
 
-            samples[d][k] = region.hu_moments_regular
+            samples[d][k] = region.features
 
     return SVM_OVO(samples)
