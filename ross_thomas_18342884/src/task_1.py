@@ -142,11 +142,12 @@ for img_file in img_files:
         reverse=True)[0]
 
     img_best = img[covering_box([r.box for r in chain_best]).indexes]
-    write_image_to_work(args, img_file, f"5", img_best)
+    # write_image_to_work(args, img_file, f"5", img_best)
 
     print(f"{timing()} classifying digits")
     digits = np.array([r.features for r in chain_best])
-    predicted = svm_digits.predict(digits)
-    print(predicted)
+    p = svm_digits.predict(digits)
+    write_image_to_work(args, img_file, f"5_{p[0]}{p[1]}{p[2]}", img_best)
+    print(p)
 
     print(f"{timing()} ")

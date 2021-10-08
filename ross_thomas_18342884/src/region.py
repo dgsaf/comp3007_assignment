@@ -59,6 +59,13 @@ class Region:
         return (m["m10"] / m["m00"], m["m01"] / m["m00"])
 
     @property
+    def norm_central_moments(self):
+        m = self.moments
+        return np.array(
+            [m["nu20"], m["nu11"], m["nu02"],
+             m["nu30"], m["nu21"], m["nu12"], m["nu03"]])
+
+    @property
     def hu_moments(self):
         return cv2.HuMoments(self.moments)[:, 0]
 
@@ -77,7 +84,6 @@ class Region:
         cov[1, 1] = m["mu20"] / m["m00"]
         return cov
 
-
     @property
     def covariance_eigen(self):
         cov = self.covariance
@@ -91,7 +97,7 @@ class Region:
     @property
     def features(self):
         eig_1, eig_2, theta = self.covariance_eigen
-        return np.append(self.hu_moments, [self.holes, eig_1, eig_2, theta])
+        return np.append(self.norm_central_moments, [self.holes, theta])
 
     @property
     def contours(self):
@@ -145,7 +151,7 @@ class Region:
             + f"area = {self.area}\n"\
             + f"fill = {self.fill}\n"\
             + f"holes = {self.holes}\n"\
-            + f"hu moments (reg) = \n{self.hu_moments_regular}\n"\
+            + f"hu moments = \n{self.hu_moments}\n"\
             + f"covariance eig = {self.covariance_eigen}"
         return properties
 
