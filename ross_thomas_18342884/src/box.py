@@ -5,12 +5,6 @@ import cv2
 
 
 class Box:
-    def __init__(self, box):
-        self._x = box[0]
-        self._y = box[1]
-        self._width = box[2]
-        self._height = box[3]
-
     def __init__(self, x, y, width, height):
         self._x = x
         self._y = y
@@ -119,10 +113,13 @@ def covering_box(boxes):
 
 
 def bounding_box(points):
-    x_min = min(points, key=lambda p: p[0])
-    x_max = max(points, key=lambda p: p[0])
-    y_min = min(points, key=lambda p: p[1])
-    y_max = max(points, key=lambda p: p[1])
+    xs = {p[0] for p in points}
+    ys = {p[1] for p in points}
+
+    x_min = min(xs)
+    x_max = max(xs)
+    y_min = min(ys)
+    y_max = max(ys)
     bounding = Box(x_min, y_min, x_max - x_min, y_max - y_min)
     return bounding
 
