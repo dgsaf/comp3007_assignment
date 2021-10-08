@@ -144,7 +144,7 @@ def remove_occluded_holes(regions, max_boundary_distance=10):
 
 def draw_regions(regions, size=None):
     if size:
-        canvas = Box((0, 0, size[1], size[0]))
+        canvas = Box(0, 0, size[1], size[0])
     else:
         canvas = covering_box([r.box for r in regions])
 

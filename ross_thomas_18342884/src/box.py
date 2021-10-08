@@ -113,19 +113,9 @@ def covering_box(boxes):
 
 
 def bounding_box(points):
-    x, y, w, h = cv2.boundingRect(np.array(points))
+    x, y, w, h = cv2.boundingRect(np.array([p for p in points]))
     bounding = Box(x, y, w, h)
     return bounding
-
-    # xs = {p[0] for p in points}
-    # ys = {p[1] for p in points}
-
-    # x_min = min(xs)
-    # x_max = max(xs)
-    # y_min = min(ys)
-    # y_max = max(ys)
-    # bounding = Box(x_min, y_min, x_max - x_min, y_max - y_min)
-    # return bounding
 
 
 def merge_overlapping(boxes, max_overlap=0.05):
