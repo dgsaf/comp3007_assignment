@@ -47,7 +47,8 @@ class SVM_OVO:
 
                 self._svms[kij] = cv2.ml.SVM_create()
                 self._svms[kij].setType(cv2.ml.SVM_C_SVC)
-                self._svms[kij].setKernel(cv2.ml.SVM_RBF)
+                # self._svms[kij].setKernel(cv2.ml.SVM_RBF)
+                self._svms[kij].setKernel(cv2.ml.SVM_LINEAR)
                 self._svms[kij].setTermCriteria(
                     (cv2.TERM_CRITERIA_MAX_ITER , 100000, 1.0e-6))
                 self._svms[kij].setClassWeights(wij)
