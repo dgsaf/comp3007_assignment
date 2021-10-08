@@ -12,6 +12,10 @@ from chain import *
 # task 1
 args, img_files = parse_input()
 
+# build classifier
+svm_digits = build_svm_digits(args["digits"])
+
+# locate and classify the digits of each building sign
 for img_file in img_files:
     time_start = timer()
 
@@ -93,27 +97,27 @@ for img_file in img_files:
 
     chains = list(filter(lambda c: len(c) <= 3, chains))
 
-    print(f"{timing()} analysing chains")
-    for i, chain in enumerate(chains):
-        # img_chain = draw_regions(chain)
-        # write_image_to_work(args, img_file, f"3_{i}", img_chain)
+    # print(f"{timing()} analysing chains")
+    # for i, chain in enumerate(chains):
+    #     img_chain = draw_regions(chain)
+    #     write_image_to_work(args, img_file, f"3_{i}", img_chain)
 
-        def summary(arr):
-            return f"({np.amin(arr):.1f} | {np.average(arr):.1f} | {np.amax(arr):.1f})"
+    #     def summary(arr):
+    #         return f"({np.amin(arr):.1f} | {np.average(arr):.1f} | {np.amax(arr):.1f})"
 
-        print(f"Chain {i}:")
-        print(f"height = {summary([r.box.height for r in chain])}")
-        print(f"width = {summary([r.box.width for r in chain])}")
-        print(f"aspect = {summary([r.box.aspect for r in chain])}")
-        print(f"fill = {summary([r.fill for r in chain])}")
-        print(f"otsu sep:")
-        print(f"  I = {otsu_separation(img_gray, covering_box([r.box for r in chain])):.2f}")
-        print(f"  B = {otsu_separation(img[:,:,0], covering_box([r.box for r in chain])):.2f}")
-        print(f"  G = {otsu_separation(img[:,:,1], covering_box([r.box for r in chain])):.2f}")
-        print(f"  R = {otsu_separation(img[:,:,2], covering_box([r.box for r in chain])):.2f}")
-        print(f"")
-        # for j, region in enumerate(chain):
-        #     print(f"{i}-{j}: \n{str(region)}")
+    #     print(f"Chain {i}:")
+    #     print(f"height = {summary([r.box.height for r in chain])}")
+    #     print(f"width = {summary([r.box.width for r in chain])}")
+    #     print(f"aspect = {summary([r.box.aspect for r in chain])}")
+    #     print(f"fill = {summary([r.fill for r in chain])}")
+    #     print(f"otsu sep:")
+    #     print(f"  I = {otsu_separation(img_gray, covering_box([r.box for r in chain])):.2f}")
+    #     print(f"  B = {otsu_separation(img[:,:,0], covering_box([r.box for r in chain])):.2f}")
+    #     print(f"  G = {otsu_separation(img[:,:,1], covering_box([r.box for r in chain])):.2f}")
+    #     print(f"  R = {otsu_separation(img[:,:,2], covering_box([r.box for r in chain])):.2f}")
+    #     print(f"")
+    #     for j, region in enumerate(chain):
+    #         print(f"{i}-{j}: \n{str(region)}")
 
     print(f"{timing()} writing regions of interest")
     rois = [covering_box([r.box for r in c]) for c in chains]
@@ -138,5 +142,10 @@ for img_file in img_files:
 
     img_best = img[covering_box([r.box for r in chain_best]).indexes]
     write_image_to_work(args, img_file, f"5", img_best)
+
+    print(f"{timing()} classifying digits")
+    digits = np.array([r.hu_moments_regular for r in chain_best])
+    predicted = svm_digits.predict(digits)
+    print(predicted)
 
     print(f"{timing()} ")

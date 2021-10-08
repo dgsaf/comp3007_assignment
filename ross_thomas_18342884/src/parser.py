@@ -10,10 +10,12 @@ def parse_input():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", required=True,
                         help="directory path with input images")
-    parser.add_argument("-w", "--work", required=True,
-                        help="directory path for work images")
     parser.add_argument("-o", "--output", required=True,
                         help="directory path for output images and data")
+    parser.add_argument("-d", "--digits", required=True,
+                        help="directory path for digit and arrow images")
+    parser.add_argument("-w", "--work", required=True,
+                        help="directory path for work images")
     parser.add_argument("-W", "--work-save", action="store_true",
                         help="flag if intermediate images " +
                         "are to be saved to work directory")

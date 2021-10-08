@@ -73,7 +73,7 @@ class SVM_OVO:
         return labels_predicted
 
 
-def svm_digits(dir_digits):
+def build_svm_digits(dir_digits):
     digits = {
         0: "Zero",
         1: "One",
@@ -109,7 +109,7 @@ def svm_digits(dir_digits):
     return SVM_OVO(samples)
 
 
-def svm_arrows(dir_arrows):
+def build_svm_arrows(dir_arrows):
     arrows = {
         "L": "LeftArrow",
         "R": "RightArrow"}
