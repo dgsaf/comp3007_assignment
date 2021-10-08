@@ -8,9 +8,9 @@ from box import *
 
 
 class Region:
-    def __init__(self, points, box):
+    def __init__(self, points):
         self._points = set([(p[0], p[1]) for p in points])
-        self._box = Box(box)
+        self._box = bounding_box(self.points)
 
         self._cached_boundary = False
         self._boundary = None

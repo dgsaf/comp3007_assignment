@@ -52,7 +52,7 @@ for img_file in img_files:
     point_sets, boxes = mser.detectRegions(img_gray)
 
     print(f"{timing()} constructing regions")
-    regions = [Region(ps, b) for (ps, b) in zip(point_sets, boxes)]
+    regions = [Region(ps) for ps in point_sets]
     print(f"{timing()} writing regions ({len(regions)})")
     # write_image_to_work(args, img_file, "2_0", draw_regions(regions, (H, W)))
 

@@ -11,6 +11,12 @@ class Box:
         self._width = box[2]
         self._height = box[3]
 
+    def __init__(self, x, y, width, height):
+        self._x = x
+        self._y = y
+        self._width = width
+        self._height = height
+
     @property
     def x(self):
         return self._x
@@ -108,8 +114,17 @@ def covering_box(boxes):
     x_max = np.amax([b.x + b.width for b in boxes])
     y_min = np.amin([b.y for b in boxes])
     y_max = np.amax([b.y + b.height for b in boxes])
-    cover = Box((x_min, y_min, x_max - x_min, y_max - y_min))
+    cover = Box(x_min, y_min, x_max - x_min, y_max - y_min)
     return cover
+
+
+def bounding_box(points):
+    x_min = min(points, key=lambda p: p[0])
+    x_max = max(points, key=lambda p: p[0])
+    y_min = min(points, key=lambda p: p[1])
+    y_max = max(points, key=lambda p: p[1])
+    bounding = Box(x_min, y_min, x_max - x_min, y_max - y_min)
+    return bounding
 
 
 def merge_overlapping(boxes, max_overlap=0.05):
