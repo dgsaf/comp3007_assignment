@@ -26,15 +26,15 @@ class SVM_OVO:
         for li in self.labels:
             si = samples_labelled[li].astype(np.float32)
             ni = si.shape[0]
-            ri = li * np.ones((ni))
+            ri = np.array([li for i in range(ni)])
 
             for lj in self.labels:
-                if lj < li:
+                if lj <= li:
                     continue
 
                 sj = samples_labelled[lj].astype(np.float32)
                 nj = sj.shape[0]
-                rj = lj * np.ones((nj))
+                rj = np.array([lj for j in range(nj)])
 
                 lij = (li, lj)
                 nij = (ni + nj)
