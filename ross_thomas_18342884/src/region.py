@@ -163,5 +163,6 @@ def draw_regions(regions, size=None):
 
 def cc_regions(img_bin):
     n, labels = cv2.connectedComponents(img_bin, connectivity=8)
-    regions = [Region(np.argwhere(labels == l)) for l in range(1, n)]
+    regions = [Region(np.argwhere(np.transpose(labels) == l))
+               for l in range(1, n)]
     return regions

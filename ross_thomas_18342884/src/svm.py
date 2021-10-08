@@ -74,7 +74,7 @@ class SVM_OVO:
                 votes[i][k] += 1
 
         labels_predicted = np.array(
-            [max(votes[i], key=votes[i].get) for i in iter(votes)])
+            [self.labels[max(votes[i], key=votes[i].get)] for i in iter(votes)])
         return labels_predicted
 
 
