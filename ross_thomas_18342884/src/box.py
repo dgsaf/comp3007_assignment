@@ -87,7 +87,7 @@ class Box:
             + f"width = {self.width}\n"\
             + f"height = {self.height}\n"\
             + f"area = {self.area}\n"\
-            + f"aspect = {self.aspect}\n"
+            + f"aspect = {self.aspect}"
         return properties
 
 

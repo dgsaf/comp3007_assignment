@@ -97,11 +97,13 @@ def svm_digits(dir_digits):
         samples[d] = np.zeros((5, 7), dtype=np.float32)
         for k in range(5):
             img_gray = cv2.cvtColor(imgs[(d, k)], cv2.COLOR_BGR2GRAY)
-            t, img_bin = cv2.threshold(img_gray, 128, 255, cv2.THRESH_OTSU)
+            _, img_bin = cv2.threshold(img_gray, 128, 255, cv2.THRESH_OTSU)
 
-            # detect all regions
-            # select most central region as candidate
-            # use (regular) hu moments as feature vector
+            regions = cc_regions(img_bin)
+            h, w = img_bin.shape[:2]
+            region = min(
+                regions, key=lambda r: r.distance((int(w/2), int(h/2))))
+
             samples[d][k] = region.hu_moments_regular
 
     return SVM_OVO(samples)
@@ -123,11 +125,13 @@ def svm_arrows(dir_arrows):
         samples[a] = np.zeros((5, 7), dtype=np.float32)
         for k in range(5):
             img_gray = cv2.cvtColor(imgs[(a, k)], cv2.COLOR_BGR2GRAY)
-            t, img_bin = cv2.threshold(img_gray, 128, 255, cv2.THRESH_OTSU)
+            _, img_bin = cv2.threshold(img_gray, 128, 255, cv2.THRESH_OTSU)
 
-            # detect all regions
-            # select most central region as candidate
-            # use (regular) hu moments as feature vector
+            regions = cc_regions(img_bin)
+            h, w = img_bin.shape[:2]
+            region = min(
+                regions, key=lambda r: r.distance((int(w/2), int(h/2))))
+
             samples[d][k] = region.hu_moments_regular
 
     return SVM_OVO(samples)

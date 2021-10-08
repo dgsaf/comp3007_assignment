@@ -110,12 +110,11 @@ class Region:
     def __str__(self):
         properties = \
             f"Region:\n"\
-            + f"{str(self.box)}"\
+            + f"{str(self.box)}\n"\
             + f"area = {self.area}\n"\
             + f"fill = {self.fill}\n"\
-            + f"holes = {self.holes}\n"
-            # + f"hu moments = \n{self.hu_moments}\n"\
-            # + f"hu moments (reg) = \n{self.hu_moments_regular}\n"
+            + f"holes = {self.holes}\n"\
+            + f"hu moments (reg) = \n{self.hu_moments_regular}"
         return properties
 
 
@@ -160,3 +159,9 @@ def draw_regions(regions, size=None):
             img_regions[y - canvas.y, x - canvas.x] = (0, 0, 255)
     img_regions = cv2.cvtColor(img_regions, cv2.COLOR_HSV2BGR)
     return img_regions
+
+
+def cc_regions(img_bin):
+    n, labels = cv2.connectedComponents(img_bin, connectivity=8)
+    regions = [Region(np.argwhere(labels == l)) for l in range(1, n)]
+    return regions
