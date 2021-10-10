@@ -1,4 +1,4 @@
-\documentclass[draft]{article}
+\documentclass{article}
 
 % - style template
 \usepackage{base}
@@ -137,16 +137,237 @@ uniformly spaced are regularly present in images for task 1 - hence, when
 exploiting the uniformity of the layout of the digits, care must be taken to
 avoid or handle the false detection of these other objects.
 
-\subsubsection*{Regular Cases}
+Examples of the images expected for task 1, which provide the justification for
+the assumptions made on the properties of the sign are shown in
+\autoref{fig:problem-1-regular}.
+Examples of images which may be encountered for task 1, but which challenge the
+assumptions made on the properties of the sign are shown in
+\autoref{fig:problem-1-outlier}.
 
-\subsubsection*{Outlier Cases}
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS02}
+    \caption[BS02]{
+      \lstinline{BS02.jpg}
+    }
+    \label{fig:bs02}
+  \end{subfigure}
+  %
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS04}
+    \caption[BS04]{
+      \lstinline{BS04.jpg}
+    }
+    \label{fig:bs04}
+  \end{subfigure}
+
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS09}
+    \caption[BS09]{
+      \lstinline{BS09.jpg}
+    }
+    \label{fig:bs09}
+  \end{subfigure}
+  %
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS14}
+    \caption[BS14]{
+      \lstinline{BS14.jpg}
+    }
+    \label{fig:bs14}
+  \end{subfigure}
+
+  \caption[Task 1 - Regular Cases]{
+    Examples of training images for task 1, which exhibit the described
+    distinguishing properties of the signs and digits.
+  }
+  \label{fig:problem-1-regular}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS03}
+    \caption[BS03]{
+      \lstinline{BS03.jpg}
+    }
+    \label{fig:bs03}
+  \end{subfigure}
+  %
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS05}
+    \caption[BS05]{
+      \lstinline{BS05.jpg}
+    }
+    \label{fig:bs05}
+  \end{subfigure}
+
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS07}
+    \caption[BS07]{
+      \lstinline{BS07.jpg}
+    }
+    \label{fig:bs07}
+  \end{subfigure}
+  %
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS11}
+    \caption[BS11]{
+      \lstinline{BS11.jpg}
+    }
+    \label{fig:bs11}
+  \end{subfigure}
+
+  \caption[Task 1 - Edge Cases]{
+    Examples of training images for task 1, which may challenge the assumptions
+    made on the signs and thus necessitate the development of a robust detection
+    algorithm.
+    Sharp shadows, motion blur and monochromatic periodic objects, which may
+    interfere with digit detection, can be observed.
+  }
+  \label{fig:problem-1-outlier}
+\end{figure}
 
 \subsection{Task 2}
 \label{sec:problem-2}
 
-\subsubsection*{Regular Cases}
+Similarly, further refinement of the problem analysis is possible for task 2.
+We are concerned with finding a variable number of chains of three digits, each
+of which has an associated directional arrow to their right.
+For each chain and their associated directional arrow, the geometric centres of
+the digits are arrow are collinear; hence we say that they form a line.
+Each line is vertically spaced (by a distance just larger than the height of the
+digits) and the set of digits and arrows from each line thus forms a grid-like
+layout.
 
-\subsubsection*{Outlier Cases}
+A challenging aspect of these signs, compared to those for task 1, is that the
+gap between the leftmost digit on each line and the edge of the sign can be very
+small.
+In cases where an object, of similar colour/intensity to the white characters,
+is behind the sign but in a similar region of the image to the leftmost digit of
+a line, the digit and the object may prove difficult to distinguish as separate
+regions.
+
+Another difficulty is that the number of lines in any particular sign is not
+known beforehand.
+However, there is a benefit in having multiple lines per sign as it provides a
+mechanism, given at least one fully known line or even partial information from
+multiple lines, to recover an expected location for characters which fail to be
+detected initially.
+
+Similar to task 1, the scene environment can be expected to be quite noisy, with
+periodically repeating objects such as brickwork present, as well as other
+objects with many sharp edges, such as plants and trees.
+
+Examples of the images expected for task 2, which provide the justification for
+the assumptions made on the properties of the sign are shown in
+\autoref{fig:problem-2-regular}.
+Examples of images which may be encountered for task 2, but which challenge the
+assumptions made on the properties of the sign are shown in
+\autoref{fig:problem-2-outlier}.
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task2/DS06}
+    \caption[DS06]{
+      \lstinline{DS06.jpg}
+    }
+    \label{fig:ds06}
+  \end{subfigure}
+  %
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task2/DS12}
+    \caption[DS12]{
+      \lstinline{DS12.jpg}
+    }
+    \label{fig:ds12}
+  \end{subfigure}
+
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task2/DS13}
+    \caption[DS13]{
+      \lstinline{DS13.jpg}
+    }
+    \label{fig:ds13}
+  \end{subfigure}
+  %
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task2/DS18}
+    \caption[DS18]{
+      \lstinline{DS18.jpg}
+    }
+    \label{fig:ds18}
+  \end{subfigure}
+
+  \caption[Task 2 - Regular Cases]{
+    Examples of training images for task 2, which exhibit the described
+    distinguishing properties of the signs, and their digits and arrows.
+  }
+  \label{fig:problem-2-regular}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS03}
+    \caption[BS03]{
+      \lstinline{BS03.jpg}
+    }
+    \label{fig:bs03}
+  \end{subfigure}
+  %
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS05}
+    \caption[BS05]{
+      \lstinline{BS05.jpg}
+    }
+    \label{fig:bs05}
+  \end{subfigure}
+
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS07}
+    \caption[BS07]{
+      \lstinline{BS07.jpg}
+    }
+    \label{fig:bs07}
+  \end{subfigure}
+  %
+  \begin{subfigure}[h]{0.45\textwidth}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../train/task1/BS11}
+    \caption[BS11]{
+      \lstinline{BS11.jpg}
+    }
+    \label{fig:bs11}
+  \end{subfigure}
+
+  \caption[Task 2 - Edge Cases]{
+    Examples of training images for task 2, which may challenge the assumptions
+    made on the signs and thus necessitate the development of a robust detection
+    algorithm.
+    ...
+  }
+  \label{fig:problem-2-outlier}
+\end{figure}
+
+\clearpage
 
 \section{Implementation}
 \label{sec:implementation}
