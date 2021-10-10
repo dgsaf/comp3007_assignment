@@ -35,14 +35,31 @@ The entire code repository can be found at
 \section{Introduction}
 \label{sec:introduction}
 
+\section{Problem Analysis}
+\label{sec:problem-analysis}
+
+\subsection{Task 1}
+\label{sec:problem-1}
+
+\subsubsection*{Regular Cases}
+
+\subsubsection*{Outlier Cases}
+
+\subsection{Task 2}
+\label{sec:problem-2}
+
+\subsubsection*{Regular Cases}
+
+\subsubsection*{Outlier Cases}
+
 \section{Implementation}
 \label{sec:implementation}
 
-\subsection{Problem Analysis}
-\label{sec:problem-analysis}
+\subsection{Overview}
+\label{sec:implementation-overview}
 
-To detect the characters (digits and arrows), we utilise the technique of Maximally
-Stable Extremal Regions (MSER).
+To detect the characters (digits and arrows), we utilise the technique of
+Maximally Stable Extremal Regions (MSER).
 We suggest that this technique is suitable for our purpose, as the characters
 are uniformly white and contrast well against the surrounding uniformly black
 area of the signs.
@@ -51,8 +68,8 @@ thresholding, when compared with their local context.
 Furthermore, this technique should be fairly robust to the presence of shadows
 and other variations in illumination.
 
-\subsection{Technique}
-\label{sec:technique}
+\subsection{Mathematical Details}
+\label{sec:mathematical-details}
 
 \subsubsection*{Image}
 
@@ -363,21 +380,31 @@ region $R$ is given by
 \end{equation}
 An extremal region $R_{t_{0}}$ is then said to be maximally stable if
 $G_{\delta}\lr{R; t}$ has a local minimum at $t = t_{0}$.
+Such a thresholded region experiences minimal change (in cardinality) when the
+threshold $t_{0}$ is increased/decreased by $\delta$.
 
 \subsection{Task 1}
-\label{sec:imp-task-1}
+\label{sec:implementation-1}
+
+\subsubsection*{Detection}
+
+\subsubsection*{Classification}
 
 \subsection{Task 2}
-\label{sec:imp-task-2}
+\label{sec:implementation-2}
+
+\subsubsection*{Detection}
+
+\subsubsection*{Classification}
 
 \section{Validation Performance}
-\label{sec:val-per}
+\label{sec:validation}
 
 \subsection{Task 1}
-\label{sec:val-task-1}
+\label{sec:validation-1}
 
 \subsection{Task 2}
-\label{sec:val-task-2}
+\label{sec:validation-2}
 
 \section{Conclusion}
 \label{sec:conclusion}
