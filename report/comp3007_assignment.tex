@@ -61,29 +61,36 @@ their dimensions are distinct from those of the digits - noticeably having a
 smaller height than the digits.
 
 The digits do not overlap with each other (unless subject to camera
-artifacts/blurring) but are closely adjacent to each other.
+artifacts/blurring) but are closely adjacent to each other, and regularly
+spaced.
 Each sign contains at least one sequence of three digits, which are ideally
 surrounded by a black sub-region of the sign; although for task 2, the gap
 between the leftmost digit and the edge of the sign can be very small.
 
-In summary, the following properties of the digits are almost always observed,
-providing a robust foundation for detection of the digits:
+In summary, the following properties of the signs are almost always observed,
+providing a robust foundation for their detection:
 \begin{itemize}
 \item
-  The uniformly white colour of the digits;
+  The uniformly white colour of the characters;
 
 \item
   The uniformly black background of the sign;
 
 \item
-  The strong contrast between the white digits and the black background across
-  all red, green, and blue channels as well as in grayscale;
+  The strong contrast between the white characters and the black background
+  across all red, green, and blue channels as well as in grayscale;
 
 \item
-  The regular uniform height of the digits;
+  The uniform height of the digits;
 
 \item
-  The regular spacing of the digits horizontally;
+  The uniform spacing of the characters horizontally;
+
+\item
+  The height of the digits exceeding the width;
+
+\item
+  The uniform dimensions of the arrows;
 
 \item
   The presence of a chain of exactly three digits;
@@ -96,22 +103,39 @@ However, the assumption of the above properties may be invalidated by any one of
 the (non-exhaustive) list of conditions:
 \begin{itemize}
 \item
-  The presence of strong radial, or motion blurring which may cause character
-  regions to overlap;
+  The presence of strong radial, or motion blurring which may cause character to
+  overlap;
 
 \item
   The presence of strong shadowns, glare, or other variations in lighting
-  conditions across the character regions;
+  conditions across the character;
 
 \item
   The presence of a foreign object, such as a sticker or a mark, on the sign
-  (violating the assumptions on regularity of layout) or across the character
-  regions (violating the assumptions on uniformity of character regions).
+  (violating the assumptions on uniformity of layout) or across the characters
+  (violating the assumptions on uniformity of characters).
 
 \end{itemize}
+It should also be noted that often there are other monospace white characters
+present near the sign - typically letters forming the name of the location
+marked by the sign.
+These characters can be distinguished from the digits (and arrows) by the fact
+that they almost always form chains of more than three characters, and presented
+on their own signs which almost never have a black background.
 
 \subsection{Task 1}
 \label{sec:problem-1}
+
+Further refinement of the problem analysis is possible for task 1.
+We are concerned with finding only one chain of three digits, and we are not
+concerned with directional arrows at all.
+Futhermore, there exists a sizeable gap between the chain of digits and the edge
+of the sign both horizontally and vertically.
+
+Bricks and other objects which are of approximately uniform dimensions and
+uniformly spaced are regularly present in images for task 1 - hence, when
+exploiting the uniformity of the layout of the digits, care must be taken to
+avoid or handle the false detection of these other objects.
 
 \subsubsection*{Regular Cases}
 
