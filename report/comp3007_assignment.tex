@@ -6,7 +6,7 @@
 % - title, author, etc.
 \title{COMP3007 - Assignment}
 \author{Tom Ross}
-\date{}
+\date{\today}
 
 % - headers
 \pagestyle{fancy}
@@ -21,6 +21,9 @@
 % - document
 \begin{document}
 
+The entire code repository can be found at
+\url{https://github.com/dgsaf/comp3007_assignment}.
+
 \tableofcontents
 
 \listoffigures
@@ -28,5 +31,190 @@
 \listoftables
 
 \clearpage
+
+\section{Introduction}
+\label{sec:introduction}
+
+\section{Implementation}
+\label{sec:implementation}
+
+\subsection{Problem Analysis}
+\label{sec:problem-analysis}
+
+To detect the characters (digits and arrows), we utilise the technique of Maximally
+Stable Extremal Regions (MSER).
+We suggest that this technique is suitable for our purpose, as the characters
+are uniformly white and contrast well against the surrounding uniformly black
+area of the signs.
+Hence, these characters should form regions which are very stable under
+thresholding, when compared with their local context.
+Furthermore, this technique should be fairly robust to the presence of shadows
+and other variations in illumination.
+
+\subsection{Technique}
+\label{sec:technique}
+
+\subsubsection*{Image}
+
+We define an image $I$, with $n$ channels and of width $w$ and height $h$, to be
+a mapping
+\begin{equation}
+  \label{eq:def-image}
+  I
+  :
+  D \to S
+  :
+  \lr{x, y}
+  \mapsto
+  I\lr{x, y}
+  =
+  \lr[\big]
+  {
+    I_{1}\lr{x, y}
+    ,
+    \dotsc
+    ,
+    I_{n}\lr{x, y}
+  }
+  ,
+\end{equation}
+where the domain $D \subset \natural^{2}$ is of the form
+$D = \lrset{0, \dotsc, w - 1} \times \lrset{0, \dotsc, h - 1}$, and where the
+codomain $S$ is in general of the form $S \subset \real^{n}$.
+
+\subsubsection*{Thresholded Image}
+
+Suppose $I : D \to S \subset \real$ is a single-channel image.
+For each $t \in S$, we define the Boolean-valued image $I_{t}$ to be of the
+form
+\begin{equation}
+  \label{eq:def-image-threshold}
+  I_{t}
+  :
+  D \to \mathbb{B}
+  :
+  \lr{x, y}
+  \mapsto
+  \begin{cases}
+    0
+    &\qq{if}
+    I\lr{x, y} \leq t
+    \\
+    1
+    &\qq{if}
+    I\lr{x, y} > t
+  \end{cases}
+  ,
+\end{equation}
+and we say that $I_{t}$ is a thresholded image.
+
+\subsubsection*{Connectedness}
+
+Suppose $D$ is the domain of an image.
+An adjacency relation $A$ on $D$ is a Boolean-valued mapping
+\begin{equation}
+  \label{eq:def-adjacency}
+  A
+  :
+  D \times D \to \mathbb{B}
+  :
+  \lr{p, q}
+  \mapsto
+  A\lr{p, q}
+  ,
+\end{equation}
+which indicates if the two points of the domain are considered to be adjacent.
+For any $p \in D$, we may define the neighbourhood $N\lr{p}$ of $p$ to be the
+set of all points which are adjacent to it; that is,
+\begin{equation}
+  \label{eq:def-neighbourhood}
+  N\lr{p}
+  =
+  \lrset
+  {
+    q \in D
+    \mid
+    A\lr{p, q}
+  }
+  .
+\end{equation}
+For any $p, q \in D$, we say that $p$ and $q$ are connected if there exists a
+finite sequence $\lr{\rho_{k}}_{1 \leq k \leq n}$ in $D$ such that
+\begin{equation}
+  \label{eq:def-connected}
+  A\lr{p, \rho_{1}}
+  \wedge
+  A\lr{\rho_{1}, \rho_{2}}
+  \wedge
+  \dotsb
+  \wedge
+  A\lr{\rho_{n-1}, \rho_{n}}
+  \wedge
+  A\lr{\rho_{n}, q}
+  =
+  1
+  .
+\end{equation}
+In the case where the adjacency relation $A$ is symmetric, then connectedness
+defines an equivalency relation; whence we may write, for any connected
+$p, q \in D$ that $p \sim q$.
+
+\subsubsection*{Region}
+
+We define image regions, for the case of a single channel image, in the theme of
+the MSER approach.
+Suppose $I : D \to S \subset \real$ is a single-channel image, and for all
+$t \in S$, let $I_{t}$ be its thresholded image.
+Suppose $A : D \times D \to \mathbb{B}$ is the (symmetric) adjacency relation
+associated with either the Von Neumann neighbourhood (4-connectivity) or the
+Moore neighbourhood (8-connectivity).
+For all $t \in S$, we define a new adjacency relation
+$A_{t} : D \times D \to \mathbb{B}$ by
+\begin{equation}
+  \label{eq:def-adjacency-threshold}
+  A_{t}\lr{p, q}
+  =
+  A\lr{p, q}
+  \wedge
+  \lrsq[\big]
+  {
+    I_{t}\lr{p}
+    \iff
+    I_{t}\lr{q}
+  }
+  ,
+\end{equation}
+that is, two points $p, q \in D$ are considered adjacent by $A_{t}$ if they are
+geometrically adjacent by $A$ and map to equivalent values in the thresholded
+image $I_{t}$.
+
+For all $t \in S$, we define an image region $R \subset D$ to be a subset of
+the image domain that is connected by the adjacency relation $A_{t}$; that is,
+for all $p, q \in R$, we have that $p \sim q$ by $A_{t}$.
+
+\subsection{Task 1}
+\label{sec:imp-task-1}
+
+\subsection{Task 2}
+\label{sec:imp-task-2}
+
+\section{Validation Performance}
+\label{sec:val-per}
+
+\subsection{Task 1}
+\label{sec:val-task-1}
+
+\subsection{Task 2}
+\label{sec:val-task-2}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\clearpage
+
+\appendix
+
+\section{Source Code}
+\label{sec:source-code}
 
 \end{document}
