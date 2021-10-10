@@ -79,8 +79,10 @@ a mapping
   ,
 \end{equation}
 where the domain $D \subset \natural^{2}$ is of the form
-$D = \lrset{0, \dotsc, w - 1} \times \lrset{0, \dotsc, h - 1}$, and where the
-codomain $S$ is in general of the form $S \subset \real^{n}$.
+$D = \lrset{0, \dotsc, w - 1} \times \lrset{0, \dotsc, h - 1}$, and $S$ is the
+codomain.
+Constraints can be specified on $S$, but for our purposes it suffices to suppose
+that either $S \subseteq \lrset{0, \dotsc, 255}^{n}$ or $S \subset \real^{n}$.
 
 \subsubsection*{Thresholded Image}
 
@@ -107,6 +109,23 @@ form
   ,
 \end{equation}
 and we say that $I_{t}$ is a thresholded image.
+
+
+\subsubsection*{Bounding Box}
+
+Suppose $D$ is the domain of an image $I : D \to S$.
+For all $R \subseteq D$, we define the bounding box $B\lr{R}$ of $R$ to be
+\begin{equation}
+  \label{eq:def-bounding-box}
+  B\lr{R}
+  =
+  \lrsq{x_{R}, x_{R} + w_{R}}
+  \times
+  \lrsq{y_{R}, y_{R} + h_{R}}
+  \qq{such that}
+  R \subseteq B\lr{R}
+\end{equation}
+and where $w_{R}, h_{R} \in \natural$ are minimal.
 
 \subsubsection*{Connectedness}
 
@@ -159,38 +178,191 @@ In the case where the adjacency relation $A$ is symmetric, then connectedness
 defines an equivalency relation; whence we may write, for any connected
 $p, q \in D$ that $p \sim q$.
 
-\subsubsection*{Region}
-
-We define image regions, for the case of a single channel image, in the theme of
-the MSER approach.
-Suppose $I : D \to S \subset \real$ is a single-channel image, and for all
-$t \in S$, let $I_{t}$ be its thresholded image.
-Suppose $A : D \times D \to \mathbb{B}$ is the (symmetric) adjacency relation
-associated with either the Von Neumann neighbourhood (4-connectivity) or the
-Moore neighbourhood (8-connectivity).
-For all $t \in S$, we define a new adjacency relation
-$A_{t} : D \times D \to \mathbb{B}$ by
+Note that we are primarily concerned with the adjacency relations associated
+with the Von Neumann neighbourhood (4-connectivity)
 \begin{equation}
-  \label{eq:def-adjacency-threshold}
-  A_{t}\lr{p, q}
+  \label{eq:def-neighbourhood-4}
+  N_{4}\lr{p}
   =
-  A\lr{p, q}
-  \wedge
-  \lrsq[\big]
+  \lrset
   {
-    I_{t}\lr{p}
-    \iff
-    I_{t}\lr{q}
+    p + n \in D
+    \mid
+    n
+    \in
+    \lrset
+    {
+      \lr{0, 1}
+      ,
+      \lr{1, 0}
+      ,
+      \lr{0, -1}
+      ,
+      \lr{-1, 0}
+    }
   }
   ,
 \end{equation}
-that is, two points $p, q \in D$ are considered adjacent by $A_{t}$ if they are
-geometrically adjacent by $A$ and map to equivalent values in the thresholded
-image $I_{t}$.
+and the Moore neighbourhood (8-connectivity)
+\begin{equation}
+  \label{eq:def-neighbourhood-8}
+  N_{8}\lr{p}
+  =
+  \lrset
+  {
+    p + n \in D
+    \mid
+    n
+    \in
+    \lrset{-1, 0, 1} \times \lrset{-1, 0, 1}
+    \setminus \lr{0, 0}
+  }
+  .
+\end{equation}
 
-For all $t \in S$, we define an image region $R \subset D$ to be a subset of
-the image domain that is connected by the adjacency relation $A_{t}$; that is,
-for all $p, q \in R$, we have that $p \sim q$ by $A_{t}$.
+\subsubsection*{Region}
+
+Suppose $D$ is the domain of an image $I : D \to S$ and let
+$A : D \times D \to \mathbb{B}$ be a symmetric adjacency relation on $D$.
+We say that $R \subseteq D$ is a region if every element of $R$ is connected to
+every other element of $R$; that is,
+\begin{equation}
+  \label{eq:def-region}
+  p, q \in R
+  \implies
+  p \sim q
+  .
+\end{equation}
+We define the (inner) boundary $\partial R$ of a region $R$ to be subset of
+points of $R$ which are also connected to at least one point not in $R$; that
+is,
+\begin{equation}
+  \label{eq:def-region-boundary-inner}
+  \partial R
+  =
+  \lrset
+  {
+    p \in R
+    \mid
+    \exists q \in D \setminus R
+    :
+    A\lr{p, q}
+  }
+  .
+\end{equation}
+We define the outer boundary $\Delta R$ of a region $R$ to be the set of points
+of $D$ which do not belong to $R$ but are adjacent to a point of $R$; that is,
+\begin{equation}
+  \label{eq:def-region-boundary-outer}
+  \Delta R
+  =
+  \lrset
+  {
+    p \in D \setminus R
+    \mid
+    \exists q \in R
+    :
+    A\lr{p, q}
+  }
+  .
+\end{equation}
+
+\subsubsection*{Maximally Stable Extremal Region (MSER)}
+
+Suppose $I : D \to S \subset \real$ is a single-channel image, and suppose
+$A : D \times D \to \mathbb{B}$ is the (symmetric) adjacency relation associated
+with either the Von Neumann neighbourhood or the Moore neighbourhood.
+Suppose $R \subseteq D$ is a region.
+We say that $R$ is a minimal region if for all $p \in R$ and $q \in \Delta R$ we
+have $I\lr{p} < I\lr{q}$; which is equivalently written as the requirement that
+\begin{equation}
+  \label{eq:def-region-minimal}
+  \max_{p \in R} I\lr{p}
+  <
+  \min_{q \in \Delta R} I\lr{q}
+  .
+\end{equation}
+Similarly, we say that $R$ is a maximal region if for all $p \in R$ and
+$q \in \Delta R$ we have $I\lr{p} > I\lr{q}$; which is equivalently written as
+the requirement that
+\begin{equation}
+  \label{eq:def-region-minimal}
+  \min_{p \in R} I\lr{p}
+  >
+  \max_{q \in \Delta R} I\lr{q}
+  .
+\end{equation}
+We say that $R$ is an extremal region if it is either a minimal or maximal
+region.
+
+The formulation of extremal regions in terms of the minimal and maximal
+intensity values of the image permits the usage of thresholding.
+Suppose that $R$ is an extremal region, and suppose that $t \in S$.
+Consider the thresholded region $R_{t}$, defined by
+\begin{equation}
+  \label{eq:def-region-threshold}
+  R_{t}
+  =
+  \lrset
+  {
+    p \in R
+    \mid
+    I\lr{p} < t
+  }
+  ,
+\end{equation}
+which is itself an extremal region, and for which we have that
+\begin{equation}
+  \label{eq:def-region-threshold}
+  \max_{p \in R_{t}} I\lr{p}
+  <
+  t
+  .
+\end{equation}
+We note that $R_{t} \subseteq R$ for all $t \in S$.
+We also note that when $t_{1} \leq t_{2}$, we have that
+$R_{t_{1}} \subseteq R_{t_{2}}$; that is, the thresholded regions form an
+increasing (by set inclusion) sequence of subsets of $R$.
+For any increasing chain $t_{1} < \dotsc < t_{n}$ in $S$, we have
+\begin{equation}
+  \label{eq:def-region-threshold-sequence}
+  \emptyset
+  \subseteq
+  R_{t_{1}}
+  \subseteq
+  \dotsb
+  \subseteq
+  R_{t_{n}}
+  \subseteq
+  R
+  .
+\end{equation}
+In the MSER approach, the stability of an extremal region $R$ is measured by
+examining the change in the cardinality of $R_{t}$ with the change in the
+threshold $t$.
+That is, for a particular threshold $t \in S$ and threshold step $\delta \in S$,
+such that $t - \delta, t + \delta \in S$, the rate of growth of the extremal
+region $R$ is given by
+\begin{equation}
+  \label{eq:def-region-growth}
+  G_{\delta}\lr{R; t}
+  =
+  \frac
+  {
+    \lrabs
+    {
+      R_{t + \delta}
+      \setminus
+      R_{t - \delta}
+    }
+  }
+  {
+    \lrabs{R_{t}}
+  }
+  .
+\end{equation}
+An extremal region $R_{t_{0}}$ is then said to be maximally stable if
+$G_{\delta}\lr{R; t}$ has a local minimum at $t = t_{0}$.
 
 \subsection{Task 1}
 \label{sec:imp-task-1}
