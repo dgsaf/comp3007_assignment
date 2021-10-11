@@ -393,10 +393,11 @@ in a general manner in \autoref{sec:imp-classification}.
 
 To detect the characters (digits and arrows) we utilise the method of
 Maximally Stable Extremal Regions (MSER) - first developed by
-\cite{MATAS2004761} and we present our formalism in a similar manner to theirs.
+\cite{MATAS2004761}.
+We present our formalism in a similar manner to \cite{MATAS2004761}.
 In this method, a number of regions, which are extremal in terms of light
 intensity and stable in the sense that the region boundary changes little under
-a varying threshold, are detected.
+a varying threshold, are detected in the grayscale image.
 With suitably chosen parameters for the MSER algorithm, the regions of interest,
 corresponding to the characters on the sign, can be reliably detected - but must
 be distinguished from the other regions detected which are not of interest.
@@ -445,13 +446,17 @@ with the training digits and arrows respectively.
 For each region, we define a binary image (with the dimensions of the bounding
 box of the region) which maps each point that is in the region to 1, and 0
 otherwise.
-We then take a spatial histogram of the binary image, decomposing it into a set
-of bins and calculating the fractional occupancy of each box by the region.
+We then decompose the binary image into a set of bins (which are symmetric about
+the box midpoint) and use the fractional occupancy of each bin as a feature
+vector for the region.
 In testing with a suitably selected number of bins, this approach has proved to
 be reliably accurate despite its simplicity.
 
 \subsection{Mathematical Details}
 \label{sec:mathematical-details}
+
+We introduce here various formal presentations of the concepts used in the
+detection and classification algorithms.
 
 \subsubsection*{Image}
 
@@ -765,6 +770,144 @@ $G_{\delta}\lr{R; t}$ has a local minimum at $t = t_{0}$.
 Such a thresholded region experiences minimal change (in cardinality) when the
 threshold $t_{0}$ is increased/decreased by $\delta$.
 
+\subsubsection*{Spatial Occupancy}
+
+Suppose that $D$ is the domain of an image $I : D \to S \subset \real$.
+Suppose that $R \subseteq D$ is a region and that $B\lr{R}$ it its corresponding
+bounded box, with width $w_{R}$ and height $h_{R}$.
+We now describe how we partition $B\lr{R}$ into a number of rectangular bins
+which are symmetric about the midpoint of $B\lr{R}$.
+Let $k_{x}, k_{y} \in \natural$ be the number of $x$ and $y$ bins respectively.
+To simplify the following expressions, we employ the coordinate transformation
+$\lr{x, y} \mapsto \lr{x', y'} = \lr{x - x_{R}, y - y_{R}}$, for which
+$B\lr{R} = \lrsq{0, w_{R}} \times \lrsq{0, h_{R}}$.
+We partition the $x'$ component of $B\lr{R}$, $\lrsq{0, w_{R}}$, by the chain
+\begin{equation}
+  \label{eq:def-bins-chain-x}
+  0
+  =
+  x_{0}
+  <
+  x_{1}
+  <
+  \dotsb
+  <
+  x_{k_{x} - 1}
+  <
+  x_{k_{x}}
+  =
+  w_{R}
+  ,
+\end{equation}
+where
+\begin{equation}
+  \label{eq:def-bins-x}
+  s_{x}
+  =
+  \lrceil[\bigg]
+  {
+    \frac
+    {
+      w_{R}
+    }
+    {
+      k_{x}
+    }
+  }
+  ,
+  \quad
+  c_{x}
+  =
+  \lrfloor[\bigg]
+  {
+    \frac
+    {
+      w_{R}
+      -
+      \lr{k_{x} - 2}
+      s_{x}
+    }
+    {
+      2
+    }
+  }
+  ,
+  \quad
+  x_{n}
+  =
+  \begin{cases}
+    0
+    &
+    \qq{if}
+    n = 0
+    \\
+    c_{x}
+    +
+    \lr{n - 1}
+    s_{x}
+    &
+    \qq{if}
+    1 \leq n \leq k_{x} - 1
+    \\
+    w_{R}
+    &
+    \qq{if}
+    n = k_{x}
+  \end{cases}
+  .
+\end{equation}
+We similarly partition the $y'$ component of $B\lr{R}$ as above, replacing
+$w_{R}$ by $h_{R}$, and variables subscripted by $x$ with $y$.
+Each partition (or bin) of $B\lr{R}$ is then of the form
+\begin{equation}
+  \label{eq:def-bins}
+  B_{i, j}
+  =
+  \lrsq{x_{i}, x_{i + 1}}
+  \times
+  \lrsq{y_{j}, y_{j + 1}}
+  \qq{for all}
+  0 \leq i \leq k_{x} - 1
+  ,
+  \quad
+  0 \leq j \leq k_{y} - 1
+  .
+\end{equation}
+We will make an abuse of notation by writing $B_{i, j}$ in terms of real
+intervals while instead interpreting it as a set of pairs of natural numbers;
+that is, as $B_{i, j} \cap \natural^{2}$.
+Using this partition of $B\lr{R}$, we now define the spatial occupancy
+$v\lr{R} = \lr{v_{i, j}\lr{R}} \in \real^{k_{x} \times k_{y}}$ of $R$ as
+\begin{equation}
+  \label{eq:def-spatial-occupancy}
+  v_{i, j}\lr{R}
+  =
+  \frac
+  {
+    \lrabs
+    {
+      R
+      \cap
+      B_{i, j}
+    }
+  }
+  {
+    \lrabs
+    {
+      B_{i, j}
+    }
+  }
+  \qq{for all}
+  0 \leq i \leq k_{x} - 1
+  ,
+  \quad
+  0 \leq j \leq k_{y} - 1
+  ;
+\end{equation}
+that is, the fraction of points in $B_{i, j}$ that are also in $R$.
+We note that $v_{i, j}\lr{R} \in \lrsq{0, 1}$ for all $0 \leq i \leq k_{x} - 1$,
+$0 \leq j \leq k_{y} - 1$.
+
 \subsection{Detection}
 \label{sec:imp-detection}
 
@@ -795,7 +938,7 @@ box of the region) which maps each point that is in the region to 1, and 0
 otherwise.
 We then take a spatial histogram of the binary image, decomposing it into a set
 of bins (which we constrain to be symmetric around the midpoint of the bounding
-box), and calculating the fractional occupancy of each box by the region.
+box), and calculating the fractional occupancy of each bin by the region.
 For a histogram with $k_{x}$ $x$-bins and $k_{y}$ $y$-bins, we have thus formed,
 for each region, a $k_{x} k_{y}$-dimensional feature vector with elements in
 $\lrsq{0, 1}$.
