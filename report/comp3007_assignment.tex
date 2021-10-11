@@ -941,6 +941,145 @@ $0 \leq j \leq k_{y} - 1$.
 \subsection{Task 1}
 \label{sec:imp-1}
 
+We describe the detection algorithm for task 1 in detail.
+\begin{itemize}
+\item
+  We begin with the supplied colour image,
+  $I_{C} : D \to \lrset{0, \dotsc, 255}^{3}$, for which we are to detect a sign
+  with three digits.
+  We denote the red, green, and blue channels of this image by
+  $I_{R}, I_{G}, I_{B} : D \to \lrset{0, \dotsc, 255}$.
+
+\item
+  We create a grayscale transformation of this image,
+  $I : D \to \lrset{0, \dotsc, 255}$.
+
+\item
+  We use the MSER method, with the following parameters:
+  \begin{itemize}
+  \item
+    minimum region size of 45;
+  \item
+    maximum region size of 2000;
+  \item
+    threshold step, $\delta = 20$.
+  \end{itemize}
+  Applying the MSER algorithm with these parameters to the grayscale image $I$
+  yields a set of maximally stable extremal regions
+  $\mathcal{R} = \lrset{R_{1}, \dotsc, R_{n}}$.
+
+\item
+  The MSER algorithm can yield nested regions, or strongly overlapping regions,
+  which interfere with the construction of chains of regions.
+  Hence, we order the regions by decreasing area and filter out any regions
+  which strongly overlap with a larger region.
+  That is, we order $\mathcal{R}$ such that for all
+  $R_{i}, R_{j} \in \mathcal{R}$ we have $\lrabs{R_{i}} \geq \lrabs{R_{j}}$ if
+  $i \leq j$.
+  Then, for each $R_{i} \in \mathcal{R}$, for all $R_{j} \in \mathcal{R}$ with
+  $j \geq i$, we remove $R_{j}$ from $\mathcal{R}$ if
+  \begin{equation*}
+    \frac
+    {
+      \lrabs
+      {
+        R_{j}
+        \cap
+        R_{i}
+      }
+    }
+    {
+      \lrabs
+      {
+        R_{j}
+      }
+    }
+    \geq
+    \lambda
+    .
+  \end{equation*}
+  In testing, we have found $\lambda = 0.8$ to be suitable (although this could
+  probably be much stricter).
+
+\item
+  We then make use of the regularity of the aspect ratio of the bounding boxes
+  of the digits to further filter $\mathcal{R}$.
+  This step is effective at removing any regions corresponding to bricks (which
+  tend to be wider than they are tall) which can be numerous, and thus impact
+  the performance of the algorithm.
+  For each region $R_{i} \in \mathcal{R}$ with corresponding bounding box
+  $B\lr{R_{i}}$, with aspect ratio $a_{i} = w_{R_{i}} / h_{R_{i}}$, we remove
+  $R_{i}$ from $\mathcal{R}$ if $a_{i} \notin \lrsq{a_{\min}, a_{\max}}$.
+  In testing, we have found $a_{\min} = 1:1.2$ and $a_{\max} = 1:3$ to be
+  suitable.
+
+\item
+  A consequence of the MSER algorithm is that it detects the interior black
+  holes of digits - such as those in 0, 6, 8, 9 - as extremal regions in
+  addition to the white digits regions.
+  These regions can also interfere with the construction of chains of regions,
+  and so we filter them out.
+  We make use of the fact that the bounding box of a region, that is contained
+  within another region, will be contained in the bounding box of that region
+  also, and that these interior regions we wish to remove are simply connected
+  (they have no holes of their own).
+  However, we wish to remove only interior regions which are closely packed into
+  another region - and avoid accidentally removing say a character region which
+  may possibly be inside a region corresponding to the sign.
+  Hence, for each region $R_{i} \in \mathcal{R}$ we remove any region
+  $R_{j} \in \mathcal{R}$ from $\mathcal{R}$ if
+  \begin{equation*}
+    B\lr{R_{j}}
+    \subseteq
+    B\lr{R_{i}}
+    \qq{and}
+    \max_{q \in \partial R_{j}}
+    \lr[\bigg]
+    {
+      \min_{p \in \partial R_{i}}
+      \mathrm{dist}\lr{p, q}
+    }
+    \leq
+    \mu
+    .
+  \end{equation*}
+  That is, we only remove $R_{j}$ if the maximum distance between the boundaries
+  of $R_{i}$ and $R_{j}$ is less than $\mu$.
+  In testing, we have found $\mu = 10$ to be suitable (however, this should
+  probably be modified to be scale invariant).
+
+\item
+  We then make use of the regularity of the fill of the digits regions to
+  further filter $\mathcal{R}$, by removing any regions which fill their
+  bounding box above a certain point.
+  This step is effective at removing any vertically oriented rectangles which
+  might otherwise be possibly mistaken for digits.
+  That is, for each region $R_{i} \in \mathcal{R}$, with corresponding bounding
+  box $B\lr{R_{i}}$, we remove $R_{i}$ from $\mathcal{R}$ if
+  \begin{equation*}
+    \frac
+    {
+      \lrabs
+      {
+        R_{i}
+      }
+    }
+    {
+      \lrabs
+      {
+        B\lr{R_{i}}
+        \cap
+        \natural^{2}
+      }
+    }
+    \geq
+    \xi
+    .
+  \end{equation*}
+  In testing, we have found $\xi = 0.85$ to be suitable.
+
+\end{itemize}
+
 \subsection{Task 2}
 \label{sec:imp-2}
 
