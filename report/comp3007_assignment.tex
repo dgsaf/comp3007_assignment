@@ -391,6 +391,9 @@ both the digits and the arrows.
 Hence, we discuss the problem of classification, for both types of characters,
 in a general manner in \autoref{sec:imp-classification}.
 
+\subsection{Detection}
+\label{sec:imp-detection}
+
 To detect the characters (digits and arrows) we utilise the method of
 Maximally Stable Extremal Regions (MSER) - first developed by
 \cite{MATAS2004761}.
@@ -398,6 +401,20 @@ We present our formalism in a similar manner to \cite{MATAS2004761}.
 In this method, a number of regions, which are extremal in terms of light
 intensity and stable in the sense that the region boundary changes little under
 a varying threshold, are detected in the grayscale image.
+We suggest that this technique is suitable for our purpose, as the characters
+are uniformly white and contrast well against the surrounding uniformly black
+bounding area of the signs.
+Furthermore, in most cases the characters are well separated from other
+characters and the edge of the sign (except notably for the leftmost digits in
+task 2).
+Hence, these characters should form extremal regions which are relatively stable
+under affine transformations, and when the image is underexposed or overexposed.
+Theoretically, this technique may be susceptible to extreme variations in
+lighting conditions, such as strong shadows or glare, which form discontinuous
+non-monotonic changes in light intensity.
+However, in testing, this technique has proved tolerant to moderate shadows and
+glare, so we do not expect this to be a major issue.
+
 With suitably chosen parameters for the MSER algorithm, the regions of interest,
 corresponding to the characters on the sign, can be reliably detected - but must
 be distinguished from the other regions detected which are not of interest.
@@ -430,9 +447,12 @@ for this digit which is limited to the scope of this bounding box.
 With all regions corresponding to the digit sequences now found, the
 collinearity of the digits is used to locate the region corresponding to the
 directional arrow associated with these digits.
-
 Thus for each task, the detected lines of digits (and directional arrows for
 task 2) are now located.
+
+\subsection{Classification by $k$-Nearest Neighbours}
+\label{sec:imp-classification}
+
 Prior to the classification stage, we utilise the collinearity of the lines, and
 the uniform height of the digits, to construct an affine transformation which
 rotates the line to be horizontal.
@@ -447,8 +467,11 @@ For each region, we define a binary image (with the dimensions of the bounding
 box of the region) which maps each point that is in the region to 1, and 0
 otherwise.
 We then decompose the binary image into a set of bins (which are symmetric about
-the box midpoint) and use the fractional occupancy of each bin as a feature
-vector for the region.
+the bounding box midpoint) and use the spatial occupancy of each bin as a
+feature vector for the region.
+We suggest that this approach is suitable, as the digits and directional arrows
+are of a uniform style and dimensions, and we note that this feature vector is
+scale-invariant.
 In testing with a suitably selected number of bins, this approach has proved to
 be reliably accurate despite its simplicity.
 
@@ -907,46 +930,6 @@ $v\lr{R} = \lr{v_{i, j}\lr{R}} \in \real^{k_{x} \times k_{y}}$ of $R$ as
 that is, the fraction of points in $B_{i, j}$ that are also in $R$.
 We note that $v_{i, j}\lr{R} \in \lrsq{0, 1}$ for all $0 \leq i \leq k_{x} - 1$,
 $0 \leq j \leq k_{y} - 1$.
-
-\subsection{Detection}
-\label{sec:imp-detection}
-
-The problem of detection is accomplished by using the MSER method to detect the
-character regions present on the sign.
-We suggest that this technique is suitable for our purpose, as the characters
-are uniformly white and contrast well against the surrounding uniformly black
-bounding area of the signs.
-Furthermore, in most cases the characters are well separated from other
-characters and the edge of the sign (except notably for the leftmost digits in
-task 2).
-Hence, these characters should form extremal regions which are relatively stable
-under affine transformations, and when the image is underexposed or overexposed.
-Theoretically, this technique may be susceptible to extreme variations in
-lighting conditions, such as strong shadows or glare, which form discontinuous
-non-monotonic changes in light intensity.
-However, in testing, this technique has proved tolerant to moderate shadows and
-glare, so we do not expect this to be a major issue.
-
-\subsection{Classification by $k$-Nearest Neighbours}
-\label{sec:imp-classification}
-
-To address the problem of digit and directional arrow classification, we use
-the $k$-NN algorithm, comparing the regions expected to be digits and arrows
-with the training digits and arrows respectively.
-For each region, we define a binary image (with the dimensions of the bounding
-box of the region) which maps each point that is in the region to 1, and 0
-otherwise.
-We then take a spatial histogram of the binary image, decomposing it into a set
-of bins (which we constrain to be symmetric around the midpoint of the bounding
-box), and calculating the fractional occupancy of each bin by the region.
-For a histogram with $k_{x}$ $x$-bins and $k_{y}$ $y$-bins, we have thus formed,
-for each region, a $k_{x} k_{y}$-dimensional feature vector with elements in
-$\lrsq{0, 1}$.
-We suggest that this approach is suitable, as the digits and directional arrows
-are of a uniform style and dimensions, and we note that this feature vector is
-scale-invariant.
-In testing with a suitably selected number of bins, this approach has proved to
-be reliably accurate despite its simplicity.
 
 \subsection{Task 1}
 \label{sec:imp-1}
