@@ -373,20 +373,41 @@ assumptions made on the properties of the sign are shown in
 \clearpage
 
 \section{Implementation}
-\label{sec:implementation}
+\label{sec:imp}
 
 \subsection{Overview}
-\label{sec:implementation-overview}
+\label{sec:imp-overview}
 
-To detect the characters (digits and arrows), we utilise the technique of
-Maximally Stable Extremal Regions (MSER).
-We suggest that this technique is suitable for our purpose, as the characters
-are uniformly white and contrast well against the surrounding uniformly black
-area of the signs.
-Hence, these characters should form regions which are very stable under
-thresholding, when compared with their local context.
-Furthermore, this technique should be reasonably robust to the presence of
-shadows and other variations in illumination.
+We make use of the commonality of the properties of the signs that are to be
+detected in task 1 and task 2 by designing a detection algorithm which can be
+adapted with minor changes for each task.
+The specific detection algorithms for each task are discussed in
+\autoref{sec:imp-1} and \autoref{sec:imp-2}.
+Furthermore, as the digits to be classified in each task are of the same style,
+we also design a classification algorithm which is suitable for both tasks.
+Naturally, a separate classifier will be needed for the directional arrows,
+however we use the $k$-Nearest Neighbours ($k$-NN) algorithm for classifying
+both the digits and the arrows.
+Hence, we discuss the problem of classification, for both types of characters,
+in a general manner in \autoref{sec:imp-classification}.
+
+To detect the characters (digits and arrows) we utilise the method of
+Maximally Stable Extremal Regions (MSER) - first developed by
+\cite{MATAS2004761} and we present our formalism in a similar manner to theirs.
+In this method, a number of regions, which are extremal in terms of light
+intensity and stable in the sense that the region boundary changes little under
+a varying threshold, are detected.
+With suitably chosen parameters for the MSER algorithm, the regions of interest,
+corresponding to the characters on the sign, can be reliably detected - but must
+be distinguished from the other regions detected which are not of interest.
+Using known properties of the characters (such as dimension, aspect ratio,
+bounding box fill) we are able to refine the set of regions.
+We then examine the geometric relationships between the regions to determine
+which pairs of regions are: similar in dimension, and possibly collinear.
+This results in a directed graph of regions, with paths in this graph
+constituting possible lines of similar regions (a property that the sequences of
+digits are known to exhibit).
+
 
 \subsection{Mathematical Details}
 \label{sec:mathematical-details}
@@ -703,33 +724,49 @@ $G_{\delta}\lr{R; t}$ has a local minimum at $t = t_{0}$.
 Such a thresholded region experiences minimal change (in cardinality) when the
 threshold $t_{0}$ is increased/decreased by $\delta$.
 
+\subsection{Detection}
+\label{sec:imp-detection}
+
+The problem of detection is accomplished by using the MSER method to detect the
+character regions present on the sign.
+We suggest that this technique is suitable for our purpose, as the characters
+are uniformly white and contrast well against the surrounding uniformly black
+bounding area of the signs.
+Furthermore, in most cases the characters are well separated from other
+characters and the edge of the sign (except notably for the leftmost digits in
+task 2).
+Hence, these characters should form extremal regions which are relatively stable
+under affine transformations, and when the image is underexposed or overexposed.
+Theoretically, this technique may be susceptible to extreme variations in
+lighting conditions, such as strong shadows or glare, which form discontinuous
+non-monotonic changes in light intensity.
+However, in testing, this technique has proved tolerant to moderate shadows and
+glare, so we do not expect this to be a major issue.
+
+\subsection{Classification by $k$-Nearest Neighbours}
+\label{sec:imp-classification}
+
 \subsection{Task 1}
-\label{sec:implementation-1}
-
-\subsubsection*{Detection}
-
-\subsubsection*{Classification}
+\label{sec:imp-1}
 
 \subsection{Task 2}
-\label{sec:implementation-2}
-
-\subsubsection*{Detection}
-
-\subsubsection*{Classification}
+\label{sec:imp-2}
 
 \section{Validation Performance}
-\label{sec:validation}
+\label{sec:val}
 
 \subsection{Task 1}
-\label{sec:validation-1}
+\label{sec:val-1}
 
 \subsection{Task 2}
-\label{sec:validation-2}
+\label{sec:val-2}
 
 \section{Conclusion}
 \label{sec:conclusion}
 
 \clearpage
+
+\bibliography{references}
 
 \appendix
 
