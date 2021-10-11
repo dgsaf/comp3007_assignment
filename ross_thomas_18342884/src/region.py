@@ -2,6 +2,7 @@
 
 import numpy as np
 import cv2
+import math
 import random
 
 from box import *
@@ -116,11 +117,11 @@ class Region:
         return img
 
     def spatial_histogram(self, bins_x, bins_y):
-        s_x = ceil(self.box.width / bins_x)
-        s_y = ceil(self.box.height / bins_y)
+        s_x = math.ceil(self.box.width / bins_x)
+        s_y = math.ceil(self.box.height / bins_y)
 
-        c_x = floor((self.box.width - ((bins_x - 2) * s_x)) / 2)
-        c_y = floor((self.box.height - ((bins_y - 2) * s_y)) / 2)
+        c_x = math.floor((self.box.width - ((bins_x - 2) * s_x)) / 2)
+        c_y = math.floor((self.box.height - ((bins_y - 2) * s_y)) / 2)
 
         xs = np.array(
             [0]

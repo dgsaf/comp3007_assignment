@@ -41,7 +41,7 @@ class KNN:
         _, responses, _, dist = self.knn.findNearest(samples, k)
 
         labels_predicted = np.array(
-            [self.labels[np.int32(response[0])]
+            [self.labels[np.int32(r[0])]
              for i, r in enumerate(responses)])
 
         return labels_predicted
