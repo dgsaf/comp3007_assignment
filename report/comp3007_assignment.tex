@@ -1078,6 +1078,175 @@ We describe the detection algorithm for task 1 in detail.
   \end{equation*}
   In testing, we have found $\xi = 0.85$ to be suitable.
 
+\item
+  Having now filtered the regions quite heavily, we consider the dimensional
+  similarity and geometric adjacency between regions to link sequences of
+  similar, collinear regions into chains.
+  We make use of the fact that the most reliable geometric property of the
+  digits, which is least varying with perspective transformations, is the height
+  of the bounding boxes of the digits.
+  For all regions $R_{i}, R_{j} \in \mathcal{R}$:
+  \begin{itemize}
+  \item
+    We consider their height to be similar if
+    \begin{equation*}
+      \lrabs[\bigg]
+      {
+        \frac
+        {
+          h_{R_{i}}
+          -
+          h_{R_{j}}
+        }
+        {
+          h_{R_{i}}
+        }
+      }
+      \leq
+      \zeta_{h}
+      \qq{and}
+      \lrabs[\bigg]
+      {
+        \frac
+        {
+          h_{R_{i}}
+          -
+          h_{R_{j}}
+        }
+        {
+          h_{R_{j}}
+        }
+      }
+      \leq
+      \zeta_{h}
+      .
+    \end{equation*}
+    In testing, we have found that $\zeta_{h} = 0.2$ to be suitable.
+
+  \item
+    We consider their $y$ placement to be similar if
+    \begin{equation*}
+      \lrabs[\bigg]
+      {
+        \frac
+        {
+          y_{R_{i}}
+          -
+          y_{R_{j}}
+        }
+        {
+          h_{R_{i}}
+        }
+      }
+      \leq
+      \zeta_{y}
+      \qq{and}
+      \lrabs[\bigg]
+      {
+        \frac
+        {
+          y_{R_{i}}
+          -
+          y_{R_{j}}
+        }
+        {
+          h_{R_{j}}
+        }
+      }
+      \leq
+      \zeta_{y}
+      .
+    \end{equation*}
+    In testing, we have found that $\zeta_{y} = 0.5$ to be suitable.
+
+  \item
+    We consider them to be $x$ adjacent if
+    \begin{equation*}
+      \lrabs[\bigg]
+      {
+        \frac
+        {
+          x_{R_{i}}
+          -
+          x_{R_{j}}
+        }
+        {
+          h_{R_{i}}
+        }
+      }
+      \leq
+      \zeta_{x}
+      \qq{and}
+      \lrabs[\bigg]
+      {
+        \frac
+        {
+          x_{R_{i}}
+          -
+          x_{R_{j}}
+        }
+        {
+          h_{R_{j}}
+        }
+      }
+      \leq
+      \zeta_{x}
+      ,
+    \end{equation*}
+    and if the overlap of their boxes satisfies
+    \begin{equation*}
+      \frac
+      {
+        \lrabs
+        {
+          B\lr{R_{i}}
+          \cap
+          B\lr{R_{j}}
+        }
+      }
+      {
+        \lrabs
+        {
+          B\lr{R_{i}}
+        }
+      }
+      \leq
+      \zeta_{B}
+      \qq{and}
+      \frac
+      {
+        \lrabs
+        {
+          B\lr{R_{i}}
+          \cap
+          B\lr{R_{j}}
+        }
+      }
+      {
+        \lrabs
+        {
+          B\lr{R_{j}}
+        }
+      }
+      \leq
+      \zeta_{B}
+      .
+    \end{equation*}
+    In testing, we have found that $\zeta_{x} = 1.0$ and $\zeta_{B} = 0.25$ to
+    be suitable.
+  \end{itemize}
+  If $R_{i}$ and $R_{j}$ are found to satisfy the above properties, we say that
+  they are linked.
+  We first find all links between all regions in $\mathcal{R}$, and then we
+  filter these links - by minimal region-to-region distance - to ensure that
+  each region is only linked to at most one region to its left and to at most
+  one region on its right.
+  As a result, all paths extracted from the graph formed by these regions and
+  their edges will be non-overlapping.
+  We extract all paths (of at least 2 regions) and refer to these paths as
+  chains; that is, the chains are of the form
+  $\mathcal{C}_{i} = \lrset{R_{i_{1}}, R_{i_{2}}, \dotsc, R_{i_{n_{i}}}}$.
+
 \end{itemize}
 
 \subsection{Task 2}
