@@ -6,6 +6,7 @@ import cv2
 
 from region import *
 
+
 class SVM_OVO:
     def __init__(self, samples_labelled):
         self.train(samples_labelled)
@@ -20,7 +21,6 @@ class SVM_OVO:
         return self._svms
 
     def train(self, samples_labelled):
-        # self._labels = set(iter(samples_labelled))
         self._labels = {k : l for k, l in enumerate(samples_labelled.keys())}
 
         self._svms = dict()

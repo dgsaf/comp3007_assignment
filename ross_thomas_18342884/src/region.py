@@ -115,23 +115,27 @@ class Region:
             img[i, j] = 255
         return img
 
-    def spatial_histogram(self, k_x, k_y):
-        s_x = ceil(self.box.width / k_x)
-        s_y = ceil(self.box.height / k_y)
+    def spatial_histogram(self, bins_x, bins_y):
+        s_x = ceil(self.box.width / bins_x)
+        s_y = ceil(self.box.height / bins_y)
 
-        c_x = floor((self.box.width - ((k_x - 2) * s_x)) / 2)
-        c_y = floor((self.box.height - ((k_y - 2) * s_y)) / 2)
+        c_x = floor((self.box.width - ((bins_x - 2) * s_x)) / 2)
+        c_y = floor((self.box.height - ((bins_y - 2) * s_y)) / 2)
 
         xs = np.array(
-            [0] + [(i * s_x) + c_x for i in range(0, k_x - 1)] + [self.width])
+            [0]
+            + [(i * s_x) + c_x for i in range(0, bins_x - 1)]
+            + [self.box.width])
         ys = np.array(
-            [0] + [(i * s_y) + c_y for i in range(0, k_y - 1)] + [self.height])
+            [0]
+            + [(i * s_y) + c_y for i in range(0, bins_y - 1)]
+            + [self.box.height])
 
         img = self.image()
-        bins = np.zeros((k_y, k_x), dtype=np.float32)
-        for i in range(k_y):
+        bins = np.zeros((bins_y, bins_x), dtype=np.float32)
+        for i in range(bins_y):
             sl_y = slice(ys[i], ys[i+1])
-            for j in range(k_x):
+            for j in range(bins_x):
                 sl_x = slice(xs[j], xs[j+1])
                 n = (ys[i+1] - ys[i]) * (xs[j+1] - xs[j])
                 bins[i, j] = np.count_nonzero(img[sl_y, sl_x]) / n
