@@ -896,9 +896,9 @@ Each partition (or bin) of $B\lr{R}$ is then of the form
   0 \leq j \leq k_{y} - 1
   .
 \end{equation}
-We will make an abuse of notation by writing $B_{i, j}$ in terms of real
-intervals while instead interpreting it as a set of pairs of natural numbers;
-that is, as $B_{i, j} \cap \natural^{2}$.
+We note that while $B_{i, j}$ is the Cartesian product of real intervals,
+$B_{i, j} \cap \natural^{2}$ is the set of pairs of natural numbers which lie
+within these intervals.
 Using this partition of $B\lr{R}$, we now define the spatial occupancy
 $v\lr{R} = \lr{v_{i, j}\lr{R}} \in \real^{k_{x} \times k_{y}}$ of $R$ as
 \begin{equation}
@@ -911,13 +911,20 @@ $v\lr{R} = \lr{v_{i, j}\lr{R}} \in \real^{k_{x} \times k_{y}}$ of $R$ as
     {
       R
       \cap
-      B_{i, j}
+      \lr
+      {
+        B_{i, j}
+        \cap
+        \natural^{2}
+      }
     }
   }
   {
     \lrabs
     {
       B_{i, j}
+      \cap
+      \natural^{2}
     }
   }
   \qq{for all}
@@ -927,7 +934,7 @@ $v\lr{R} = \lr{v_{i, j}\lr{R}} \in \real^{k_{x} \times k_{y}}$ of $R$ as
   0 \leq j \leq k_{y} - 1
   ;
 \end{equation}
-that is, the fraction of points in $B_{i, j}$ that are also in $R$.
+that is, the fraction of discrete points in $B_{i, j}$ that are also in $R$.
 We note that $v_{i, j}\lr{R} \in \lrsq{0, 1}$ for all $0 \leq i \leq k_{x} - 1$,
 $0 \leq j \leq k_{y} - 1$.
 
