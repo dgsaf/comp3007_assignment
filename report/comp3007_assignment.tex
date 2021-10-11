@@ -537,6 +537,31 @@ form
 \end{equation}
 and we say that $I_{t}$ is a thresholded image.
 
+\subsubsection*{Otsu Separation}
+
+Suppose that $I : D \to S \subset \real$ is a single channel image.
+Let $t \in S$ be the threshold which maximises the inter-class variance of
+the binary distribution $I_{t}\lr{D}$, which is obtained via Otsu's method.
+The mean of each class $k \in \lrset{0, 1}$ is of the form
+\begin{equation}
+  \label{eq:def-otsu-mean}
+  \mu_{k}\lr{I}
+  =
+  \sum_{p \in D : I_{t}\lr{p} = k}
+  I\lr{p}
+  .
+\end{equation}
+We define the Otsu separation $\varsigma\lr{I}$ of $I$ to be the difference of
+these means; that is,
+\begin{equation}
+  \label{eq:def-otsu-separation}
+  \varsigma\lr{I}
+  =
+  \mu_{1}\lr{I}
+  -
+  \mu_{0}\lr{I}
+  .
+\end{equation}
 
 \subsubsection*{Bounding Box}
 
@@ -1246,6 +1271,65 @@ We describe the detection algorithm for task 1 in detail.
   We extract all paths (of at least 2 regions) and refer to these paths as
   chains; that is, the chains are of the form
   $\mathcal{C}_{i} = \lrset{R_{i_{1}}, R_{i_{2}}, \dotsc, R_{i_{n_{i}}}}$.
+
+\item
+  It now remains to select the chain corresponding to be the sequence of three
+  digits.
+  While it would be possible to achieve this by classifying every digit in every
+  chain and selecting the chain with the smallest $k$-NN distances, an
+  alternatively simpler and seemingly reliable method has been employed instead.
+  The white digits on the black background are likely to be the only
+  predominantly black and white region in the image that we are considering.
+  Hence, we need only select the most monochromatic chain, which has the
+  sharpest contrast.
+  For each chain $\mathcal{C}_{i} = \lrset{R_{i_{1}}, R_{i_{2}}, R_{i_{3}}}$ of
+  exactly three regions, we perform the following:
+  \begin{itemize}
+  \item
+    From the bounding boxes of each region in the chain $B\lr{R_{i_{j}}}$ we
+    construct the bounding box of the chain $B\lr{\mathcal{C}_{i}}$.
+
+  \item
+    For each color channel $I_{R}, I_{G}, I_{B}$ and in grayscale $I$, the Otsu
+    separation of the image, restricted to this bounding box, is calculated, and
+    the cross-channel Otsu separation of this chain is taken to be the minimum
+    of these values; that is, with slight abuse of notation,
+    \begin{equation*}
+      \varsigma\lr{\mathcal{C}_{i}}
+      =
+      \min
+      \lrset
+      {
+        \varsigma\lr{J\mid_{B\lr{\mathcal{C}_{i}}}}
+        \mid
+        J
+        \in
+        \lrset
+        {
+          I_{R}
+          ,
+          I_{G}
+          ,
+          I_{B}
+          ,
+          I
+        }
+      }
+      .
+    \end{equation*}
+    For a black and white region, the Otsu separation will be similar across
+    each color channel and in grayscale, whereas for a coloured region it is
+    likely that at least one will be smaller than the rest.
+  \end{itemize}
+  We then take the chain $\mathcal{C}_{i}$, for which
+  $\varsigma\lr{\mathcal{C}_{i}}$ is maximal, to be the chain associated with
+  the sequence of three monochromatic digits.
+  While this approach is not guaranteed to locate the sequence of digits, as
+  opposed to another arbitrary chain of three equally spaced monochromatic
+  regions, it is has proven successful across all training and validation
+  images.
+  Extremely unfortunate circumstances would be required to result in an
+  arbitrary non-digit chain being selected ahead.
 
 \end{itemize}
 
