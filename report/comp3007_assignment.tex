@@ -408,8 +408,8 @@ the geometric relationships between the regions to determine which pairs of
 regions are: similar in dimension, and possibly collinear.
 This results in a directed graph of regions, with paths in this graph
 constituting possible lines of similar regions.
-For each region (node) in this graph we filter their set of edges to leave only
-the edge connecting it to the closest adjacent region - ensuring all paths are
+For each region in this graph we filter their set of edges to leave only the
+edge connecting it to the closest adjacent region - ensuring all paths are
 non-overlapping.
 We then extract all possible paths, which we call chains, and analyse each chain
 by length and by contrast (in gray scale as well as in red, green, and blue
@@ -438,6 +438,17 @@ rotates the line to be horizontal.
 While a full perspective transformation could be employed, we observed that an
 affine transformation was sufficient in the absence of extreme perspective
 distortions.
+
+To address the problem of digit and directional arrow classification, we use
+the $k$-NN algorithm, comparing the regions expected to be digits and arrows
+with the training digits and arrows respectively.
+For each region, we define a binary image (with the dimensions of the bounding
+box of the region) which maps each point that is in the region to 1, and 0
+otherwise.
+We then take a spatial histogram of the binary image, decomposing it into a set
+of bins and calculating the fractional occupancy of each box by the region.
+In testing with a suitably selected number of bins, this approach has proved to
+be reliably accurate despite its simplicity.
 
 \subsection{Mathematical Details}
 \label{sec:mathematical-details}
@@ -775,6 +786,24 @@ glare, so we do not expect this to be a major issue.
 
 \subsection{Classification by $k$-Nearest Neighbours}
 \label{sec:imp-classification}
+
+To address the problem of digit and directional arrow classification, we use
+the $k$-NN algorithm, comparing the regions expected to be digits and arrows
+with the training digits and arrows respectively.
+For each region, we define a binary image (with the dimensions of the bounding
+box of the region) which maps each point that is in the region to 1, and 0
+otherwise.
+We then take a spatial histogram of the binary image, decomposing it into a set
+of bins (which we constrain to be symmetric around the midpoint of the bounding
+box), and calculating the fractional occupancy of each box by the region.
+For a histogram with $k_{x}$ $x$-bins and $k_{y}$ $y$-bins, we have thus formed,
+for each region, a $k_{x} k_{y}$-dimensional feature vector with elements in
+$\lrsq{0, 1}$.
+We suggest that this approach is suitable, as the digits and directional arrows
+are of a uniform style and dimensions, and we note that this feature vector is
+scale-invariant.
+In testing with a suitably selected number of bins, this approach has proved to
+be reliably accurate despite its simplicity.
 
 \subsection{Task 1}
 \label{sec:imp-1}
