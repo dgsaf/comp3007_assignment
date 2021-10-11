@@ -14,14 +14,16 @@ from chain import *
 args, img_files = parse_input()
 
 # build classifier
+print(f"> building classifiers")
 svm_digits = build_svm_digits(args["digits"])
+knn_digits = build_knn_digits(args["digits"], 5, 7)
 
 # locate and classify the digits of each building sign
 for img_file in img_files:
-    time_start = timer()
+    time_img = timer()
 
     def timing():
-        return f"{timer() - time_start:>.1f} s>"
+        return f"{timer() - time_img:>.1f} s>"
 
     file_root, file_ext, file_id = parse_image_file(img_file)
     print(f"{img_file} -> ({file_root}, {file_ext}, {file_id})")
@@ -147,7 +149,11 @@ for img_file in img_files:
     print(f"{timing()} classifying digits")
     digits = np.array([r.features for r in chain_best])
     p = svm_digits.predict(digits)
-    write_image_to_work(args, img_file, f"5_{p[0]}{p[1]}{p[2]}", img_best)
+    write_image_to_work(args, img_file, f"5_svm_{p[0]}{p[1]}{p[2]}", img_best)
+
+    digits = np.array([np.ravel(r.spatial_histogram(5, 7)) for r in chain_best])
+    p = knn_digits.predict(digits, k=3)
+    write_image_to_work(args, img_file, f"5_knn_{p[0]}{p[1]}{p[2]}", img_best)
     print(p)
 
     print(f"{timing()} ")

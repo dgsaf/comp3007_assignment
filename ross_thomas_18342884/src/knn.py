@@ -37,7 +37,7 @@ class KNN:
         self._knn.train(samples, cv2.ml.ROW_SAMPLE, responses)
         return
 
-    def predict(self, samples, k):
+    def predict(self, samples, k=3):
         _, responses, _, dist = self.knn.findNearest(samples, k)
 
         labels_predicted = np.array(
