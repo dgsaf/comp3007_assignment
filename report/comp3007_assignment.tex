@@ -402,12 +402,42 @@ corresponding to the characters on the sign, can be reliably detected - but must
 be distinguished from the other regions detected which are not of interest.
 Using known properties of the characters (such as dimension, aspect ratio,
 bounding box fill) we are able to refine the set of regions.
-We then examine the geometric relationships between the regions to determine
-which pairs of regions are: similar in dimension, and possibly collinear.
-This results in a directed graph of regions, with paths in this graph
-constituting possible lines of similar regions (a property that the sequences of
-digits are known to exhibit).
 
+To detect the regions corresponding to the sequences of digits, we then examine
+the geometric relationships between the regions to determine which pairs of
+regions are: similar in dimension, and possibly collinear.
+This results in a directed graph of regions, with paths in this graph
+constituting possible lines of similar regions.
+For each region (node) in this graph we filter their set of edges to leave only
+the edge connecting it to the closest adjacent region - ensuring all paths are
+non-overlapping.
+We then extract all possible paths, which we call chains, and analyse each chain
+by length and by contrast (in gray scale as well as in red, green, and blue
+channels) to order the chains by their likelihood of being a sequence of three
+digits.
+
+For task 1, we detect only the most likely chain as our sequence of digits, and
+the problem of detection is complete.
+For task 2, we cluster these chains by their likelihood and select the most
+likely subset of the chains.
+If any of the sequences of digits have been only partially found (e.g. two out
+of three digits), we make use of the grid-like layout of the digits to locate
+the remaining digit.
+A bounding box is drawn around where the remaining digit is expected to be
+present, and a connected-components algorithm is employed to construct a region
+for this digit which is limited to the scope of this bounding box.
+With all regions corresponding to the digit sequences now found, the
+collinearity of the digits is used to locate the region corresponding to the
+directional arrow associated with these digits.
+
+Thus for each task, the detected lines of digits (and directional arrows for
+task 2) are now located.
+Prior to the classification stage, we utilise the collinearity of the lines, and
+the uniform height of the digits, to construct an affine transformation which
+rotates the line to be horizontal.
+While a full perspective transformation could be employed, we observed that an
+affine transformation was sufficient in the absence of extreme perspective
+distortions.
 
 \subsection{Mathematical Details}
 \label{sec:mathematical-details}
