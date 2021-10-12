@@ -160,6 +160,36 @@ def find_aligned_chains(chains):
     return max(aligned_chains, key=lambda ac: len(ac))
 
 
+def find_missing_digits(aligned_chains, img_gray):
+    aligned_chains_found = []
+    for chain in aligned_chains:
+        n = len(chain)
+
+        if n == 3:
+            aligned_chains_found.append(chain)
+            continue
+
+        digit_2 = chain[n-2]
+        digit_3 = chain[n-1]
+
+        box = covering_box([digit_2.box, digit_3.box])
+
+        x = max([0, box.tl[0] - int(box.width / 2)])
+        y = box.tl[1]
+        w = box.tl[0] - x - 1
+        h = box.height
+        left_box = Box(x, y, w, h)
+
+        img_box = (img_gray[left_box.indexes]).astype(np.uint8)
+        t, img_bin = cv2.threshold(img_box, 128, 255, cv2.THRESH_OTSU)
+        regions = cc_regions(img_bin)
+
+        digit_1 = max(regions, key=lambda r: r.area)
+
+        aligned_chains_found.append([digit_1] + chain)
+    return aligned_chains_found
+
+
 def find_arrows(aligned_chains, regions):
     aligned_chains_arrows = []
     for chain in aligned_chains:

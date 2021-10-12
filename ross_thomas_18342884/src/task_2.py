@@ -150,6 +150,21 @@ for img_file in img_files:
         cv2.rectangle(img_ac, ac_box.tl, ac_box.br, (255, 255, 255), 2)
         write_image_to_work("5", img_ac)
 
+    print(f"{timing()} finding any missing digits")
+    aligned_chains = find_missing_digits(aligned_chains, img_gray)
+
+    if args["work_save"]:
+        print(f"{timing()} writing aligned chains (with found digits)")
+        chain_boxes = [covering_box([r.box for r in c]) for c in aligned_chains]
+
+        img_ac = img.copy()
+        for box in chain_boxes:
+            cv2.rectangle(img_ac, box.tl, box.br, (255, 255, 255), 1)
+
+        ac_box = covering_box(chain_boxes)
+        cv2.rectangle(img_ac, ac_box.tl, ac_box.br, (255, 255, 255), 2)
+        write_image_to_work("6", img_ac)
+
     print(f"{timing()} finding each chain's associated arrow")
     aligned_chains_arrows = find_arrows(aligned_chains, regions)
 
@@ -164,7 +179,7 @@ for img_file in img_files:
 
         aca_box = covering_box(chain_arrow_boxes)
         cv2.rectangle(img_aca, aca_box.tl, aca_box.br, (255, 255, 255), 2)
-        write_image_to_work("6", img_aca)
+        write_image_to_work("7", img_aca)
 
 
     # print(f"{timing()} selecting chain most likely to be digits")
