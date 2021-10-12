@@ -181,6 +181,9 @@ for img_file in img_files:
         cv2.rectangle(img_aca, aca_box.tl, aca_box.br, (255, 255, 255), 2)
         write_image_to_work("7", img_aca)
 
+        for i, (c, a) in enumerate(aligned_chains_arrows):
+            write_image_to_work(f"7_{i}", draw_regions(c + [a]))
+
     print(f"{timing()} classifying digits and arrows")
     predicted = []
     for chain_digits, arrow in aligned_chains_arrows:
