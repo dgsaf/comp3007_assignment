@@ -10,14 +10,15 @@ from chain import *
 from knn import *
 
 
-# task 1
+# task 2
 args, img_files = parse_input()
 
-# build classifier
+# build classifiers
 print(f"> building classifiers")
 knn_digits = build_knn_digits(args["digits"], 5, 7)
+knn_arrows = build_knn_arrows(args["digits"], 3, 3)
 
-# locate and classify the digits of each building sign
+# locate and classify the digits of each line of each directional sign
 for img_file in img_files:
     time_img = timer()
     def timing():
@@ -79,27 +80,31 @@ for img_file in img_files:
         print(f"{timing()} writing regions ({len(regions)})")
         write_image_to_work("2_1", draw_regions(regions, (H, W)))
 
-    print(f"{timing()} filtering regions by aspect ratio")
-    # 0.8 for directions, 1.2 for digits
-    regions = list(filter(lambda r: 1.2 <= r.box.aspect <= 3.0, regions))
-
-    if args["work_save"]:
-        print(f"{timing()} writing regions ({len(regions)})")
-        write_image_to_work("2_2", draw_regions(regions, (H, W)))
-
     print(f"{timing()} removing occluded hole regions")
     regions = remove_occluded_holes(regions, max_boundary_distance=10)
 
     if args["work_save"]:
         print(f"{timing()} writing regions ({len(regions)})")
-        write_image_to_work("2_3", draw_regions(regions, (H, W)))
+        write_image_to_work("2_2", draw_regions(regions, (H, W)))
 
     print(f"{timing()} removing highly filled regions")
     regions = list(filter(lambda r: r.fill <= 0.85, regions))
 
     if args["work_save"]:
         print(f"{timing()} writing regions ({len(regions)})")
+        write_image_to_work("2_3", draw_regions(regions, (H, W)))
+
+    print(f"{timing()} filtering regions by aspect ratio")
+    regions_arrows = list(filter(lambda r: 0.5 <= r.box.aspect <= 1.5, regions))
+    regions = list(filter(lambda r: 1.2 <= r.box.aspect <= 3.0, regions))
+
+    if args["work_save"]:
+        print(f"{timing()} writing regions ({len(regions)})")
         write_image_to_work("2_4", draw_regions(regions, (H, W)))
+
+    if args["work_save"]:
+        print(f"{timing()} writing arrow regions ({len(regions_arrows)})")
+        write_image_to_work("2_4_1", draw_regions(regions_arrows, (H, W)))
 
     print(f"{timing()} calculating chains of similar, adjacent regions")
     chains = find_chains(regions)
@@ -135,26 +140,26 @@ for img_file in img_files:
             img_roi = img[roi.indexes]
             write_image_to_work(f"4_{i}", img_roi)
 
-    print(f"{timing()} selecting chain most likely to be digits")
-    chain_digits = cluster_largest_otsu_separations(img, chains)[0]
+    # print(f"{timing()} selecting chain most likely to be digits")
+    # chain_digits = cluster_largest_otsu_separations(img, chains)[0]
 
-    if args["work_save"]:
-        print(f"{timing()} writing digit chain")
-        img_digits = img[covering_box([r.box for r in chain_digits]).indexes]
-        write_image_to_work("5", img_digits)
+    # if args["work_save"]:
+    #     print(f"{timing()} writing digit chain")
+    #     img_digits = img[covering_box([r.box for r in chain_digits]).indexes]
+    #     write_image_to_work("5", img_digits)
 
-    print(f"{timing()} classifying digits")
-    features_digits = np.array(
-        [np.ravel(r.spatial_histogram(5, 7))
-         for r in chain_digits])
-    predicted_digits = knn_digits.predict(features_digits, k=3)
+    # print(f"{timing()} classifying digits")
+    # features_digits = np.array(
+    #     [np.ravel(r.spatial_histogram(5, 7))
+    #      for r in chain_digits])
+    # predicted_digits = knn_digits.predict(features_digits, k=3)
 
-    print(f"{timing()} writing output for {file_root}{file_ext}")
-    img_digits = img[covering_box([r.box for r in chain_digits]).indexes]
-    cv2.imwrite(f"{args['output']}/DetectedArea{file_id}{file_ext}", img_digits)
+    # print(f"{timing()} writing output for {file_root}{file_ext}")
+    # img_digits = img[covering_box([r.box for r in chain_digits]).indexes]
+    # cv2.imwrite(f"{args['output']}/DetectedArea{file_id}{file_ext}", img_digits)
 
-    with open(f"{args['output']}/Building{file_id}.txt", "w") as out_file:
-        str_digits = "".join(map(str, predicted_digits))
-        print(f"Building {str_digits}", file=out_file)
+    # with open(f"{args['output']}/Building{file_id}.txt", "w") as out_file:
+    #     str_digits = "".join(map(str, predicted_digits))
+    #     print(f"Building {str_digits}", file=out_file)
 
-    print(f"{timing()} ")
+    # print(f"{timing()} ")
