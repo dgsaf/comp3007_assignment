@@ -156,4 +156,5 @@ def find_aligned_chains(chains):
                        for j in eq_classes[k]]
                       for k in eq_classes
                       if len(eq_classes[k]) > 1]
-    return aligned_chains
+
+    return max(aligned_chains, key=lambda ac: len(ac))
