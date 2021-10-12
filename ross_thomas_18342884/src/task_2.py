@@ -204,6 +204,11 @@ for img_file in img_files:
     with open(f"{args['output']}/BuildingList{file_id}.txt", "w") as out_file:
         for ds, a in predicted:
             str_digits = "".join(map(str, ds))
-            print(f"Building {str_digits} {a}", file=out_file)
+            if a[0] == "L":
+                str_arrow = "to the left"
+            else:
+                str_arrow = "to the right"
+
+            print(f"Building {str_digits} {str_arrow}", file=out_file)
 
     print(f"{timing()} ")
