@@ -150,6 +150,7 @@ for img_file in img_files:
     predicted_digits = knn_digits.predict(features_digits, k=3)
 
     print(f"{timing()} writing output for {file_root}{file_ext}")
+    img_digits = img[covering_box([r.box for r in chain_digits]).indexes]
     cv2.imwrite(f"{args['output']}/DetectedArea{file_id}{file_ext}", img_digits)
 
     with open(f"{args['output']}/Building{file_id}.txt", "w") as out_file:

@@ -17,7 +17,8 @@ source "${DIR_SUBMISSION}/common.sh"
 
 # Log directory variables.
 __msg_debug "Directories:"
-for name in TOP SUBMISSION DIGITS TRAIN TEST VAL OUTPUT WORK ; do
+# for name in TOP SUBMISSION DIGITS TRAIN TEST VAL OUTPUT WORK ; do
+for name in TOP SUBMISSION DIGITS TEST OUTPUT ; do
   dir="DIR_${name}"
 
   if [ -d "${!dir}" ] ; then
@@ -31,7 +32,7 @@ done
 # Run `task_1.py` script.
 /usr/bin/python3 \
   "${DIR_SUBMISSION}/src/task_1.py" \
-  -i "${DIR_TRAIN}" \
+  -i "${DIR_TEST}" \
   -o "${DIR_OUTPUT}" \
   -d "${DIR_DIGITS}" \
   -w "${DIR_WORK}" -W
