@@ -100,6 +100,11 @@ for img_file in img_files:
 
     chains = list(filter(lambda c: len(c) <= 3, chains))
 
+    if not chains:
+        print(f"{timing()} !!! no suitable chains found")
+        print(f"{timing()} ")
+        continue
+
     # print(f"{timing()} analysing chains")
     # for i, chain in enumerate(chains):
     #     img_chain = draw_regions(chain)
