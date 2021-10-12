@@ -6,20 +6,23 @@ DIR_TOP="$(dirname "${PWD}")"
 
 # Initialise directory variables.
 DIR_SUBMISSION="${DIR_TOP}/ross_thomas_18342884"
+
+# DIR_DIGITS="${DIR_TOP}/digits"
 DIR_DIGITS="${DIR_TOP}/train/digits"
-DIR_WORK="${DIR_SUBMISSION}/work"
 
 DIR_TRAIN="${DIR_TOP}/train/task1"
 DIR_TEST="${DIR_TOP}/test/task1"
 DIR_VAL="${DIR_TOP}/val/task1"
 DIR_OUTPUT="${DIR_SUBMISSION}/output/task1"
 
+DIR_WORK="${DIR_SUBMISSION}/work"
+
 # Source common scripting functionality.
 source "${DIR_SUBMISSION}/common.sh"
 
 # Log directory variables.
 __msg_debug "Directories:"
-for name in TOP SUBMISSION DIGITS WORK TRAIN TEST VAL OUTPUT ; do
+for name in TOP SUBMISSION DIGITS TRAIN TEST VAL OUTPUT WORK ; do
   dir="DIR_${name}"
 
   if [ -d "${!dir}" ] ; then
@@ -30,8 +33,10 @@ for name in TOP SUBMISSION DIGITS WORK TRAIN TEST VAL OUTPUT ; do
   fi
 done
 
-python "${DIR_SUBMISSION}/src/task_1.py" \
-       -i "${DIR_TRAIN}" \
-       -o "${DIR_OUTPUT}" \
-       -d "${DIR_DIGITS}" \
-       -w "${DIR_WORK}" -W
+# Run `task_1.py` script.
+/usr/bin/python3 \
+  "${DIR_SUBMISSION}/src/task_1.py" \
+  -i "${DIR_TRAIN}" \
+  -o "${DIR_OUTPUT}" \
+  -d "${DIR_DIGITS}" \
+  -w "${DIR_WORK}" -W

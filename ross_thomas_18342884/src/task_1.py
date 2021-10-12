@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import numpy as np
 import cv2
@@ -7,7 +7,6 @@ from timeit import default_timer as timer
 from parser import *
 from region import *
 from chain import *
-from svm import *
 from knn import *
 
 
