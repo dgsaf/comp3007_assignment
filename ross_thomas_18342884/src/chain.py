@@ -86,7 +86,7 @@ def cluster_largest_otsu_separations(img, chains, max_diff=50):
 
     n = len(otsu_seps)
     idx = n-1
-    for i in range(0, n-1):
+    for i in range(n-1):
         diff = np.abs(otsu_seps[i+1] - otsu_seps[i])
         if diff >= max_diff:
             idx = i

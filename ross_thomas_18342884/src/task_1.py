@@ -21,12 +21,15 @@ knn_digits = build_knn_digits(args["digits"], 5, 7)
 # locate and classify the digits of each building sign
 for img_file in img_files:
     time_img = timer()
-
     def timing():
         return f"{timer() - time_img:>.1f} s>"
 
     file_root, file_ext, file_id = parse_image_file(img_file)
     print(f"{img_file} -> ({file_root}, {file_ext}, {file_id})")
+
+    def write_image_to_work(suffix, img_work):
+        cv2.imwrite(f"{args['work']}/{file_root}_{suffix}{file_ext}", img_work)
+        return
 
     print(f"{timing()} reading {img_file}")
     img = cv2.imread(img_file, cv2.IMREAD_COLOR)
@@ -35,12 +38,17 @@ for img_file in img_files:
         continue
     H, W = img.shape[:2]
 
-    # write_image_to_work(args, img_file, "0", img)
+    if args["work_save"]:
+        print(f"{timing()} writing image to work")
+        write_image_to_work("0", img)
 
     # development below
     print(f"{timing()} converting to grayscale")
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # write_image_to_work(args, img_file, "1", img_gray)
+
+    if args["work_save"]:
+        print(f"{timing()} writing grayscale image to work")
+        write_image_to_work("1", img_gray)
 
     # # TASK 2: use morphology to improve MSER near edge of sign
     # print(f"{timing()} morphology")
@@ -60,101 +68,97 @@ for img_file in img_files:
 
     print(f"{timing()} constructing regions")
     regions = [Region(ps) for ps in point_sets]
-    print(f"{timing()} writing regions ({len(regions)})")
-    # write_image_to_work(args, img_file, "2_0", draw_regions(regions, (H, W)))
+
+    if args["work_save"]:
+        print(f"{timing()} writing regions ({len(regions)})")
+        write_image_to_work("2_0", draw_regions(regions, (H, W)))
 
     print(f"{timing()} removing overlapping regions")
     regions = remove_overlapping(regions, max_overlap=0.8)
-    print(f"{timing()} writing regions ({len(regions)})")
-    # write_image_to_work(args, img_file, "2_1", draw_regions(regions, (H, W)))
+
+    if args["work_save"]:
+        print(f"{timing()} writing regions ({len(regions)})")
+        write_image_to_work("2_1", draw_regions(regions, (H, W)))
 
     print(f"{timing()} filtering regions by aspect ratio")
     # 0.8 for directions, 1.2 for digits
     regions = list(filter(lambda r: 1.2 <= r.box.aspect <= 3.0, regions))
-    print(f"{timing()} writing regions ({len(regions)})")
-    # write_image_to_work(args, img_file, "2_2", draw_regions(regions, (H, W)))
+
+    if args["work_save"]:
+        print(f"{timing()} writing regions ({len(regions)})")
+        write_image_to_work("2_2", draw_regions(regions, (H, W)))
 
     print(f"{timing()} removing occluded hole regions")
     regions = remove_occluded_holes(regions, max_boundary_distance=10)
-    print(f"{timing()} writing regions ({len(regions)})")
-    # write_image_to_work(args, img_file, "2_3", draw_regions(regions, (H, W)))
+
+    if args["work_save"]:
+        print(f"{timing()} writing regions ({len(regions)})")
+        write_image_to_work("2_3", draw_regions(regions, (H, W)))
 
     print(f"{timing()} removing highly filled regions")
     regions = list(filter(lambda r: r.fill <= 0.85, regions))
-    print(f"{timing()} writing regions ({len(regions)})")
-    # write_image_to_work(args, img_file, "2_4", draw_regions(regions, (H, W)))
+
+    if args["work_save"]:
+        print(f"{timing()} writing regions ({len(regions)})")
+        write_image_to_work("2_4", draw_regions(regions, (H, W)))
 
     print(f"{timing()} calculating chains of similar, adjacent regions")
     chains = find_chains(regions)
 
-    print(f"{timing()} writing chains ({len(chains)}) of regions ({len(regions)})")
-    img_chains = draw_regions(regions, (H, W))
-    for chain in chains:
-        chain_box = covering_box([r.box for r in chain])
-        if len(chain) <= 3:
-            box_color = (255, 255, 255)
-        else:
-            box_color = (100, 100, 100)
-        cv2.rectangle(img_chains, chain_box.tl, chain_box.br, box_color, 1)
-    write_image_to_work(args, img_file, "3", img_chains)
+    if args["work_save"]:
+        print(f"{timing()} writing chains ({len(chains)})")
+        img_chains = draw_regions(regions, (H, W))
+        for chain in chains:
+            chain_box = covering_box([r.box for r in chain])
+            if len(chain) <= 3:
+                box_color = (255, 255, 255)
+            else:
+                box_color = (100, 100, 100)
+                cv2.rectangle(
+                    img_chains, chain_box.tl, chain_box.br, box_color, 1)
+                write_image_to_work("3", img_chains)
 
+    print(f"{timing()} filtering chains by length")
     chains = list(filter(lambda c: len(c) <= 3, chains))
 
     if not chains:
-        print(f"{timing()} !!! no suitable chains found")
+        print(f"{timing()} no suitable chains found")
         print(f"{timing()} ")
         continue
 
-    # print(f"{timing()} analysing chains")
-    # for i, chain in enumerate(chains):
-    #     img_chain = draw_regions(chain)
-    #     write_image_to_work(args, img_file, f"3_{i}", img_chain)
+    if args["work_save"]:
+        print(f"{timing()} writing regions of interest")
+        rois = [covering_box([r.box for r in c]) for c in chains]
+        rois = merge_overlapping(rois, max_overlap=0.01)
 
-    #     def summary(arr):
-    #         return f"({np.amin(arr):.1f} | {np.average(arr):.1f} | {np.amax(arr):.1f})"
+        img_rois = img.copy()
+        for i, roi in enumerate(rois):
+            cv2.rectangle(img_rois, roi.tl, roi.br, (255, 255, 255), 1)
+        write_image_to_work("4", img_rois)
 
-    #     print(f"Chain {i}:")
-    #     print(f"height = {summary([r.box.height for r in chain])}")
-    #     print(f"width = {summary([r.box.width for r in chain])}")
-    #     print(f"aspect = {summary([r.box.aspect for r in chain])}")
-    #     print(f"fill = {summary([r.fill for r in chain])}")
-    #     print(f"otsu sep:")
-    #     print(f"  I = {otsu_separation(img_gray, covering_box([r.box for r in chain])):.2f}")
-    #     print(f"  B = {otsu_separation(img[:,:,0], covering_box([r.box for r in chain])):.2f}")
-    #     print(f"  G = {otsu_separation(img[:,:,1], covering_box([r.box for r in chain])):.2f}")
-    #     print(f"  R = {otsu_separation(img[:,:,2], covering_box([r.box for r in chain])):.2f}")
-    #     print(f"")
-    #     for j, region in enumerate(chain):
-    #         print(f"{i}-{j}: \n{str(region)}")
+        for i, roi in enumerate(rois):
+            img_roi = img[roi.indexes]
+            write_image_to_work(f"4_{i}", img_roi)
 
-    print(f"{timing()} writing regions of interest")
-    rois = [covering_box([r.box for r in c]) for c in chains]
-
-    rois = merge_overlapping(rois, max_overlap=0.01)
-
-    img_rois = img.copy()
-    for i, roi in enumerate(rois):
-        cv2.rectangle(img_rois, roi.tl, roi.br, (255, 255, 255), 1)
-    write_image_to_work(args, img_file, f"4", img_rois)
-
-    # for i, roi in enumerate(rois):
-    #     img_roi = img[roi.indexes]
-    #     write_image_to_work(args, img_file, f"4_{i}", img_roi)
-
-    print(f"{timing()} selecting most monochromatic chain (by otsu separation)")
+    print(f"{timing()} selecting chain most likely to be digits")
     chain_digits = cluster_largest_otsu_separations(img, chains)[0]
 
-    img_digits = img[covering_box([r.box for r in chain_digits]).indexes]
-    # write_image_to_work(args, img_file, f"5", img_digits)
+    if args["work_save"]:
+        print(f"{timing()} writing digit chain")
+        img_digits = img[covering_box([r.box for r in chain_digits]).indexes]
+        write_image_to_work(args, img_file, f"5", img_digits)
 
     print(f"{timing()} classifying digits")
     features_digits = np.array(
         [np.ravel(r.spatial_histogram(5, 7))
          for r in chain_digits])
-    predicted = knn_digits.predict(features_digits, k=3)
-    write_image_to_work(
-        args, img_file,
-        f"5_knn_{predicted[0]}{predicted[1]}{predicted[2]}", img_digits)
-    print(predicted)
+    predicted_digits = knn_digits.predict(features_digits, k=3)
+
+    print(f"{timing()} writing output for {file_root}{file_ext}")
+    cv2.imwrite(f"{args['output']}/DetectedArea{file_id}{file_ext}", img_digits)
+
+    with open(f"{args['output']}/Building{file_id}.txt", "w") as out_file:
+        str_digits = "".join(map(str, predicted_digits))
+        print(f"Building {str_digits}", file=out_file)
 
     print(f"{timing()} ")
