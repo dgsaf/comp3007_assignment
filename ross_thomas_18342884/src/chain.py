@@ -161,6 +161,8 @@ def find_aligned_chains(chains):
 
 
 def find_missing_digits(aligned_chains, img_gray):
+    H, W = img_gray.shape[:2]
+
     aligned_chains_found = []
     for chain in aligned_chains:
         n = len(chain)
@@ -174,19 +176,20 @@ def find_missing_digits(aligned_chains, img_gray):
 
         box = covering_box([digit_2.box, digit_3.box])
 
-        x = max([0, box.tl[0] - int(box.width / 2)])
-        y = box.tl[1]
+        x = max([0, box.tl[0] - int(1.4 * box.width / 2)])
+        y = max([0, box.tl[1] - 0.2*box.height])
         w = box.tl[0] - x - 1
-        h = box.height
+        h = min([H - y, box.bl[1] + 0.2*box.height])
         left_box = Box(x, y, w, h)
 
         img_box = (img_gray[left_box.indexes]).astype(np.uint8)
         t, img_bin = cv2.threshold(img_box, 128, 255, cv2.THRESH_OTSU)
         regions = cc_regions(img_bin)
 
-        digit_1 = max(regions, key=lambda r: r.area)
+        region = max(regions, key=lambda r: r.area)
+        digit_1 = Region({(x + p[0], y + p[1]) for p in region.points})
 
-        aligned_chains_found.append([digit_1] + chain)
+        aligned_chains_found.append([digit_1, digit_2, digit_3])
     return aligned_chains_found
 
 
