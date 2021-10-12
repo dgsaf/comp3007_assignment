@@ -191,13 +191,13 @@ for img_file in img_files:
         predicted_digits = knn_digits.predict(features_digits, k=3)
 
         features_arrow = np.array([np.ravel(arrow.spatial_histogram(3, 3))])
-        predicted_arrow = knn_arrows.predict(features_arrows, k=3)
+        predicted_arrow = knn_arrows.predict(features_arrow, k=3)
         predicted.append((predicted_digits, predicted_arrow))
 
     print(f"{timing()} writing output for {file_root}{file_ext}")
     aca_box = covering_box(
         [covering_box([r.box for r in c] + [a.box])
-         for c, a in aligned_chain_arrows])
+         for c, a in aligned_chains_arrows])
     img_sign = img[aca_box.indexes]
     cv2.imwrite(f"{args['output']}/DetectedArea{file_id}{file_ext}", img_sign)
 
