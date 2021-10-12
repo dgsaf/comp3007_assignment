@@ -48,7 +48,7 @@ for img_file in img_files:
 
     if args["work_save"]:
         print(f"{timing()} writing grayscale image to work")
-        write_image_to_work("1", img_gray)
+        # write_image_to_work("1", img_gray)
 
     # # TASK 2: use morphology to improve MSER near edge of sign
     # print(f"{timing()} morphology")
@@ -71,35 +71,35 @@ for img_file in img_files:
 
     if args["work_save"]:
         print(f"{timing()} writing regions ({len(regions)})")
-        write_image_to_work("2_0", draw_regions(regions, (H, W)))
+        # write_image_to_work("2_0", draw_regions(regions, (H, W)))
 
     print(f"{timing()} removing overlapping regions")
     regions = remove_overlapping(regions, max_overlap=0.8)
 
     if args["work_save"]:
         print(f"{timing()} writing regions ({len(regions)})")
-        write_image_to_work("2_1", draw_regions(regions, (H, W)))
+        # write_image_to_work("2_1", draw_regions(regions, (H, W)))
 
     print(f"{timing()} filtering regions by aspect ratio")
     regions = list(filter(lambda r: 0.75 <= r.box.aspect <= 3.0, regions))
 
     if args["work_save"]:
         print(f"{timing()} writing regions ({len(regions)})")
-        write_image_to_work("2_2", draw_regions(regions, (H, W)))
+        # write_image_to_work("2_2", draw_regions(regions, (H, W)))
 
     print(f"{timing()} removing occluded hole regions")
     regions = remove_occluded_holes(regions, max_boundary_distance=10)
 
     if args["work_save"]:
         print(f"{timing()} writing regions ({len(regions)})")
-        write_image_to_work("2_3", draw_regions(regions, (H, W)))
+        # write_image_to_work("2_3", draw_regions(regions, (H, W)))
 
     print(f"{timing()} removing highly filled regions")
     regions = list(filter(lambda r: r.fill <= 0.85, regions))
 
     if args["work_save"]:
         print(f"{timing()} writing regions ({len(regions)})")
-        write_image_to_work("2_4", draw_regions(regions, (H, W)))
+        # write_image_to_work("2_4", draw_regions(regions, (H, W)))
 
     print(f"{timing()} finding chains of similar, adjacent regions")
     chains = find_chains(regions)
@@ -111,7 +111,7 @@ for img_file in img_files:
             chain_box = covering_box([r.box for r in chain])
             cv2.rectangle(
                 img_chains, chain_box.tl, chain_box.br, (255, 255, 255), 1)
-        write_image_to_work("3", img_chains)
+        # write_image_to_work("3", img_chains)
 
     print(f"{timing()} filtering chains by length")
     chains = list(filter(lambda c: len(c) <= 3, chains))
@@ -133,13 +133,13 @@ for img_file in img_files:
 
         for i, roi in enumerate(rois):
             img_roi = img[roi.indexes]
-            write_image_to_work(f"4_{i}", img_roi)
+            # write_image_to_work(f"4_{i}", img_roi)
 
     print(f"{timing()} finding aligned chains")
     aligned_chains = find_aligned_chains(chains)
 
     if args["work_save"]:
-        print(f"{timing()} writing aligned_chains")
+        print(f"{timing()} writing aligned chains")
         chain_boxes = [covering_box([r.box for r in c]) for c in aligned_chains]
 
         img_ac = img.copy()
@@ -149,6 +149,22 @@ for img_file in img_files:
         ac_box = covering_box(chain_boxes)
         cv2.rectangle(img_ac, ac_box.tl, ac_box.br, (255, 255, 255), 2)
         write_image_to_work("5", img_ac)
+
+    print(f"{timing()} finding each chain's associated arrow")
+    aligned_chains_arrows = find_arrows(aligned_chains, regions)
+
+    if args["work_save"]:
+        print(f"{timing()} writing aligned chains with arrows")
+        chain_arrow_boxes = [covering_box([r.box for r in c] + [a.box])
+                       for c, a in aligned_chains_arrows]
+
+        img_aca = img.copy()
+        for box in chain_arrow_boxes:
+            cv2.rectangle(img_aca, box.tl, box.br, (255, 255, 255), 1)
+
+        aca_box = covering_box(chain_arrow_boxes)
+        cv2.rectangle(img_aca, aca_box.tl, aca_box.br, (255, 255, 255), 2)
+        write_image_to_work("6", img_aca)
 
 
     # print(f"{timing()} selecting chain most likely to be digits")

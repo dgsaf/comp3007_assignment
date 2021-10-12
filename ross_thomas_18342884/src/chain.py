@@ -158,3 +158,19 @@ def find_aligned_chains(chains):
                       if len(eq_classes[k]) > 1]
 
     return max(aligned_chains, key=lambda ac: len(ac))
+
+
+def find_arrows(aligned_chains, regions):
+    aligned_chains_arrows = []
+    for chain in aligned_chains:
+        n = len(chain)
+
+        digit_2 = chain[n-2]
+        digit_3 = chain[n-1]
+
+        box = covering_box([digit_2.box, digit_3.box])
+        right_box = Box(box.tr[0] + 1, box.tr[1], box.width, box.height)
+
+        arrow = max(regions, key=lambda r: right_box.overlap(r.box))
+        aligned_chains_arrows.append((chain, arrow))
+    return aligned_chains_arrows
