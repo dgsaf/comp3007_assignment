@@ -171,7 +171,7 @@ for img_file in img_files:
     if args["work_save"]:
         print(f"{timing()} writing aligned chains with arrows")
         chain_arrow_boxes = [covering_box([r.box for r in c] + [a.box])
-                       for c, a in aligned_chains_arrows]
+                             for c, a in aligned_chains_arrows]
 
         img_aca = img.copy()
         for box in chain_arrow_boxes:
@@ -181,27 +181,29 @@ for img_file in img_files:
         cv2.rectangle(img_aca, aca_box.tl, aca_box.br, (255, 255, 255), 2)
         write_image_to_work("7", img_aca)
 
+    print(f"{timing()} classifying digits and arrows")
+    predicted = []
+    for chain_digits, arrow in aligned_chains_arrows:
 
-    # print(f"{timing()} selecting chain most likely to be digits")
-    # chain_digits = cluster_largest_otsu_separations(img, chains)[0]
+        features_digits = np.array(
+            [np.ravel(r.spatial_histogram(5, 7))
+             for r in chain_digits])
+        predicted_digits = knn_digits.predict(features_digits, k=3)
 
-    # if args["work_save"]:
-    #     print(f"{timing()} writing digit chain")
-    #     img_digits = img[covering_box([r.box for r in chain_digits]).indexes]
-    #     write_image_to_work("5", img_digits)
+        features_arrow = np.array([np.ravel(arrow.spatial_histogram(3, 3))])
+        predicted_arrow = knn_arrows.predict(features_arrows, k=3)
+        predicted.append((predicted_digits, predicted_arrow))
 
-    # print(f"{timing()} classifying digits")
-    # features_digits = np.array(
-    #     [np.ravel(r.spatial_histogram(5, 7))
-    #      for r in chain_digits])
-    # predicted_digits = knn_digits.predict(features_digits, k=3)
+    print(f"{timing()} writing output for {file_root}{file_ext}")
+    aca_box = covering_box(
+        [covering_box([r.box for r in c] + [a.box])
+         for c, a in aligned_chain_arrows])
+    img_sign = img[aca_box.indexes]
+    cv2.imwrite(f"{args['output']}/DetectedArea{file_id}{file_ext}", img_sign)
 
-    # print(f"{timing()} writing output for {file_root}{file_ext}")
-    # img_digits = img[covering_box([r.box for r in chain_digits]).indexes]
-    # cv2.imwrite(f"{args['output']}/DetectedArea{file_id}{file_ext}", img_digits)
-
-    # with open(f"{args['output']}/Building{file_id}.txt", "w") as out_file:
-    #     str_digits = "".join(map(str, predicted_digits))
-    #     print(f"Building {str_digits}", file=out_file)
+    with open(f"{args['output']}/BuildingList{file_id}.txt", "w") as out_file:
+        for ds, a in predicted:
+            str_digits = "".join(map(str, ds))
+            print(f"Building {str_digits} {a}", file=out_file)
 
     print(f"{timing()} ")
