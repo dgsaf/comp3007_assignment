@@ -80,31 +80,26 @@ for img_file in img_files:
         print(f"{timing()} writing regions ({len(regions)})")
         write_image_to_work("2_1", draw_regions(regions, (H, W)))
 
+    print(f"{timing()} filtering regions by aspect ratio")
+    regions = list(filter(lambda r: 0.75 <= r.box.aspect <= 3.0, regions))
+
+    if args["work_save"]:
+        print(f"{timing()} writing regions ({len(regions)})")
+        write_image_to_work("2_2", draw_regions(regions, (H, W)))
+
     print(f"{timing()} removing occluded hole regions")
     regions = remove_occluded_holes(regions, max_boundary_distance=10)
 
     if args["work_save"]:
         print(f"{timing()} writing regions ({len(regions)})")
-        write_image_to_work("2_2", draw_regions(regions, (H, W)))
+        write_image_to_work("2_3", draw_regions(regions, (H, W)))
 
     print(f"{timing()} removing highly filled regions")
     regions = list(filter(lambda r: r.fill <= 0.85, regions))
 
     if args["work_save"]:
         print(f"{timing()} writing regions ({len(regions)})")
-        write_image_to_work("2_3", draw_regions(regions, (H, W)))
-
-    print(f"{timing()} filtering regions by aspect ratio")
-    regions_arrows = list(filter(lambda r: 0.5 <= r.box.aspect <= 1.5, regions))
-    regions = list(filter(lambda r: 1.2 <= r.box.aspect <= 3.0, regions))
-
-    if args["work_save"]:
-        print(f"{timing()} writing regions ({len(regions)})")
         write_image_to_work("2_4", draw_regions(regions, (H, W)))
-
-    if args["work_save"]:
-        print(f"{timing()} writing arrow regions ({len(regions_arrows)})")
-        write_image_to_work("2_4_1", draw_regions(regions_arrows, (H, W)))
 
     print(f"{timing()} calculating chains of similar, adjacent regions")
     chains = find_chains(regions)
