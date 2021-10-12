@@ -68,3 +68,28 @@ def find_chains(regions, best_edge=True):
 
     chains = [p for i in roots for p in paths(i)]
     return [list(map(lambda i: regions_ordered[i], c)) for c in chains]
+
+
+def cluster_largest_otsu_separations(img, chains, max_ratio=1.5):
+    chains_ordered = sorted(
+        chains,
+        key=(lambda c: \
+             otsu_separation_color(img, covering_box([r.box for r in c]))),
+        reverse=True)
+
+    otsu_seps = np.array(
+        [otsu_separation_color(img, covering_box([r.box for r in c]))
+         for c in chains_ordered])
+
+    n = len(otsu_seps)
+    diff_otsu_seps = np.array(
+        [np.abs(otsu_seps[i+1] - otsu_seps[i])
+         for i in range(0, n-1)])
+
+    idx = n - 1
+    for i in range(0, n-2):
+        ratio = diff_otsu_seps[i+1] / diff_otsu_seps[i]
+        if ratio >= max_ratio:
+            idx = i + 1
+            break
+    return (chains_ordered[:idx+1])

@@ -16,7 +16,6 @@ args, img_files = parse_input()
 
 # build classifier
 print(f"> building classifiers")
-svm_digits = build_svm_digits(args["digits"])
 knn_digits = build_knn_digits(args["digits"], 5, 7)
 
 # locate and classify the digits of each building sign
@@ -138,23 +137,19 @@ for img_file in img_files:
     #     write_image_to_work(args, img_file, f"4_{i}", img_roi)
 
     print(f"{timing()} selecting most monochromatic chain (by otsu separation)")
-    chain_best = sorted(
-        chains,
-        key=(lambda c: \
-             otsu_separation_color(img, covering_box([r.box for r in c]))),
-        reverse=True)[0]
+    chain_digits = cluster_largest_otsu_separations(img, chains)[0]
 
-    img_best = img[covering_box([r.box for r in chain_best]).indexes]
-    # write_image_to_work(args, img_file, f"5", img_best)
+    img_digits = img[covering_box([r.box for r in chain_digits]).indexes]
+    # write_image_to_work(args, img_file, f"5", img_digits)
 
     print(f"{timing()} classifying digits")
-    digits = np.array([r.features for r in chain_best])
-    p = svm_digits.predict(digits)
-    write_image_to_work(args, img_file, f"5_svm_{p[0]}{p[1]}{p[2]}", img_best)
-
-    digits = np.array([np.ravel(r.spatial_histogram(5, 7)) for r in chain_best])
-    p = knn_digits.predict(digits, k=3)
-    write_image_to_work(args, img_file, f"5_knn_{p[0]}{p[1]}{p[2]}", img_best)
-    print(p)
+    features_digits = np.array(
+        [np.ravel(r.spatial_histogram(5, 7))
+         for r in chain_digits])
+    predicted = knn_digits.predict(features_digits, k=3)
+    write_image_to_work(
+        args, img_file,
+        f"5_knn_{predicted[0]}{predicted[1]}{predicted[2]}", img_digits)
+    print(predicted)
 
     print(f"{timing()} ")
