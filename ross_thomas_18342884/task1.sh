@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Source common scripting functionality.
-source "./common.sh"
-
 # Initialise top directory.
 DIR_TOP="/home/student"
 DIR_TOP="$(dirname "${PWD}")"
@@ -16,6 +13,9 @@ DIR_TRAIN="${DIR_TOP}/train/task1"
 DIR_TEST="${DIR_TOP}/test/task1"
 DIR_VAL="${DIR_TOP}/val/task1"
 DIR_OUTPUT="${DIR_SUBMISSION}/output/task1"
+
+# Source common scripting functionality.
+source "${DIR_SUBMISSION}/common.sh"
 
 # Log directory variables.
 __msg_debug "Directories:"
