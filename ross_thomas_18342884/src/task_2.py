@@ -101,7 +101,7 @@ for img_file in img_files:
         print(f"{timing()} writing regions ({len(regions)})")
         write_image_to_work("2_4", draw_regions(regions, (H, W)))
 
-    print(f"{timing()} calculating chains of similar, adjacent regions")
+    print(f"{timing()} finding chains of similar, adjacent regions")
     chains = find_chains(regions)
 
     if args["work_save"]:
@@ -135,6 +135,9 @@ for img_file in img_files:
             img_roi = img[roi.indexes]
             write_image_to_work(f"4_{i}", img_roi)
 
+    print(f"{timing()} finding aligned chains")
+    aligned_chains = find_aligned_chains(chains)
+
     # print(f"{timing()} selecting chain most likely to be digits")
     # chain_digits = cluster_largest_otsu_separations(img, chains)[0]
 
@@ -157,4 +160,4 @@ for img_file in img_files:
     #     str_digits = "".join(map(str, predicted_digits))
     #     print(f"Building {str_digits}", file=out_file)
 
-    # print(f"{timing()} ")
+    print(f"{timing()} ")

@@ -144,3 +144,17 @@ def find_aligned_chains(chains):
             for j in edges[i]:
                 idxs |= dfs(explored, j)
         return idxs
+
+    k = 0
+    eq_classes = dict()
+    explored = set()
+    for i in range(n):
+        if i not in explored:
+            eq_classes[m] = dfs(explored, i)
+            k += 1
+
+    aligned_chains = [[chains_ordered[j]
+                        for j in eq_classes[k]
+                        if len(eq_classes[k]) > 1]
+                       for k in eq_classes]
+    return aligned_chains
