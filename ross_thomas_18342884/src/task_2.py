@@ -138,6 +138,20 @@ for img_file in img_files:
     print(f"{timing()} finding aligned chains")
     aligned_chains = find_aligned_chains(chains)
 
+    if args["work_save"]:
+        print(f"{timing()} writing aligned_chains")
+        img_ac = img.copy()
+        for ac in aligned_chains:
+            chain_boxes = [covering_box([r.box for r in c]) for c in ac]
+
+            for box in chain_boxes:
+                cv2.rectangle(img_ac, box.tl, box.br, (255, 255, 255), 1)
+
+            ac_box = covering_box(chain_boxes)
+            cv2.rectangle(img_ac, ac_box.tl, ac_box.br, (255, 255, 255), 2)
+        write_image_to_work("5", img_ac)
+
+
     # print(f"{timing()} selecting chain most likely to be digits")
     # chain_digits = cluster_largest_otsu_separations(img, chains)[0]
 
