@@ -61,7 +61,7 @@ for img_file in img_files:
 
     print(f"{timing()} calculating MSER")
     mser = cv2.MSER_create()
-    mser.setMinArea(45)
+    mser.setMinArea(25)
     mser.setMaxArea(2000)
     mser.setDelta(20)
     point_sets, boxes = mser.detectRegions(img_gray)
