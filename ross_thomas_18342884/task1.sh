@@ -7,9 +7,7 @@ DIR_TOP="$(dirname "${PWD}")"
 # Initialise directory variables.
 DIR_SUBMISSION="${DIR_TOP}/ross_thomas_18342884"
 
-# DIR_DIGITS="${DIR_TOP}/digits"
-DIR_DIGITS="${DIR_TOP}/train/digits"
-
+DIR_DIGITS="${DIR_TOP}/train/digits" # "${DIR_TOP}/digits"
 DIR_TRAIN="${DIR_TOP}/train/task1"
 DIR_TEST="${DIR_TOP}/test/task1"
 DIR_VAL="${DIR_TOP}/val/task1"
