@@ -178,7 +178,7 @@ def find_missing_digits(aligned_chains, img_gray):
         diff_x = digit_3.box.tl[0] - digit_2.box.tl[0]
         diff_y = digit_3.box.tl[1] - digit_2.box.tl[1]
 
-        x = max([0, box.tl[0] - int(diff_x)])
+        x = max([0, box.tl[0] - int(0.9*diff_x)])
         y = min([H - 1, max([0, box.tl[1] - diff_y])])
         w = box.tl[0] - x - 1
         h = min([H - y - 1, max([digit_2.box.height, digit_3.box.height])])
