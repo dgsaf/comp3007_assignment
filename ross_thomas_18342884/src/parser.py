@@ -37,11 +37,3 @@ def parse_image_file(img_file):
     match_id = re.search("[0-9]+", file_root)
     file_id = match_id.group(0) if match_id else ""
     return (file_root, file_ext, file_id)
-
-
-# def write_image_to_work(args, img_file, suffix, img):
-#     if args["work_save"]:
-#         dir_work = args['work']
-#         file_root, file_ext, _ = parse_image_file(img_file)
-#         cv2.imwrite(f"{dir_work}/{file_root}_{suffix}{file_ext}", img)
-#     return

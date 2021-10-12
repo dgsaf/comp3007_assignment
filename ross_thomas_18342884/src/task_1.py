@@ -55,9 +55,9 @@ for img_file in img_files:
     # img_bg = cv2.morphology(
     #     img_gray, cv2.MORPH_OPEN,
     #     cv2.getStructuringElement(cv2.MORPH_CROSS, (3, 31)), iterations=1)
-    # write_image_to_work(args, img_file, "1_1", img_bg)
+    # write_image_to_work("1_1", img_bg)
     # img_gray = cv2.addWeighted(img_gray, 1, img_bg, -1, 0)
-    # write_image_to_work(args, img_file, "1_2", img_gray)
+    # write_image_to_work("1_2", img_gray)
 
     print(f"{timing()} calculating MSER")
     mser = cv2.MSER_create()
@@ -110,13 +110,9 @@ for img_file in img_files:
         img_chains = draw_regions(regions, (H, W))
         for chain in chains:
             chain_box = covering_box([r.box for r in chain])
-            if len(chain) <= 3:
-                box_color = (255, 255, 255)
-            else:
-                box_color = (100, 100, 100)
-                cv2.rectangle(
-                    img_chains, chain_box.tl, chain_box.br, box_color, 1)
-                write_image_to_work("3", img_chains)
+            cv2.rectangle(
+                img_chains, chain_box.tl, chain_box.br, (255, 255, 255), 1)
+        write_image_to_work("3", img_chains)
 
     print(f"{timing()} filtering chains by length")
     chains = list(filter(lambda c: len(c) <= 3, chains))
@@ -146,7 +142,7 @@ for img_file in img_files:
     if args["work_save"]:
         print(f"{timing()} writing digit chain")
         img_digits = img[covering_box([r.box for r in chain_digits]).indexes]
-        write_image_to_work(args, img_file, f"5", img_digits)
+        write_image_to_work("5", img_digits)
 
     print(f"{timing()} classifying digits")
     features_digits = np.array(
