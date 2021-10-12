@@ -70,7 +70,10 @@ def find_chains(regions, best_edge=True):
     return [list(map(lambda i: regions_ordered[i], c)) for c in chains]
 
 
-def cluster_largest_otsu_separations(img, chains, max_ratio=1.5):
+def cluster_largest_otsu_separations(img, chains, max_diff=50):
+    if not chains:
+        return chains
+
     chains_ordered = sorted(
         chains,
         key=(lambda c: \
@@ -82,14 +85,8 @@ def cluster_largest_otsu_separations(img, chains, max_ratio=1.5):
          for c in chains_ordered])
 
     n = len(otsu_seps)
-    diff_otsu_seps = np.array(
-        [np.abs(otsu_seps[i+1] - otsu_seps[i])
-         for i in range(0, n-1)])
-
-    idx = n - 1
-    for i in range(0, n-2):
-        ratio = diff_otsu_seps[i+1] / diff_otsu_seps[i]
-        if ratio >= max_ratio:
-            idx = i + 1
+    for idx in range(1, n):
+        if np.abs(otsu_seps[idx] - otsu_seps[idx-1]) >= max_diff:
             break
-    return (chains_ordered[:idx+1])
+
+    return (chains_ordered[:idx])
