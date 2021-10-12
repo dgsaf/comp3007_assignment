@@ -153,7 +153,7 @@ def find_aligned_chains(chains):
             k += 1
 
     aligned_chains = [[chains_ordered[j]
-                        for j in eq_classes[k]
-                        if len(eq_classes[k]) > 1]
-                       for k in eq_classes]
+                       for j in eq_classes[k]]
+                      for k in eq_classes
+                      if len(eq_classes[k]) > 1]
     return aligned_chains
