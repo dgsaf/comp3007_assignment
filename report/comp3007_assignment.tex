@@ -966,7 +966,7 @@ $0 \leq j \leq k_{y} - 1$.
 \subsection{Task 1}
 \label{sec:imp-1}
 
-We describe the detection algorithm for task 1 in detail.
+We describe the detection and classification algorithms for task 1 in detail.
 \begin{itemize}
 \item
   We begin with the supplied colour image,
@@ -1331,6 +1331,27 @@ We describe the detection algorithm for task 1 in detail.
   Extremely unfortunate circumstances would be required to result in an
   arbitrary non-digit chain being selected ahead.
 
+\item
+  For each of the three regions in the chain of digits, we calculate its spatial
+  occupancy feature vector $v\lr{R_{i_{j}}} \in \real^{5 \times 7}$ with 5
+  $x$-bins and 7 $y$-bins.
+  These number of bins have been chosen to allow for a compact, low-dimensional
+  feature vector which:
+  \begin{itemize}
+  \item
+    Can distinguish between digits with similar outlines but with a different
+    number of holes, such as the digits 0 and 8;
+
+  \item
+    Can distinguish between digits which are rotationally similar, such as the
+    digits 6 and 9;
+
+  \item
+    Can distinguish between digits which may possess similar sub-structures,
+    such as the digits 0 and 6, or 1 and 7.
+  \end{itemize}
+  These digits are then classified using a $k$-Nearest Neighbour algorithm,
+  which is trained on the provided training digit images.
 \end{itemize}
 
 \subsection{Task 2}
