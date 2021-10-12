@@ -175,11 +175,12 @@ def find_missing_digits(aligned_chains, img_gray):
         digit_3 = chain[n-1]
 
         box = covering_box([digit_2.box, digit_3.box])
+        diff_y = digit_3.box.center[1] - digit_2.box.center[1]
 
         x = max([0, box.tl[0] - int(1.4 * box.width / 2)])
-        y = max([0, box.tl[1] - 0.2*box.height])
+        y = min([H - 1, max([0, box.tl[1] + diff_y])])
         w = box.tl[0] - x - 1
-        h = min([H - y, box.bl[1] + 0.2*box.height])
+        h = min([H - y - 1, box.height + np.abs(diff_y)])
         left_box = Box(x, y, w, h)
 
         img_box = (img_gray[left_box.indexes]).astype(np.uint8)
