@@ -93,3 +93,54 @@ def cluster_largest_otsu_separations(img, chains, max_diff=50):
             break
 
     return (chains_ordered[:idx+1])
+
+
+def aligned(chain_1, chain_2):
+    n1 = len(chain_1)
+    n2 = len(chain_2)
+
+    if (not (2 <= n1 <= 3)) and (not (2 <= n2 <= 3)):
+        return False
+
+    norm = lambda p: np.sqrt(np.abs((p[0] ** 2) + (p[1] ** 2)))
+    diff = lambda p1, p2: (p1[0] - p2[0], p1[1] - p2[1])
+
+    box_1 = covering_box([r.box for r in chain_1])
+    box_2 = covering_box([r.box for r in chain_2])
+    w = min([box_1.width, box_2.width])
+
+    n = min([n1, n2])
+    digits_1 = {i: chain_1[n1-i-1] for i in range(n)}
+    digits_2 = {i: chain_2[n2-i-1] for i in range(n)}
+
+    aligned_vert = np.all(
+        [np.abs(diff(digits_1[i].box.center, digits_2[i].box.center)[0])
+         <= w
+         for i in range(n)])
+
+    similar_heights = np.all(
+        [np.abs(digits_1[i].box.height - digits_2[i].box.height)
+         <= 0.2 * min([digits_1[i].box.height, digits_2[i].box.height])
+         for i in range(n)])
+
+    return (aligned_vert and similar_heights)
+
+
+def find_aligned_chains(chains):
+    chains_ordered = sorted(
+        chains, key=lambda c: covering_box([r.box for r in c]).y)
+    n = len(chains_ordered)
+
+    edges = dict()
+    for i, ci in enumerate(chains_ordered[0:n]):
+        edges[i] = {j for j, cj in enumerate(chains_ordered)
+                    if (j != i and aligned(ci, cj))}
+        print(f"{i} -> {edges[i]}")
+
+    def dfs(explored, i):
+        idxs = {i}
+        if i not in explored:
+            explored |= {i}
+            for j in edges[i]:
+                idxs |= dfs(explored, j)
+        return idxs
