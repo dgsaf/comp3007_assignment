@@ -1608,8 +1608,78 @@ This detection algorithm is demonstrated in \autoref{fig:2-demonstration}.
 \subsection{Task 1}
 \label{sec:val-1}
 
+\begin{figure}[h]
+  \centering
+  \foreach \imgID in {01, 02, 03, 04, 05}{%
+    \begin{subfigure}[t]{0.18\textwidth}
+      \centering
+      \includegraphics[width=0.9\textwidth]{%
+        figures/output/task1/DetectedArea\imgID
+      }
+      \caption{\input{figures/output/task1/Building\imgID.txt}}
+    \end{subfigure}
+    %
+  }
+
+  \foreach \imgID in {06, 07, 08, 09, 10}{%
+    \begin{subfigure}[t]{0.18\textwidth}
+      \centering
+      \includegraphics[width=0.9\textwidth]{%
+        figures/output/task1/DetectedArea\imgID
+      }
+      \caption{\input{figures/output/task1/Building\imgID.txt}}
+    \end{subfigure}
+    %
+  }
+
+  \caption[Task 1 - Validation]{
+    Detected regions of interest, and predicted digits for each of the
+    validation images for task 1.
+  }
+  \label{fig:val-1}
+\end{figure}
+
 \subsection{Task 2}
 \label{sec:val-2}
+
+\begin{figure}[h]
+  \centering
+  \foreach \imgID in {01, 02, 03, 04, 05}{%
+    \begin{subfigure}[t]{0.19\linewidth}
+      \centering
+      \includegraphics[width=0.3\textwidth]{%
+        figures/output/task2/DetectedArea\imgID
+      }
+      \caption{
+        \lstinputlisting[linewidth=\linewidth]{%
+          figures/output/task2/BuildingList\imgID.txt
+        }
+      }
+    \end{subfigure}
+    %
+  }
+
+  \foreach \imgID in {06, 07, 08, 09, 10}{%
+    \begin{subfigure}[t]{0.19\linewidth}
+      \centering
+      \includegraphics[width=0.3\textwidth]{%
+        figures/output/task2/DetectedArea\imgID
+      }
+      \caption{
+        \lstinputlisting[linewidth=\linewidth]{%
+          figures/output/task2/BuildingList\imgID.txt
+        }
+      }
+    \end{subfigure}
+    %
+  }
+
+  \caption[Task 2 - Validation]{
+    Detected regions of interest, and predicted digits for each of the
+    validation images for task 2.
+  }
+  \label{fig:val-2}
+\end{figure}
 
 \section{Conclusion}
 \label{sec:conclusion}
