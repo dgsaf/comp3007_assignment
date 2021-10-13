@@ -214,17 +214,22 @@ def aligned(chain_1, chain_2):
 
 def find_aligned_chains(chains):
     """
-    Summary
+    Find the largest subset of aligned chains, from a set of chains.
+
+    Each pair of chains is compared for alignment, forming a graph of chains.
+    This graph is then searched (depth-first) to form a partition of `chains`
+    which groups chains by alignment, and connectedness thereof.
+    The largest subset of aligned chains is assumed to be the subset of
+    interest, and is returned.
 
     Parameters
     ----------
-    x : t
-        e
+    chains : list of list of Region
 
     Returns
     -------
-    f : t
-        e
+    list of list of Region
+        The largest subset of chains which are aligned.
 
     """
     chains_ordered = sorted(
@@ -262,17 +267,29 @@ def find_aligned_chains(chains):
 
 def find_missing_digits(aligned_chains, img_gray):
     """
-    Summary
+    Find any missing left digits in a set of aligned chains.
+
+    For each chain, of only two regions, in a set of aligned chains, the
+    bounding box of the missing left digit is estimated.
+    The grayscale image is then restricted to this box, thresholded to a binary
+    image, and the connected components are calculated.
+    The largest connected component is assumed to be the missing digit, and
+    prepended to the chain.
 
     Parameters
     ----------
-    x : t
-        e
+    aligned_chains : list of list of Region
+        List of chains (of two or three regions) with possibly missing left
+        digits.
+    img_gray : 2-D array of int
+        Grayscale image, to be used in the construction an approximate region
+        for the missing digits.
 
     Returns
     -------
-    f : t
-        e
+    aligned_chains_found : list of list of Region
+        List of chains (of exactly three regions) with all missing left digits
+        localised and found.
 
     """
     H, W = img_gray.shape[:2]
@@ -311,17 +328,27 @@ def find_missing_digits(aligned_chains, img_gray):
 
 def find_arrows(aligned_chains, regions):
     """
-    Summary
+    Find the directional arrows associated with each chain for a set of chains.
+
+    For each chain, the bounding box of two rightmost digits is used to
+    construct an estimate for a box which will contain the directional arrow
+    region, and likely no other region.
+    The region corresponding to the arrow is assumed to be contained maximally
+    within this box.
 
     Parameters
     ----------
-    x : t
-        e
+    aligned_chains : list of list of Region
+        List of aligned chains, assumed to be a sequence of 2 or 3 digits, for
+        which the associated arrows are to be found.
+    regions : list of Region
+        List of regions which is assumed to contain the regions corresponding to
+        the directional arrows.
 
     Returns
     -------
-    f : t
-        e
+    aligned_chains_arrows : list of (list of Region, Region)
+        List of chains (of digits) and their associated directional arrow region.
 
     """
     aligned_chains_arrows = []
