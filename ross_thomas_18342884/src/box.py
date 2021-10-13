@@ -5,6 +5,62 @@ import cv2
 
 
 class Box:
+    """
+    Rectangular box, suitable for use with OpenCV.
+
+    Attributes
+    ----------
+    x : int
+        x-coordinate of top-left corner
+    y : int
+        y-coordinate of top-left corner
+    width : int
+        x-length of box
+    height : int
+        y-length of box
+
+    Methods
+    -------
+    tl : (int, int)
+        Top left corner of the box.
+
+    br : (int, int)
+        Bottom right corner of the box.
+
+    tr : (int, int)
+        Top right corner of the box.
+
+    bl : (int, int)
+        Bottom left corner of the box.
+
+    center : (int, int)
+        Geometric center point of the box.
+
+    area : int
+        Rectangular area of the box.
+
+    aspect : float
+        Aspect ratio of the box, in height/width format.
+
+    indexes : (slice int, slice int)
+        2-D array index slices that this box corresponds to.
+        Suitable for accessing 2-D arrays as `array[box.indexes]`.
+
+    contains(point) : bool
+        Returns true if `point` is within the box.
+
+    overlap(box) : float
+        The fractional of the area of `box` that overlaps with this box.
+
+    is_superset_of(box) : bool
+        Returns true if `box` is entirely inside this box.
+
+    Notes
+    -----
+    As per OpenCV, a point `(x, y)` corresponds to an array index `array[y, x]`.
+
+    """
+
     def __init__(self, x, y, width, height):
         self._x = x
         self._y = y
@@ -113,12 +169,39 @@ def covering_box(boxes):
 
 
 def bounding_box(points):
+    """
+    Construct the minimal bounding box for a given set of 2-D points.
+
+    Parameters
+    ----------
+    points : iterable collection of (int, int)
+
+    Returns
+    -------
+    bounding : Box
+
+    """
     x, y, w, h = cv2.boundingRect(np.array([p for p in points]))
     bounding = Box(x, y, w, h)
     return bounding
 
 
 def merge_overlapping(boxes, max_overlap=0.05):
+    """
+    Merge all sufficiently overlapping boxes in a collection of boxes.
+
+    Parameters
+    ----------
+    boxes : iterable collection of Box
+    max_overlap : float, default=0.05
+        Merge any pair of boxes for which one of them overlaps the other more
+        than this value.
+
+    Returns
+    -------
+    boxes_merged : list of Box
+
+    """
     def overlaps(bi, bj):
         return (bi.overlap(bj) >= max_overlap
                 or bj.overlap(bi) >= max_overlap)
@@ -139,6 +222,24 @@ def merge_overlapping(boxes, max_overlap=0.05):
 
 
 def otsu_separation(img_gray, box):
+    """
+    Calculate the Otsu separation of a single-channel image restricted to a box.
+
+    Parameters
+    ----------
+    img_gray : 2-D array
+        Single channel image.
+    box : Box
+        The 2-D restriction of `img_gray` for which the Otsu separation is
+        calculated.
+
+    Returns
+    -------
+    otsu_sep : float
+        The separation between the black and white class means, after
+        determining class by Otsu thresholding.
+
+    """
     img_box = (img_gray[box.indexes]).astype(np.uint8)
     t, img_bin = cv2.threshold(img_box, 128, 255, cv2.THRESH_OTSU)
 
@@ -147,10 +248,29 @@ def otsu_separation(img_gray, box):
 
     mean_w = np.average(img_box[idxs_w])
     mean_b = np.average(img_box[idxs_b])
-    return (mean_w - mean_b)
+    otsu_sep = mean_w - mean_b
+    return otsu_sep
 
 
 def otsu_separation_color(img, box):
+    """
+    Calculate the Otsu separation of a colour image restricted to a box.
+
+    Parameters
+    ----------
+    img : 3-D array
+        Color image with 3 colour channels.
+    box : Box
+        The 2-D restriction of `img` for which the Otsu separation is
+        calculated.
+
+    Returns
+    -------
+    min_otsu_sep : float
+        The minimum of the Otsu separations calculated for each colour channel
+        of `img` and its grayscale transformation.
+
+    """
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     min_otsu_sep = np.amin(
         [otsu_separation(img_gray, box),
