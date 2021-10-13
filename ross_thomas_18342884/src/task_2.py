@@ -138,6 +138,11 @@ for img_file in img_files:
     print(f"{timing()} finding aligned chains")
     aligned_chains = find_aligned_chains(chains)
 
+    if not aligned_chains:
+        print(f"{timing()} no suitable aligned chains found")
+        print(f"{timing()} ")
+        continue
+
     if args["work_save"]:
         print(f"{timing()} writing aligned chains")
         chain_boxes = [covering_box([r.box for r in c]) for c in aligned_chains]
