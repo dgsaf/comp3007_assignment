@@ -100,7 +100,7 @@ def build_svm_digits(dir_digits, bins_x, bins_y):
 
     samples = dict()
     for d in iter(digits):
-        samples[d] = np.zeros((5, 9), dtype=np.float32)
+        samples[d] = np.zeros((5, bins_x * bins_y), dtype=np.float32)
         for k in range(5):
             img_gray = cv2.cvtColor(imgs[(d, k)], cv2.COLOR_BGR2GRAY)
             _, img_bin = cv2.threshold(img_gray, 128, 255, cv2.THRESH_OTSU)
@@ -128,7 +128,7 @@ def build_svm_arrows(dir_arrows, bins_x, bins_y):
 
     samples = dict()
     for a in iter(arrows):
-        samples[a] = np.zeros((5, 7), dtype=np.float32)
+        samples[a] = np.zeros((5, bins_x * bins_y), dtype=np.float32)
         for k in range(5):
             img_gray = cv2.cvtColor(imgs[(a, k)], cv2.COLOR_BGR2GRAY)
             _, img_bin = cv2.threshold(img_gray, 128, 255, cv2.THRESH_OTSU)
