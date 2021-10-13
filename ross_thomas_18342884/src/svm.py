@@ -79,7 +79,7 @@ class SVM_OVO:
         return labels_predicted
 
 
-def build_svm_digits(dir_digits):
+def build_svm_digits(dir_digits, bins_x, bins_y):
     digits = {
         0: "Zero",
         1: "One",
@@ -110,12 +110,12 @@ def build_svm_digits(dir_digits):
             region = min(
                 regions, key=lambda r: r.distance((int(w/2), int(h/2))))
 
-            samples[d][k] = region.features
+            samples[d][k] = np.ravel(region.spatial_occupancy(bins_x, bins_y))
 
     return SVM_OVO(samples)
 
 
-def build_svm_arrows(dir_arrows):
+def build_svm_arrows(dir_arrows, bins_x, bins_y):
     arrows = {
         "L": "LeftArrow",
         "R": "RightArrow"}
@@ -138,6 +138,6 @@ def build_svm_arrows(dir_arrows):
             region = min(
                 regions, key=lambda r: r.distance((int(w/2), int(h/2))))
 
-            samples[d][k] = region.features
+            samples[d][k] = np.ravel(region.spatial_occupancy(bins_x, bins_y))
 
     return SVM_OVO(samples)

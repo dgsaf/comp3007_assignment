@@ -149,45 +149,8 @@ class Region:
         return (m["m10"] / m["m00"], m["m01"] / m["m00"])
 
     @property
-    def norm_central_moments(self):
-        m = self.moments
-        return np.array(
-            [m["nu20"], m["nu11"], m["nu02"],
-             m["nu30"], m["nu21"], m["nu12"], m["nu03"]])
-
-    @property
     def hu_moments(self):
         return cv2.HuMoments(self.moments)[:, 0]
-
-    @property
-    def hu_moments_regular(self):
-        return np.array([- np.sign(h) * np.log(np.abs(h))
-                         for h in self.hu_moments])
-
-    @property
-    def covariance(self):
-        m = self.moments
-        cov = np.zeros((2, 2), dtype=np.float32)
-        cov[0, 0] = m["mu02"] / m["m00"]
-        cov[0, 1] = m["mu11"] / m["m00"]
-        cov[1, 0] = m["mu11"] / m["m00"]
-        cov[1, 1] = m["mu20"] / m["m00"]
-        return cov
-
-    @property
-    def covariance_eigen(self):
-        cov = self.covariance
-        a = (cov[0, 0] + cov[1, 1]) / 2
-        b = (cov[0, 0] - cov[1, 1]) / 2
-        c = np.sqrt(np.abs((cov[0, 1] ** 2) + (b ** 2)))
-        eig_1, eig_2 = a + c, a - c
-        theta = np.arctan(cov[0, 1] / b) / 2
-        return (eig_1, eig_2, theta)
-
-    @property
-    def features(self):
-        eig_1, eig_2, theta = self.covariance_eigen
-        return np.append(self.norm_central_moments, [self.holes, theta])
 
     @property
     def contours(self):
@@ -266,9 +229,7 @@ class Region:
             + f"{str(self.box)}\n"\
             + f"area = {self.area}\n"\
             + f"fill = {self.fill}\n"\
-            + f"holes = {self.holes}\n"\
-            + f"hu moments = \n{self.hu_moments}\n"\
-            + f"covariance eig = {self.covariance_eigen}"
+            + f"holes = {self.holes}"
         return properties
 
 
