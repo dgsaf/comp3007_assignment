@@ -14,7 +14,7 @@ from knn import *
 args, img_files = parse_input()
 
 # build classifier
-print(f"> building classifiers")
+print(f"> building classifier")
 knn_digits = build_knn_digits(args["digits"], 5, 7)
 
 # locate and classify the digits of each building sign
@@ -41,22 +41,12 @@ for img_file in img_files:
         print(f"{timing()} writing image to work")
         write_image_to_work("0", img)
 
-    # development below
     print(f"{timing()} converting to grayscale")
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     if args["work_save"]:
         print(f"{timing()} writing grayscale image to work")
         write_image_to_work("1", img_gray)
-
-    # # TASK 2: use morphology to improve MSER near edge of sign
-    # print(f"{timing()} morphology")
-    # img_bg = cv2.morphology(
-    #     img_gray, cv2.MORPH_OPEN,
-    #     cv2.getStructuringElement(cv2.MORPH_CROSS, (3, 31)), iterations=1)
-    # write_image_to_work("1_1", img_bg)
-    # img_gray = cv2.addWeighted(img_gray, 1, img_bg, -1, 0)
-    # write_image_to_work("1_2", img_gray)
 
     print(f"{timing()} calculating MSER")
     mser = cv2.MSER_create()
