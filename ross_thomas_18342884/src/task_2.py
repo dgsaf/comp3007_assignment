@@ -16,7 +16,7 @@ args, img_files = parse_input()
 # build classifiers
 print(f"> building classifiers")
 knn_digits = build_knn_digits(args["digits"], 3, 5)
-knn_arrows = build_knn_arrows(args["digits"], 3, 3)
+knn_arrows = build_knn_arrows(args["digits"], 2, 2)
 
 # locate and classify the digits of each line of each directional sign
 for img_file in img_files:
@@ -198,7 +198,7 @@ for img_file in img_files:
              for r in chain_digits])
         predicted_digits = knn_digits.predict(features_digits, k=3)
 
-        features_arrow = np.array([np.ravel(arrow.spatial_occupancy(3, 3))])
+        features_arrow = np.array([np.ravel(arrow.spatial_occupancy(2, 2))])
         predicted_arrow = knn_arrows.predict(features_arrow, k=3)
         predicted.append((predicted_digits, predicted_arrow))
 
