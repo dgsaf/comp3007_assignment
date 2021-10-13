@@ -23,45 +23,59 @@ class Region:
         Minimal bounding box of this region.
 
     boundary : set of (int, int)
-        E.
+        Set of points of this region which are adjacent to at least point not in
+        this region.
+        Calculated using OpenCV's `findContours()` method.
+        Is calculated as needed, and then cached.
 
     cached_boundary : bool
-        E.
+        Flag true if the boundary points have been calculated.
 
     contours : list of list of (int, int)
-        E.
+        The set of contours calculated using OpenCV's `findContours()` method.
+        Is calculated as needed, and then cached.
 
     hierarchy : 2-D array
-        E.
+        The heirarchy of the set of contours calculated using OpenCV's
+        `findContours()` method.
+        Is calculated as needed, and then cached.
 
     cached_contours : bool
-        E.
+        Flag true if the contours have been calculated.
 
     Methods
     -------
     area : int
-        E.
+        The cardinality of `points`; that is, the number of points this region
+        contains.
 
     fill : float
-        E.
+        The fraction of the area of the bounding box of this region that this
+        region also contains.
 
     holes : int
-        E.
+        The number of interior holes this regions contains.
+        Inferred from the number of contours this region has.
 
     moments : dict of (string, float)
-        E.
+        The image moments of this region, assuming each point has a mass of 1.
+        Calculated using OpenCV's `moments()` method.
 
     centroid : (float, float)
-        E.
+        The mass centre of this region, calculated from its moments.
 
     hu_moments : array of float
-        E.
+        The Hu moments of this region, calculated using OpenCV's `HuMoments()`
+        method.
 
     image : 2-D array of int
-        E.
+        Represents this region as binary image, with dimensions of its bounding
+        box, with a point in the image being white if it is in `points`.
 
-    spatial_histogram : 2-D array of float
-        E.
+    spatial_occupancy(bins_x, bins_y) : 2-D array of float
+        Constructs a set of bins, symmetric about the geometric centre of `box`,
+        with `bins_x` x-bins and `bins_y` y-bins, then calculates the fill of
+        each bin by the region.
 
     distance(point) : float
         E.
