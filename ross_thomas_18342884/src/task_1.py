@@ -145,7 +145,7 @@ for img_file in img_files:
 
     print(f"{timing()} classifying digits")
     features_digits = np.array(
-        [np.ravel(r.spatial_histogram(5, 7))
+        [np.ravel(r.spatial_occupancy(5, 7))
          for r in chain_digits])
     predicted_digits = knn_digits.predict(features_digits, k=3)
 

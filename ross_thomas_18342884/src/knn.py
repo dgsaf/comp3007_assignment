@@ -78,7 +78,7 @@ def build_knn_digits(dir_digits, bins_x, bins_y):
             region = min(
                 regions, key=lambda r: r.distance((int(w/2), int(h/2))))
 
-            samples[d][k] = np.ravel(region.spatial_histogram(bins_x, bins_y))
+            samples[d][k] = np.ravel(region.spatial_occupancy(bins_x, bins_y))
 
     return KNN(samples)
 
@@ -106,6 +106,6 @@ def build_knn_arrows(dir_arrows, bins_x, bins_y):
             region = min(
                 regions, key=lambda r: r.distance((int(w/2), int(h/2))))
 
-            samples[a][k] = np.ravel(region.spatial_histogram(bins_x, bins_y))
+            samples[a][k] = np.ravel(region.spatial_occupancy(bins_x, bins_y))
 
     return KNN(samples)

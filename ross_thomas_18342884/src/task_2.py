@@ -194,11 +194,11 @@ for img_file in img_files:
     for chain_digits, arrow in aligned_chains_arrows:
 
         features_digits = np.array(
-            [np.ravel(r.spatial_histogram(3, 5))
+            [np.ravel(r.spatial_occupancy(3, 5))
              for r in chain_digits])
         predicted_digits = knn_digits.predict(features_digits, k=3)
 
-        features_arrow = np.array([np.ravel(arrow.spatial_histogram(3, 3))])
+        features_arrow = np.array([np.ravel(arrow.spatial_occupancy(3, 3))])
         predicted_arrow = knn_arrows.predict(features_arrow, k=3)
         predicted.append((predicted_digits, predicted_arrow))
 

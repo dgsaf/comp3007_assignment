@@ -205,7 +205,7 @@ class Region:
             img[i, j] = 255
         return img
 
-    def spatial_histogram(self, bins_x, bins_y):
+    def spatial_occupancy(self, bins_x, bins_y):
         s_x = math.ceil(self.box.width / bins_x)
         s_y = math.ceil(self.box.height / bins_y)
 

@@ -50,7 +50,7 @@ class Box:
         Returns true if `point` is within the box.
 
     overlap(box) : float
-        The fractional of the area of `box` that overlaps with this box.
+        The fraction of the area of `box` that overlaps with this box.
 
     is_superset_of(box) : bool
         Returns true if `box` is entirely inside this box.
@@ -227,7 +227,7 @@ def otsu_separation(img_gray, box):
 
     Parameters
     ----------
-    img_gray : 2-D array
+    img_gray : 2-D array of int
         Single channel image.
     box : Box
         The 2-D restriction of `img_gray` for which the Otsu separation is
@@ -258,7 +258,7 @@ def otsu_separation_color(img, box):
 
     Parameters
     ----------
-    img : 3-D array
+    img : 3-D array of int
         Color image with 3 colour channels.
     box : Box
         The 2-D restriction of `img` for which the Otsu separation is
