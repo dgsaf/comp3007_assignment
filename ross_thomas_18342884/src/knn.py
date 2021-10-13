@@ -8,6 +8,21 @@ from region import *
 
 
 class KNN:
+    """
+    Summary
+
+    Attributes
+    ----------
+    x : t
+        e
+
+    Methods
+    -------
+    f : t
+        e
+
+    """
+
     def __init__(self, samples_labelled):
         self.train(samples_labelled)
         return
@@ -48,6 +63,20 @@ class KNN:
 
 
 def build_knn_digits(dir_digits, bins_x, bins_y):
+    """
+    Summary
+
+    Parameters
+    ----------
+    x : t
+        e
+
+    Returns
+    -------
+    f : t
+        e
+
+    """
     digits = {
         0: "Zero",
         1: "One",
@@ -84,6 +113,20 @@ def build_knn_digits(dir_digits, bins_x, bins_y):
 
 
 def build_knn_arrows(dir_arrows, bins_x, bins_y):
+    """
+    Summary
+
+    Parameters
+    ----------
+    x : t
+        e
+
+    Returns
+    -------
+    f : t
+        e
+
+    """
     arrows = {
         "L": "LeftArrow",
         "R": "RightArrow"}

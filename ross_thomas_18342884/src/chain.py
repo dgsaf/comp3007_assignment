@@ -8,7 +8,22 @@ from region import *
 
 
 def linked(region_1, region_2):
-    # these are ratios w.r.t. box heights
+    """
+    Summary
+
+    Parameters
+    ----------
+    x : t
+        e
+
+    Returns
+    -------
+    f : t
+        e
+
+    """
+
+    # these are ratios with regard to box heights
     max_ratio_diff_y = 0.5
     max_ratio_diff_height = 0.2
     max_ratio_diff_x = 1.0
@@ -39,6 +54,20 @@ def linked(region_1, region_2):
 
 
 def find_chains(regions, best_edge=True):
+    """
+    Summary
+
+    Parameters
+    ----------
+    x : t
+        e
+
+    Returns
+    -------
+    f : t
+        e
+
+    """
     regions_ordered = sorted(regions, key=lambda r: r.box.x)
     n = len(regions_ordered)
 
@@ -71,6 +100,20 @@ def find_chains(regions, best_edge=True):
 
 
 def cluster_largest_otsu_separations(img, chains, max_diff=50):
+    """
+    Summary
+
+    Parameters
+    ----------
+    x : t
+        e
+
+    Returns
+    -------
+    f : t
+        e
+
+    """
     if not chains:
         return chains
 
@@ -96,6 +139,20 @@ def cluster_largest_otsu_separations(img, chains, max_diff=50):
 
 
 def aligned(chain_1, chain_2):
+    """
+    Summary
+
+    Parameters
+    ----------
+    x : t
+        e
+
+    Returns
+    -------
+    f : t
+        e
+
+    """
     n1 = len(chain_1)
     n2 = len(chain_2)
 
@@ -127,6 +184,20 @@ def aligned(chain_1, chain_2):
 
 
 def find_aligned_chains(chains):
+    """
+    Summary
+
+    Parameters
+    ----------
+    x : t
+        e
+
+    Returns
+    -------
+    f : t
+        e
+
+    """
     chains_ordered = sorted(
         chains, key=lambda c: covering_box([r.box for r in c]).y)
     n = len(chains_ordered)
@@ -161,6 +232,20 @@ def find_aligned_chains(chains):
 
 
 def find_missing_digits(aligned_chains, img_gray):
+    """
+    Summary
+
+    Parameters
+    ----------
+    x : t
+        e
+
+    Returns
+    -------
+    f : t
+        e
+
+    """
     H, W = img_gray.shape[:2]
 
     aligned_chains_found = []
@@ -196,6 +281,20 @@ def find_missing_digits(aligned_chains, img_gray):
 
 
 def find_arrows(aligned_chains, regions):
+    """
+    Summary
+
+    Parameters
+    ----------
+    x : t
+        e
+
+    Returns
+    -------
+    f : t
+        e
+
+    """
     aligned_chains_arrows = []
     for chain in aligned_chains:
         n = len(chain)
