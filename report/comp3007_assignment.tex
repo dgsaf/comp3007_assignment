@@ -1104,6 +1104,7 @@ We describe the detection and classification algorithms for task 1 in detail.
   In testing, we have found $\xi = 0.85$ to be suitable.
 
 \item
+  \label{item:1-adjacency}
   Having now filtered the regions quite heavily, we consider the dimensional
   similarity and geometric adjacency between regions to link sequences of
   similar, collinear regions into chains.
@@ -1269,8 +1270,8 @@ We describe the detection and classification algorithms for task 1 in detail.
   As a result, all paths extracted from the graph formed by these regions and
   their edges will be non-overlapping.
   We extract all paths (of at least 2 regions) and refer to these paths as
-  chains; that is, the chains are of the form
-  $\mathcal{C}_{i} = \lrset{R_{i_{1}}, R_{i_{2}}, \dotsc, R_{i_{n_{i}}}}$.
+  chains; that is, the chains $C_{i} \in \mathcal{C}$ are of the form
+  $C_{i} = \lrset{R_{i_{1}}, R_{i_{2}}, \dotsc, R_{i_{n_{i}}}}$.
 
 \item
   \label{item:1-select-chain}
@@ -1283,12 +1284,12 @@ We describe the detection and classification algorithms for task 1 in detail.
   predominantly black and white region in the image that we are considering.
   Hence, we need only select the most monochromatic chain, which has the
   sharpest contrast.
-  For each chain $\mathcal{C}_{i} = \lrset{R_{i_{1}}, R_{i_{2}}, R_{i_{3}}}$ of
+  For each chain $C_{i} = \lrset{R_{i_{1}}, R_{i_{2}}, R_{i_{3}}}$ of
   exactly three regions, we perform the following:
   \begin{itemize}
   \item
     From the bounding boxes of each region in the chain $B\lr{R_{i_{j}}}$ we
-    construct the bounding box of the chain $B\lr{\mathcal{C}_{i}}$.
+    construct the bounding box of the chain $B\lr{C_{i}}$.
 
   \item
     For each color channel $I_{R}, I_{G}, I_{B}$ and in grayscale $I$, the Otsu
@@ -1296,12 +1297,12 @@ We describe the detection and classification algorithms for task 1 in detail.
     the cross-channel Otsu separation of this chain is taken to be the minimum
     of these values; that is, with slight abuse of notation,
     \begin{equation*}
-      \varsigma\lr{\mathcal{C}_{i}}
+      \varsigma\lr{C_{i}}
       =
       \min
       \lrset
       {
-        \varsigma\lr{J\mid_{B\lr{\mathcal{C}_{i}}}}
+        \varsigma\lr{J\mid_{B\lr{C_{i}}}}
         \mid
         J
         \in
@@ -1322,9 +1323,8 @@ We describe the detection and classification algorithms for task 1 in detail.
     each color channel and in grayscale, whereas for a coloured region it is
     likely that at least one will be smaller than the rest.
   \end{itemize}
-  We then take the chain $\mathcal{C}_{i}$, for which
-  $\varsigma\lr{\mathcal{C}_{i}}$ is maximal, to be the chain associated with
-  the sequence of three monochromatic digits.
+  We then take the chain $C_{i}$, for which $\varsigma\lr{C_{i}}$ is maximal, to
+  be the chain associated with the sequence of three monochromatic digits.
   While this approach is not guaranteed to locate the sequence of digits, as
   opposed to another arbitrary chain of three equally spaced monochromatic
   regions, it is has proven successful across all training and validation
@@ -1432,6 +1432,8 @@ This detection algorithm is demonstrated in \autoref{fig:1-demonstration}.
   \label{fig:1-demonstration}
 \end{figure}
 
+\clearpage
+
 \subsection{Task 2}
 \label{sec:imp-2}
 
@@ -1453,6 +1455,152 @@ The notable differences are that
   No use is made of Otsu separation in task 2, rather likely chains are selected
   by considering their alignment with other chains.
 \end{itemize}
+
+We now describe the detection algorithm for task 2 assuming that, similar to
+what was done for task 1, we have obtained set of regions $\mathcal{R}$, and a
+set of chains $\mathcal{C}$ of similar and adjacent regions, with each chain
+containing at most three regions.
+We assume that if a chain, corresponding to a digit sequence, contains only two
+regions then it is missing its leftmost digit (due to the leftmost digit often
+being very close to the edge of the sign).
+Continuing from \autoref{item:1-select-chain}:
+\begin{enumerate}
+  \setcounter{enumi}{9}
+\item
+  We consider the alignment of the chains to partition the set of chains
+  $\mathcal{C}$ into disjoint graphs.
+  That is, for all $C_{i}, C_{j} \in \mathcal{C}$, we consider
+  $C_{i} = \lrset{R_{i_{1}}, \dotsc, R_{i_{n_{i}}}}$ and
+  $C_{j} = \lrset{R_{j_{1}}, \dotsc, R_{j_{n_{j}}}}$ to have an edge if:
+  \begin{itemize}
+  \item
+    The two rightmost regions of each chain are of similar height, in the sense
+    defined in \autoref{item:1-adjacency}; and
+
+  \item
+    For each chain a bounding box is constructed around the two rightmost
+    digits,
+    \begin{equation*}
+      B_{i}
+      =
+      B\lr{R_{i_{n_{i}}} \cup R_{i_{n_{i} - 1}}}
+      \qq{and}
+      B_{j}
+      =
+      B\lr{R_{j_{n_{j}}} \cup R_{j_{n_{j} - 1}}}
+      .
+    \end{equation*}
+    The boxes are considered to be aligned vertically if the $x$-difference
+    between the midpoints of each box is smaller than the width of each box.
+  \end{itemize}
+  This partitions $\mathcal{C}$ into a set of disjoint graphs, and we take the
+  vertices of the largest, in terms of cardinality, graph
+  $\mathcal{C}_{A}$ as the set of aligned chains - assumed to be set of
+  (partial) digit sequences.
+
+\item
+  For each chain $C \in \mathcal{C}_{A}$ containing only two regions, we
+  (re-)construct a region for its missing digit.
+  We assume that its leftmost digit is missing, and we write the chain in
+  the form $C = \lrset{R_{2}, R_{3}}$.
+  We synthetically construct a region $R_{1}$, which allows replacing the chain
+  $C$ with $C' = \lrset{R_{1}, R_{2}, R_{3}}$.
+  We construct a box $B_{1}$ to the left of $R_{2}$, with the top left corner
+  being predicted from the spacing between the top left corners of $R_{2}$ and
+  $R_{3}$, the height being the maximum of $h_{R_{2}}$ and $h_{R_{3}}$, and its
+  width extending the box to just before $B\lr{R_{2}}$.
+  The restriction of the grayscale image to this box $I\mid_{B_{1}}$ is subject
+  to Otsu thresholding, and the connected components of the resulting binary
+  image are determined.
+  We expect $B_{1}$ to cover the leftmost digit, allowing the identification of
+  the region corresponding to the digit, without letting the region extend
+  outside $B_{1}$.
+  We take $R_{1}$ to be the region formed from the largest connected component
+  found, and replace $C$ with $C'$ in $\mathcal{C}_{A}$.
+  Performing this for all incomplement chains in $\mathcal{C}_{A}$ yields a set
+  of aligned chains, all of which consist of three regions.
+
+\item
+  We now find the directional arrow associated with each chain in the set of
+  aligned chains.
+  For each chain $C = \lrset{R_{1}, R_{2}, R_{3}} \in \mathcal{C}_{A}$, we
+  construct a box $B_{4}$ to its right, which we expect to overlap maximally
+  with a region $R_{4} \in \mathcal{R}$ corresponding to the associated
+  directional arrow.
+  We construct $B_{4}$ by first constructing the bounding box of the two
+  rightmost digits $B\lr{R_{2} \cup R_{3}}$ and shifting it rightwards, so that
+  the $x$ difference between the top left corner of $B_{4}$ and the top right
+  corner of $B\lr{R_{2} \cup R_{3}}$ is $1$.
+  We then take $R_{4}$ to be the region $R_{i} \in \mathcal{R}$ for which the
+  overlap of its corresponding bounding box and $B_{4}$ is maximal.
+
+\item
+  We have thus formed a set of aligned chains $\mathcal{C}_{A}$, each of which
+  contain three regions corresponding to three digits
+  $C_{i} = \lrset{R_{i_{1}}, R_{i_{2}}, R_{i_{3}}}$ and have an associated
+  region $R_{i_{4}}$ corresponding to a directional arrow.
+  For each chain $C_{i} \in \mathcal{C}_{A}$ we perform the following:
+  \begin{itemize}
+  \item
+    For each of the three digit regions in the chain of digits, we calculate its
+    spatial occupancy feature vector $v\lr{R_{i_{j}}} \in \real^{3 \times 5}$
+    with 3 $x$-bins and 5 $y$-bins, for $j = 1, 2, 3$.
+    These digits are then classified using a $k$-Nearest Neighbour algorithm,
+    which is trained on the provided training digit images.
+
+  \item
+    The spatial occupancy feature vector of the associated arrow region is
+    calculated $v\lr{R_{i_{4}}} \in \real^{2 \times 2}$ with 2 $x$-bins and 2
+    $y$-bins.
+    This arrow is then classified using a $k$-Nearest Neighbour algorithm,
+    which is trained on the provided training arrow images.
+  \end{itemize}
+\end{enumerate}
+
+This detection algorithm is demonstrated in \autoref{fig:2-demonstration}.
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[t]{0.44\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/work/task2/val03_4}
+    \caption[]{}
+    \label{fig:work-2-0}
+  \end{subfigure}
+  %
+  \begin{subfigure}[t]{0.44\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/work/task2/val03_5}
+    \caption[]{}
+    \label{fig:work-2-1}
+  \end{subfigure}
+
+  \begin{subfigure}[t]{0.44\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/work/task2/val03_6}
+    \caption[]{}
+    \label{fig:work-2-2}
+  \end{subfigure}
+  %
+  \begin{subfigure}[t]{0.44\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/work/task2/val03_7}
+    \caption[]{}
+    \label{fig:work-2-3}
+  \end{subfigure}
+
+  \caption[Task 2 - Detection Algorithm Demonstration]{
+    Demonstration of the detection algorithm for task 2, applied to
+    \lstinline{task2/val03.jpg}:
+    \protect\subref{fig:work-2-0} - Chains of regions detected;
+    \protect\subref{fig:work-2-1} - Largest set of aligned chains detected;
+    \protect\subref{fig:work-2-2} - Missing digits detected;
+    \protect\subref{fig:work-2-3} - Associated arrows detected.
+  }
+  \label{fig:2-demonstration}
+\end{figure}
+
+\clearpage
 
 \section{Validation Performance}
 \label{sec:val}
