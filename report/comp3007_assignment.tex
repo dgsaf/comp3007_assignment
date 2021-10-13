@@ -983,7 +983,7 @@ We describe the detection and classification algorithms for task 1 in detail.
   We use the MSER method, with the following parameters:
   \begin{itemize}
   \item
-    minimum region size of 25;
+    minimum region size of 45;
   \item
     maximum region size of 2000;
   \item
@@ -1035,7 +1035,7 @@ We describe the detection and classification algorithms for task 1 in detail.
   For each region $R_{i} \in \mathcal{R}$ with corresponding bounding box
   $B\lr{R_{i}}$, with aspect ratio $a_{i} = w_{R_{i}} / h_{R_{i}}$, we remove
   $R_{i}$ from $\mathcal{R}$ if $a_{i} \notin \lrsq{a_{\min}, a_{\max}}$.
-  In testing, we have found $a_{\min} = 1:1.2$ and $a_{\max} = 1:3$ to be
+  In testing, we have found $a_{\min} = 1:3$ and $a_{\max} = 1:1.2$ to be
   suitable.
 
 \item
@@ -1273,6 +1273,7 @@ We describe the detection and classification algorithms for task 1 in detail.
   $\mathcal{C}_{i} = \lrset{R_{i_{1}}, R_{i_{2}}, \dotsc, R_{i_{n_{i}}}}$.
 
 \item
+  \label{item:1-select-chain}
   It now remains to select the chain corresponding to be the sequence of three
   digits.
   While it would be possible to achieve this by classifying every digit in every
@@ -1414,7 +1415,7 @@ This detection algorithm is demonstrated in \autoref{fig:1-demonstration}.
     \label{fig:work-1-7}
   \end{subfigure}
 
-  \caption[Task 1 - Detection Algorithm]{
+  \caption[Task 1 - Detection Algorithm Demonstration]{
     Demonstration of the detection algorithm for task 1, applied to
     \lstinline{task1/val06.jpg}:
     \protect\subref{fig:work-1-0} - Original image;
@@ -1433,6 +1434,25 @@ This detection algorithm is demonstrated in \autoref{fig:1-demonstration}.
 
 \subsection{Task 2}
 \label{sec:imp-2}
+
+We describe the detection and classification algorithm for task 2 in detail.
+The first stage of detection is essentially similar to that for task 1, as
+described in \autoref{sec:imp-1}, up to \autoref{item:1-select-chain} where the
+most likely chain is selected.
+The notable differences are that
+\begin{itemize}
+\item
+  In the MSER method, we set a minimum area size of 25 rather than 45 as for
+  task 1, due to the smaller size of the digits being detected;
+
+\item
+  When filtering regions by aspect ratio, we set $a_{\max} = 1:0.75$ rather
+  than $a_{\max} = 1:1.2$, so as to not exclude the arrow regions.
+
+\item
+  No use is made of Otsu separation in task 2, rather likely chains are selected
+  by considering their alignment with other chains.
+\end{itemize}
 
 \section{Validation Performance}
 \label{sec:val}
