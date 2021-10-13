@@ -7,6 +7,27 @@ import cv2
 
 
 def parse_input():
+    """
+    Parse command line arguments.
+
+    Returns
+    -------
+    args : dict of (string, values)
+        Dictionary of command line arguments.
+        - args["input"] is the directory of input images to detect and classify;
+        - args["output"] is the directory for output images and txt files to be
+          written to;
+        - args["digits"] is the directory of digit and directional arrow
+          training images;
+        - args["work"] is the directory that work (pipeline) images will be
+          written to;
+        - args["work_save"] is a flag indicating if work images are to be
+          constructed and saved, or not.
+    img_files : list of string
+        The set of input images on which the detection and classification
+        algorithms are to be run.
+
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", required=True,
                         help="directory path with input images")
@@ -33,6 +54,23 @@ def parse_input():
 
 
 def parse_image_file(img_file):
+    """
+    Parse an image filepath into rootname, extension, and the integer ID.
+
+    Parameters
+    ----------
+    img_file : string
+
+    Returns
+    -------
+    file_root : string
+        Root of the basename of `img_file`.
+    file_ext : string
+        Extension of the basename of `img_file`.
+    file_id : string
+        Integer ID of `img_file`.
+
+    """
     file_root, file_ext = os.path.splitext(os.path.basename(img_file))
     match_id = re.search("[0-9]+", file_root)
     file_id = match_id.group(0) if match_id else ""
