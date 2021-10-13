@@ -9,17 +9,29 @@ from region import *
 
 class KNN:
     """
-    Summary
+    k-Nearest Neighbour class, built around OpenCV's KNearest object.
 
     Attributes
     ----------
-    x : t
-        e
+    labels : dict of (int, X), where X is type of label of samples
+        A map between the int labels used internally, and the labels of the
+        samples as provided to the `train()` method.
+    knn : cv2.ml.KNearest
+        The k-Nearest Neighbour object, trained on the sample data, which is
+        used to predict class labels for unlabelled sample data.
 
     Methods
     -------
-    f : t
-        e
+    train(samples_labelled) :
+        Train `knn` on the labelled sample data, and build the map `labels`,
+        between internal labels for OpenCV's `train()` and `predict()` methods,
+        and the labels of `samples_labelled`.
+
+    predict(samples, k=3) :
+        Predict the class labels of `samples` using `k` neighbours, and the
+        trained `knn` object.
+        The output labels are converted from the internal class labels to be of
+        the same type as was provided during training.
 
     """
 
@@ -64,17 +76,21 @@ class KNN:
 
 def build_knn_digits(dir_digits, bins_x, bins_y):
     """
-    Summary
+    Construct a KNN object from a directory containing digit training images.
 
     Parameters
     ----------
-    x : t
-        e
+    dir_digits : string
+        Path for the directory containing the digit training images.
+    bins_x : int
+        Number of x-component bins for `spatial_occupancy()`.
+    bins_y : int
+        Number of y-component bins for `spatial_occupancy()`.
 
     Returns
     -------
-    f : t
-        e
+    KNN
+        k-Nearest Neighbour algorithm trained on the digit images provided.
 
     """
     digits = {
@@ -114,17 +130,21 @@ def build_knn_digits(dir_digits, bins_x, bins_y):
 
 def build_knn_arrows(dir_arrows, bins_x, bins_y):
     """
-    Summary
+    Construct a KNN object from a directory containing arrow training images.
 
     Parameters
     ----------
-    x : t
-        e
+    dir_arrows : string
+        Path for the directory containing the arrow training images.
+    bins_x : int
+        Number of x-component bins for `spatial_occupancy()`.
+    bins_y : int
+        Number of y-component bins for `spatial_occupancy()`.
 
     Returns
     -------
-    f : t
-        e
+    KNN
+        k-Nearest Neighbour algorithm trained on the arrow images provided.
 
     """
     arrows = {
