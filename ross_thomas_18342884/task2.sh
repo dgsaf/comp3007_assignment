@@ -34,4 +34,4 @@ done
   -i "${DIR_TEST}" \
   -o "${DIR_OUTPUT}" \
   -d "${DIR_DIGITS}" \
-  -w "${DIR_WORK}" -W
+  -w "${DIR_WORK}"
