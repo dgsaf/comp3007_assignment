@@ -32,8 +32,8 @@ The entire code repository can be found at
 
 \clearpage
 
-\section{Introduction}
-\label{sec:introduction}
+% \section{Introduction}
+% \label{sec:introduction}
 
 \section{Problem Analysis}
 \label{sec:problem-analysis}
@@ -1605,8 +1605,20 @@ This detection algorithm is demonstrated in \autoref{fig:2-demonstration}.
 \section{Validation Performance}
 \label{sec:val}
 
+The performance of the detection and classification algorithms for task 1 and
+task 2 on the validation images are shown in \autoref{sec:val-1} and
+\autoref{sec:val-2} respectively.
+It is seen that the detection algorithms are quite effective, handling well
+various lightning conditions, camera perspectives, and the presence of noisy
+natural scenes.
+Furthermore, the $k$-NN classification algorithms seem to be work appropriately.
+In fact, no error is seen at all on the validation sets remarkably.
+
 \subsection{Task 1}
 \label{sec:val-1}
+
+The performance of the detection and classification algorithms on the validation
+image set, for task 1, is presented in \autoref{fig:val-1}.
 
 \begin{figure}[h]
   \centering
@@ -1641,6 +1653,9 @@ This detection algorithm is demonstrated in \autoref{fig:2-demonstration}.
 
 \subsection{Task 2}
 \label{sec:val-2}
+
+The performance of the detection and classification algorithms on the validation
+image set, for task 2, is presented in \autoref{fig:val-2}.
 
 \begin{figure}[h]
   \centering
@@ -1681,16 +1696,16 @@ This detection algorithm is demonstrated in \autoref{fig:2-demonstration}.
   \label{fig:val-2}
 \end{figure}
 
-\section{Conclusion}
-\label{sec:conclusion}
+% \section{Conclusion}
+% \label{sec:conclusion}
 
 \clearpage
 
 \bibliography{references}
 
-\appendix
+% \appendix
 
-\section{Source Code}
-\label{sec:source-code}
+% \section{Source Code}
+% \label{sec:source-code}
 
 \end{document}
