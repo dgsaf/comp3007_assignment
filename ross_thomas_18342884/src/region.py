@@ -9,6 +9,77 @@ from box import *
 
 
 class Region:
+    """
+    Connected region of points, suitable for use with OpenCV MSER.
+
+    Attributes
+    ----------
+    points : set of (int, int)
+        Set of points that this region contains.
+        These points are assumed, but not checked, upon construction to be
+        connected.
+
+    box : Box
+        Minimal bounding box of this region.
+
+    boundary : set of (int, int)
+        E.
+
+    cached_boundary : bool
+        E.
+
+    contours : list of list of (int, int)
+        E.
+
+    hierarchy : 2-D array
+        E.
+
+    cached_contours : bool
+        E.
+
+    Methods
+    -------
+    area : int
+        E.
+
+    fill : float
+        E.
+
+    holes : int
+        E.
+
+    moments : dict of (string, float)
+        E.
+
+    centroid : (float, float)
+        E.
+
+    hu_moments : array of float
+        E.
+
+    image : 2-D array of int
+        E.
+
+    spatial_histogram : 2-D array of float
+        E.
+
+    distance(point) : float
+        E.
+
+    set_distance_min(points) : float
+        E.
+
+    set_distance_max(points) : float
+        E.
+
+    overlap(region) : float
+        E.
+
+    contains(region) : bool
+        E.
+
+    """
+
     def __init__(self, points):
         self._points = set([(p[0], p[1]) for p in points])
         self._box = bounding_box(self.points)
