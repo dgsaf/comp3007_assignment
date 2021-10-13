@@ -9,17 +9,21 @@ from region import *
 
 def linked(region_1, region_2):
     """
-    Summary
+    Determine if two regions are sufficiently adjacent and similar.
 
     Parameters
     ----------
-    x : t
-        e
+    region_1 : Region
+    region_2 : Region
 
     Returns
     -------
-    f : t
-        e
+    bool
+        True if the bounding boxes of `region_1` and `region_2`
+        - have similar `y` placement; and
+        - have similar `height`; and
+        - have adjacent `x` placement; and
+        - do not overlap too much.
 
     """
 
@@ -55,17 +59,25 @@ def linked(region_1, region_2):
 
 def find_chains(regions, best_edge=True):
     """
-    Summary
+    Find all non-overlapping chains of regions, in a set of regions.
+
+    Finds all links between regions, then filters the edges by distance between
+    to regions to ensure each region has at most one adjacent region to their
+    right and at most one adjacent region to their left - ensuring all paths are
+    non-overlapping.
+    All paths are then extracted and are said to be chains of regions.
 
     Parameters
     ----------
-    x : t
-        e
+    regions : list of Region
+    best_edge : bool, default=True
+        Disabling this results in the edges not being filtered, and so
+        overlapping paths may be extracted.
 
     Returns
     -------
-    f : t
-        e
+    list of list of Region
+        List of chains (represented as a list of regions) of adjacent regions.
 
     """
     regions_ordered = sorted(regions, key=lambda r: r.box.x)
@@ -101,17 +113,29 @@ def find_chains(regions, best_edge=True):
 
 def cluster_largest_otsu_separations(img, chains, max_diff=50):
     """
-    Summary
+    Filters a set of chains, to leave the most monochromatic chains.
+
+    For each chain, the minimum Otsu separation of the image across all channels
+    (RGB and grayscale), restricted to the bounding box of the chain, is
+    calculated.
+    The chains are sorted by their separation, and the cluster of most separated
+    chains is taken.
 
     Parameters
     ----------
-    x : t
-        e
+    img : 3-D array of int
+        Colour image.
+    chains : list of list of Region
+    max_diff : int, default=50
+        The cluster of most separated chains is parameterised by this value;
+        once ordered by decreasing separation, chains are taken until the change
+        in separation from one chain to the next is more than `max_diff`.
 
     Returns
     -------
-    f : t
-        e
+    list of list of Region
+        The list of chains, ordered by decreasing Otsu separation, which are
+        more separated, by `max_diff`, than the remaining list of chains.
 
     """
     if not chains:
@@ -140,17 +164,22 @@ def cluster_largest_otsu_separations(img, chains, max_diff=50):
 
 def aligned(chain_1, chain_2):
     """
-    Summary
+    Determine if two chains (of at most 3 regions) are aligned vertically.
+
+    The two chains are considered to be aligned if each of their two right-most
+    regions (expected to be digits) are:
+    - aligned vertically (or near vertically); and
+    - of correspondingly similar heights.
 
     Parameters
     ----------
-    x : t
-        e
+    chain_1 : list of Region
+    chain_2 : list of Region
 
     Returns
     -------
-    f : t
-        e
+    bool
+        Flag true if the two chains are aligned.
 
     """
     n1 = len(chain_1)
