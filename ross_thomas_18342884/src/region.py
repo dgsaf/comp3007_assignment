@@ -78,19 +78,23 @@ class Region:
         each bin by the region.
 
     distance(point) : float
-        E.
+        Calculates the minimum distance of `point` to any of the points in
+        this region.
 
     set_distance_min(points) : float
-        E.
+        Calculates the minimum of all distances between `points` and points in
+        this region.
 
     set_distance_max(points) : float
-        E.
+        Calculates the maximum of all distances between `points` and points in
+        this region.
 
     overlap(region) : float
-        E.
+        Calculates the fractional cardinality of the intersection of `region`
+        with this region, over the cardinality of `region`.
 
     contains(region) : bool
-        E.
+        Returns true if all points in `region` are also in this region.
 
     """
 
@@ -269,6 +273,21 @@ class Region:
 
 
 def remove_overlapping(regions, max_overlap=0.8):
+    """
+    Filters regions by removing sufficiently overlapping smaller regions.
+
+    Parameters
+    ----------
+    regions : iterable collection of Region
+    max_overlap : float, default=0.8
+        Remove any region which overlaps with a larger region, by area, by more
+        than this value.
+
+    Returns
+    -------
+    regions_filtered : iterable collection of Region
+
+    """
     regions_ordered = sorted(regions, key=lambda r: r.area, reverse=True)
     regions_filtered = []
     for r in regions_ordered:
@@ -280,6 +299,21 @@ def remove_overlapping(regions, max_overlap=0.8):
 
 
 def remove_occluded_holes(regions, max_boundary_distance=10):
+    """
+    Filters interior hole regions, which fill up another regions hole.
+
+    Parameters
+    ----------
+    regions : iterable collection of Region
+    max_boundary_distance : int, default=10
+        Remove any region with boundary points which are never more than this
+        distance away from another region which contains this one.
+
+    Returns
+    -------
+    regions_filtered : iterable collection of Region
+
+    """
     regions_ordered = sorted(regions, key=lambda r: r.box.x)
     regions_filtered = []
     for r in regions_ordered:
@@ -292,6 +326,23 @@ def remove_occluded_holes(regions, max_boundary_distance=10):
 
 
 def draw_regions(regions, size=None):
+    """
+    Creates an image from a set of regions.
+
+    Parameters
+    ----------
+    regions : iterable collection of Region
+    size : (int, int), optional
+        Height and width of the image canvas, on which to draw the regions.
+
+    Returns
+    -------
+    img_regions : 3-D array of int
+        Colour image (constructed in HSV space, but returned in BGR) with a
+        black background, distinct colours for each region, and with the
+        boundaries of regions coloured white.
+
+    """
     if size:
         canvas = Box(0, 0, size[1], size[0])
     else:
@@ -312,6 +363,20 @@ def draw_regions(regions, size=None):
 
 
 def cc_regions(img_bin):
+    """
+    Creates a set of regions from the connected components of a binary image.
+
+    Parameters
+    ----------
+    img_bin : 2-D array of int
+        Binary image.
+
+    Returns
+    -------
+    regions : list of Region
+        The set of regions formed from connected components of a binary image.
+
+    """
     n, labels = cv2.connectedComponents(img_bin, connectivity=8)
     regions = [Region(np.argwhere(np.transpose(labels) == l))
                for l in range(1, n)]
